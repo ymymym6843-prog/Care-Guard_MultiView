@@ -121,8 +121,37 @@ export function StatsView() {
 
   if (loading && !summary) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground text-sm">{t("stats.loading")}</p>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="h-6 w-40 bg-muted rounded animate-pulse" />
+            <div className="h-4 w-60 bg-muted rounded animate-pulse mt-2" />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i}>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-2 flex-1">
+                    <div className="h-3 w-20 bg-muted rounded animate-pulse" />
+                    <div className="h-7 w-16 bg-muted rounded animate-pulse" />
+                  </div>
+                  <div className="h-10 w-10 rounded-full bg-muted animate-pulse" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {[...Array(2)].map((_, i) => (
+            <Card key={i}>
+              <CardContent className="pt-6">
+                <div className="h-[250px] bg-muted/50 rounded animate-pulse" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     );
   }
@@ -145,7 +174,7 @@ export function StatsView() {
               variant={days === d ? "default" : "outline"}
               onClick={() => setDays(d)}
             >
-              {d}{t("stats.days")}
+              {t("stats.recentDays", { days: d, defaultValue: "최근 {{days}}일" })}
             </Button>
           ))}
           <Button size="sm" variant="ghost" onClick={fetchStats}>

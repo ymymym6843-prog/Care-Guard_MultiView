@@ -6,11 +6,18 @@ import {
   CircleDot,
   Brain,
   BookOpen,
+  Info,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useMonitoringStore, type PersonMetrics } from "@/store/monitoring";
-import { cn } from "@/lib/utils";
+import { cn, formatPersonId } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 
 // 자세 색상: 낙상 여부에 따라 동적으로 결정
@@ -90,7 +97,7 @@ function PersonCard({ person, index }: { person: PersonMetrics; index: number })
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-1.5">
           <CircleDot className={cn("h-3.5 w-3.5", dotColor)} />
-          <span className="text-sm font-bold">{person.personId}</span>
+          <span className="text-sm font-bold">{t("events.person", "인원")} {formatPersonId(person.personId)}</span>
         </div>
         <div className="flex items-center gap-1.5">
           {person.isFallen && (
@@ -145,25 +152,43 @@ function PersonCard({ person, index }: { person: PersonMetrics; index: number })
           </div>
         </div>
 
-        {/* 규칙/ML 점수 */}
-        <div className="flex items-center justify-between">
-          <span className="text-muted-foreground flex items-center gap-1">
-            <BookOpen className="h-3 w-3" />
-            {t("dashboard.metrics.rule")}
-          </span>
-          <span className="font-mono text-[11px]">
-            {(person.ruleScore * 100).toFixed(0)}%
-          </span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-muted-foreground flex items-center gap-1">
-            <Brain className="h-3 w-3" />
-            {t("dashboard.metrics.ml")}
-          </span>
-          <span className="font-mono text-[11px]">
-            {(person.mlScore * 100).toFixed(0)}%
-          </span>
-        </div>
+        {/* 규칙/ML 점수 + 툴팁 */}
+        <TooltipProvider delayDuration={300}>
+          <div className="flex items-center justify-between">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="text-muted-foreground flex items-center gap-1 cursor-help">
+                  <BookOpen className="h-3 w-3" />
+                  {t("dashboard.metrics.rule")}
+                  <Info className="h-2.5 w-2.5 opacity-50" />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[200px] text-xs">
+                {t("dashboard.metrics.ruleScoreTooltip")}
+              </TooltipContent>
+            </Tooltip>
+            <span className="font-mono text-[11px]">
+              {(person.ruleScore * 100).toFixed(0)}%
+            </span>
+          </div>
+          <div className="flex items-center justify-between">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="text-muted-foreground flex items-center gap-1 cursor-help">
+                  <Brain className="h-3 w-3" />
+                  {t("dashboard.metrics.ml")}
+                  <Info className="h-2.5 w-2.5 opacity-50" />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[200px] text-xs">
+                {t("dashboard.metrics.mlScoreTooltip")}
+              </TooltipContent>
+            </Tooltip>
+            <span className="font-mono text-[11px]">
+              {(person.mlScore * 100).toFixed(0)}%
+            </span>
+          </div>
+        </TooltipProvider>
 
         {/* 각도 + 지속시간 */}
         <div className="flex items-center justify-between">

@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SENTIO AI - 발표 유인물</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Noto Sans KR', -apple-system, sans-serif;
+      background: #f1f5f9;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      line-height: 1.5;
+    }
+
+    /* ===== PAGE ===== */
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      background: white;
+      margin: 0 auto 8mm;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 12px rgba(0,0,0,0.08);
+      page-break-after: always;
+    }
+
+    /* ===== COLORS ===== */
+    :root {
+      --primary: #6366f1;
+      --accent: #06b6d4;
+      --accent2: #2dd4bf;
+      --safe: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --bg-subtle: #f8fafc;
+      --border: #e2e8f0;
+    }
+
+    /* ============================================
+       PAGE 1: FRONT (Impact + Core)
+       ============================================ */
+
+    .page1-header {
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #1e3a5f 100%);
+      padding: 20mm 16mm 14mm;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page1-header::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(6,182,212,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .page1-header::after {
+      content: '';
+      position: absolute;
+      bottom: -30px; left: 20%;
+      width: 160px; height: 160px;
+      background: radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-svg { width: 44px; height: 44px; }
+
+    .logo-text {
+      font-size: 28px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-text span { color: var(--accent); }
+
+    .tagline {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.3em;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.4;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-title em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    /* Hero Stats */
+    .hero-stats {
+      display: flex;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-stat {
+      flex: 1;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+
+    .hero-stat-num {
+      font-size: 24px;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent2);
+    }
+
+    .hero-stat-num.green { color: #34d399; }
+    .hero-stat-num.cyan { color: var(--accent); }
+    .hero-stat-num.white { color: #fff; }
+
+    .hero-stat-label {
+      font-size: 9px;
+      color: rgba(255,255,255,0.45);
+      font-weight: 500;
+      margin-top: 2px;
+      line-height: 1.3;
+    }
+
+    /* ===== FRONT BODY ===== */
+    .page1-body {
+      padding: 12mm 16mm 14mm;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 3px;
+      height: 14px;
+      background: linear-gradient(180deg, var(--primary), var(--accent));
+      border-radius: 2px;
+    }
+
+    /* Problem + Solution Row */
+    .prob-sol-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .prob-box, .sol-box {
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 10.5px;
+      line-height: 1.6;
+    }
+
+    .prob-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+    }
+
+    .prob-box .box-title {
+      font-weight: 700;
+      color: var(--danger);
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+
+    .prob-box ul { padding-left: 14px; color: #991b1b; }
+    .prob-box li { margin-bottom: 2px; }
+    .prob-box strong { color: #7f1d1d; }
+
+    .sol-box {
+      background: #f0fdfa;
+      border: 1px solid #99f6e4;
+    }
+
+    .sol-box .box-title {
+      font-weight: 700;
+      color: var(--safe);
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+
+    .sol-box ul { padding-left: 14px; color: #065f46; }
+    .sol-box li { margin-bottom: 2px; }
+    .sol-box strong { color: #064e3b; }
+
+    /* Flow Diagram */
+    .flow-diagram {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 14px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+
+    .flow-step {
+      text-align: center;
+      flex: 1;
+      padding: 6px 4px;
+    }
+
+    .flow-icon {
+      font-size: 18px;
+      margin-bottom: 2px;
+    }
+
+    .flow-label {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .flow-desc {
+      font-size: 8px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .flow-arrow {
+      color: var(--accent);
+      font-size: 16px;
+      font-weight: 700;
+      flex-shrink: 0;
+      padding: 0 2px;
+    }
+
+    /* Differentiators */
+    .diff-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .diff-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      text-align: center;
+      background: white;
+    }
+
+    .diff-card .diff-icon { font-size: 20px; margin-bottom: 3px; }
+    .diff-card .diff-title { font-size: 10px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+    .diff-card .diff-desc { font-size: 8.5px; color: var(--text-muted); line-height: 1.4; }
+
+    /* Contact Footer */
+    .page1-footer {
+      border-top: 1px solid var(--border);
+      padding: 8px 16mm;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9px;
+      color: var(--text-muted);
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-subtle);
+    }
+
+    .page1-footer strong { color: var(--text); }
+
+    /* ============================================
+       PAGE 2: BACK (Detail + Tech + Business)
+       ============================================ */
+
+    .page2-header {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      padding: 10mm 16mm 8mm;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .page2-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .page2-logo {
+      font-size: 18px;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .page2-logo span { color: var(--accent); }
+
+    .page2-subtitle {
+      font-size: 10px;
+      color: rgba(255,255,255,0.4);
+      font-weight: 500;
+    }
+
+    .page2-badge {
+      font-size: 9px;
+      color: var(--accent);
+      background: rgba(6,182,212,0.1);
+      border: 1px solid rgba(6,182,212,0.2);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-weight: 600;
+    }
+
+    .page2-body {
+      padding: 10mm 16mm 8mm;
+    }
+
+    /* Two Column Layout */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .col-section-title {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 2px solid var(--primary);
+      display: inline-block;
+    }
+
+    /* AI Pipeline */
+    .pipeline-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .pipeline-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 10px;
+    }
+
+    .pipeline-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 800;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .pipeline-num.blue { background: linear-gradient(135deg, var(--primary), #818cf8); }
+    .pipeline-num.cyan { background: linear-gradient(135deg, var(--accent), var(--primary)); }
+    .pipeline-num.amber { background: linear-gradient(135deg, var(--warning), var(--danger)); }
+
+    .pipeline-info { flex: 1; }
+    .pipeline-title { font-size: 10px; font-weight: 700; color: var(--text); }
+    .pipeline-desc { font-size: 8.5px; color: var(--text-muted); }
+
+    /* Performance Table */
+    .perf-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9.5px;
+      margin-bottom: 8px;
+    }
+
+    .perf-table th {
+      background: #f1f5f9;
+      padding: 6px 8px;
+      font-weight: 700;
+      color: var(--text);
+      text-align: left;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .perf-table td {
+      padding: 5px 8px;
+      border-bottom: 1px solid #f1f5f9;
+      color: var(--text-muted);
+    }
+
+    .perf-table .hl { color: var(--safe); font-weight: 700; }
+    .perf-table .hl-cyan { color: var(--accent); font-weight: 700; }
+    .perf-table .dim { color: var(--text-light); }
+
+    /* Progress Bars */
+    .perf-bars { margin-bottom: 10px; }
+
+    .perf-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .perf-bar-label {
+      font-size: 9px;
+      color: var(--text-muted);
+      width: 70px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .perf-bar-bg {
+      flex: 1;
+      height: 8px;
+      background: #f1f5f9;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .perf-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent2));
+    }
+
+    .perf-bar-val {
+      font-size: 9px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--safe);
+      width: 32px;
+      flex-shrink: 0;
+    }
+
+    /* Compare Table */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9px;
+      margin-bottom: 10px;
+    }
+
+    .compare-table th {
+      padding: 5px 6px;
+      font-weight: 700;
+      text-align: center;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-muted);
+      background: #f8fafc;
+    }
+
+    .compare-table th.sentio {
+      color: var(--accent);
+      background: #f0fdfa;
+    }
+
+    .compare-table td {
+      padding: 4px 6px;
+      text-align: center;
+      border-bottom: 1px solid #f1f5f9;
+      color: var(--text-muted);
+    }
+
+    .compare-table td.sentio {
+      color: var(--safe);
+      font-weight: 700;
+      background: #f0fdfa;
+    }
+
+    .compare-table td.dim { color: #cbd5e1; }
+
+    /* Business Model */
+    .biz-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .biz-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+
+    .biz-card.featured {
+      border-color: rgba(6,182,212,0.3);
+      background: #f0fdfa;
+    }
+
+    .biz-plan { font-size: 9px; color: var(--text-muted); font-weight: 500; }
+    .biz-badge { font-size: 8px; color: var(--accent); font-weight: 700; }
+    .biz-price { font-size: 18px; font-weight: 900; color: var(--text); margin: 2px 0; }
+    .biz-unit { font-size: 8px; color: var(--text-light); }
+    .biz-features { font-size: 8px; color: var(--text-muted); line-height: 1.6; text-align: left; padding-left: 4px; margin-top: 4px; }
+
+    /* Market */
+    .market-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .market-stat {
+      flex: 1;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 8px;
+      text-align: center;
+    }
+
+    .market-num {
+      font-size: 16px;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary);
+    }
+
+    .market-label {
+      font-size: 8px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    /* Target List */
+    .target-list {
+      font-size: 9px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      padding-left: 14px;
+      margin-bottom: 10px;
+    }
+
+    .target-list strong { color: var(--text); }
+
+    /* Tech Stack Tags */
+    .tech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .tech-tag {
+      font-size: 8px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      background: white;
+    }
+
+    .tech-tag.primary { border-color: rgba(99,102,241,0.3); color: var(--primary); background: #eef2ff; }
+    .tech-tag.cyan { border-color: rgba(6,182,212,0.3); color: var(--accent); background: #ecfeff; }
+    .tech-tag.green { border-color: rgba(16,185,129,0.3); color: var(--safe); background: #ecfdf5; }
+
+    /* Info Box */
+    .info-note {
+      font-size: 8.5px;
+      color: var(--text-muted);
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 6px;
+      padding: 6px 10px;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .info-note strong { color: #92400e; }
+
+    /* Page 2 Footer */
+    .page2-footer {
+      border-top: 2px solid var(--primary);
+      padding: 8mm 16mm 10mm;
+      background: var(--bg-subtle);
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .footer-left {}
+
+    .footer-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .footer-role {
+      font-size: 9px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .footer-contact {
+      font-size: 9.5px;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .footer-contact strong { color: var(--text); }
+
+    .footer-right {
+      text-align: right;
+    }
+
+    .footer-logo {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .footer-logo span { color: var(--accent); }
+
+    .footer-slogan {
+      font-size: 9px;
+      color: var(--text-light);
+      font-style: italic;
+      margin-bottom: 6px;
+    }
+
+    .footer-course {
+      font-size: 8px;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
+
+    @media print {
+      body { background: white; }
+      .page { box-shadow: none; margin: 0; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ============================================
+     PAGE 1: FRONT
+     ============================================ -->
+<div class="page">
+
+  <!-- HEADER: Dark hero area -->
+  <div class="page1-header">
+    <div class="logo-row">
+      <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+        <circle cx="50" cy="50" r="45" fill="url(#sg)" opacity="0.12"/>
+        <circle cx="50" cy="50" r="35" fill="url(#sg)" opacity="0.2"/>
+        <circle cx="50" cy="50" r="25" fill="url(#sg)" opacity="0.4"/>
+        <circle cx="50" cy="50" r="14" fill="url(#sg)"/>
+        <circle cx="50" cy="50" r="6" fill="white" opacity="0.9"/>
+      </svg>
+      <div class="logo-text">SENTIO <span>AI</span></div>
+    </div>
+    <div class="tagline">Sense &middot; Protect &middot; Care</div>
+    <div class="hero-title">
+      기존 CCTV에 AI를 연결하면,<br>
+      환자가 넘어지는 순간 <em>즉시</em> 알려줍니다
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num green">95.2%</div>
+        <div class="hero-stat-label">감지율 (Recall)<br>20건 중 19건 포착</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num cyan">94.6%</div>
+        <div class="hero-stat-label">정밀도 (Precision)<br>오알림 5% 미만</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num white">F1 94.9</div>
+        <div class="hero-stat-label">종합 AI Score<br>424건 독립 검증</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="page1-body">
+
+    <!-- Problem vs Solution -->
+    <div class="section-title">왜 필요한가?</div>
+    <div class="prob-sol-row">
+      <div class="prob-box">
+        <div class="box-title">현재 문제</div>
+        <ul>
+          <li>65세 이상 <strong>3명 중 1명</strong> 매년 낙상</li>
+          <li>낙상 발생 장소 <strong>47%</strong>가 사각지대</li>
+          <li>간호사:환자 = <strong>1:30</strong>, 24시간 감시 불가</li>
+          <li>의료사고 원인 <strong>2위</strong> (치명적)</li>
+        </ul>
+      </div>
+      <div class="sol-box">
+        <div class="box-title">SENTIO AI 솔루션</div>
+        <ul>
+          <li><strong>기존 CCTV 그대로</strong> 활용, 추가 장비 0원</li>
+          <li>AI가 <strong>24시간</strong> 자동 모니터링</li>
+          <li>넘어지는 순간 <strong>3초 내</strong> 자동 알림</li>
+          <li>관절 좌표만 분석, <strong>프라이버시 보호</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- How it works -->
+    <div class="section-title">이렇게 작동합니다</div>
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="flow-icon">📹</div>
+        <div class="flow-label">1. 연결</div>
+        <div class="flow-desc">기존 CCTV/IP캠<br>AI 서버 연결</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="flow-icon">🤖</div>
+        <div class="flow-label">2. AI 분석</div>
+        <div class="flow-desc">YOLO11 + GRU<br>실시간 판정</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="flow-icon" style="color: var(--danger);">🚨</div>
+        <div class="flow-label" style="color: var(--danger);">3. 낙상 감지</div>
+        <div class="flow-desc">3초 내<br>자동 판별</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="flow-icon" style="color: var(--safe);">🔔</div>
+        <div class="flow-label" style="color: var(--safe);">4. 즉시 알림</div>
+        <div class="flow-desc">화면 경고<br>+ 음성 안내</div>
+      </div>
+    </div>
+
+    <!-- Differentiators -->
+    <div class="section-title">핵심 차별점</div>
+    <div class="diff-grid">
+      <div class="diff-card">
+        <div class="diff-icon">🏥</div>
+        <div class="diff-title">추가 장비 0원</div>
+        <div class="diff-desc">기존 CCTV 인프라 그대로 활용</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">🔒</div>
+        <div class="diff-title">프라이버시 내장</div>
+        <div class="diff-desc">스켈레톤 좌표만 처리, 영상 미저장</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">👥</div>
+        <div class="diff-title">다인 동시 추적</div>
+        <div class="diff-desc">대기실 내 모든 환자 개별 추적</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">📊</div>
+        <div class="diff-title">통계 리포트</div>
+        <div class="diff-desc">안전 관리 증빙 자료 자동 생성</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="page1-footer">
+    <div><strong>SENTIO AI</strong> &mdash; AI 기반 실시간 낙상 감지 시스템</div>
+    <div>Team Uminy &middot; 석유민 &middot; 뒷면에 상세 기술 정보 &rarr;</div>
+  </div>
+
+</div>
+
+<!-- ============================================
+     PAGE 2: BACK (Detail)
+     ============================================ -->
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="page2-header">
+    <div class="page2-header-left">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:28px; height:28px;">
+        <circle cx="50" cy="50" r="25" fill="url(#sg)" opacity="0.5"/>
+        <circle cx="50" cy="50" r="14" fill="url(#sg)"/>
+        <circle cx="50" cy="50" r="6" fill="white" opacity="0.9"/>
+      </svg>
+      <div>
+        <div class="page2-logo">SENTIO <span>AI</span></div>
+        <div class="page2-subtitle">기술 상세 &amp; 사업 모델</div>
+      </div>
+    </div>
+    <div class="page2-badge">424건 독립 검증 완료</div>
+  </div>
+
+  <!-- BODY -->
+  <div class="page2-body">
+
+    <div class="two-col">
+
+      <!-- LEFT COLUMN: Tech -->
+      <div>
+        <div class="col-section-title">AI 감지 파이프라인</div>
+
+        <div class="pipeline-flow">
+          <div class="pipeline-step">
+            <div class="pipeline-num blue">1</div>
+            <div class="pipeline-info">
+              <div class="pipeline-title">YOLO11s-Pose &mdash; 관절 추적</div>
+              <div class="pipeline-desc">33개 관절 키포인트 실시간 추출 (26ms/frame)</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-num cyan">2</div>
+            <div class="pipeline-info">
+              <div class="pipeline-title">물리 규칙 13종 &mdash; 1차 판정</div>
+              <div class="pipeline-desc">머리-엉덩이 역전, 수직 하강 속도, 각도 변화 분석</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-num amber">3</div>
+            <div class="pipeline-info">
+              <div class="pipeline-title">GRU 앙상블 &mdash; 최종 판정</div>
+              <div class="pipeline-desc">66만 건 학습 데이터, 30프레임 시계열 분석</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Performance -->
+        <div class="col-section-title">검증 성능 (AI Hub 424건)</div>
+
+        <div class="perf-bars">
+          <div class="perf-bar-row">
+            <div class="perf-bar-label">후방 낙상</div>
+            <div class="perf-bar-bg"><div class="perf-bar-fill" style="width:99%;"></div></div>
+            <div class="perf-bar-val">99%</div>
+          </div>
+          <div class="perf-bar-row">
+            <div class="perf-bar-label">전방 낙상</div>
+            <div class="perf-bar-bg"><div class="perf-bar-fill" style="width:97%;"></div></div>
+            <div class="perf-bar-val">97%</div>
+          </div>
+          <div class="perf-bar-row">
+            <div class="perf-bar-label">측면 낙상</div>
+            <div class="perf-bar-bg"><div class="perf-bar-fill" style="width:91%;"></div></div>
+            <div class="perf-bar-val">91%</div>
+          </div>
+          <div class="perf-bar-row">
+            <div class="perf-bar-label">정상 판별</div>
+            <div class="perf-bar-bg"><div class="perf-bar-fill" style="width:94.6%; background: linear-gradient(90deg, var(--accent), var(--safe));"></div></div>
+            <div class="perf-bar-val" style="color: var(--accent);">94.6%</div>
+          </div>
+        </div>
+
+        <!-- Compare Table -->
+        <div class="col-section-title">경쟁 솔루션 비교</div>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;">항목</th>
+              <th>기존 CCTV</th>
+              <th>레이더 센서</th>
+              <th class="sentio">SENTIO AI</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:left; font-weight:600; color:var(--text);">낙상 감지</td>
+              <td class="dim">사람 직접 확인</td>
+              <td class="dim">레이더 신호</td>
+              <td class="sentio">AI 자동 감지</td>
+            </tr>
+            <tr>
+              <td style="text-align:left; font-weight:600; color:var(--text);">추가 장비</td>
+              <td class="dim">-</td>
+              <td class="dim">방당 50만원+</td>
+              <td class="sentio">0원</td>
+            </tr>
+            <tr>
+              <td style="text-align:left; font-weight:600; color:var(--text);">프라이버시</td>
+              <td class="dim">영상 녹화</td>
+              <td class="dim">영상 없음</td>
+              <td class="sentio">좌표만 처리</td>
+            </tr>
+            <tr>
+              <td style="text-align:left; font-weight:600; color:var(--text);">다인 추적</td>
+              <td class="dim">불가</td>
+              <td class="dim">불가</td>
+              <td class="sentio">N명 동시</td>
+            </tr>
+            <tr>
+              <td style="text-align:left; font-weight:600; color:var(--text);">전용 GPU</td>
+              <td class="dim">-</td>
+              <td class="dim">불필요</td>
+              <td class="sentio">선택적</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Tech Stack -->
+        <div class="col-section-title">기술 스택</div>
+        <div class="tech-tags">
+          <span class="tech-tag primary">YOLO11s-Pose</span>
+          <span class="tech-tag primary">GRU Ensemble</span>
+          <span class="tech-tag primary">ByteTrack</span>
+          <span class="tech-tag cyan">FastAPI</span>
+          <span class="tech-tag cyan">WebSocket</span>
+          <span class="tech-tag cyan">WebRTC</span>
+          <span class="tech-tag green">React + Vite</span>
+          <span class="tech-tag green">Tailwind CSS</span>
+          <span class="tech-tag">Docker</span>
+          <span class="tech-tag">PostgreSQL</span>
+          <span class="tech-tag">MediaPipe</span>
+          <span class="tech-tag">ONNX Runtime</span>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: Business -->
+      <div>
+        <div class="col-section-title">SaaS 구독 요금제</div>
+
+        <div class="biz-grid">
+          <div class="biz-card">
+            <div class="biz-plan">Basic</div>
+            <div class="biz-price">30<span class="biz-unit">만원/월</span></div>
+            <div class="biz-features">
+              &#10003; 카메라 2대<br>
+              &#10003; 낙상 감지<br>
+              &#10003; 모바일 알림
+            </div>
+          </div>
+          <div class="biz-card featured">
+            <div class="biz-badge">추천</div>
+            <div class="biz-plan">Pro</div>
+            <div class="biz-price">70<span class="biz-unit">만원/월</span></div>
+            <div class="biz-features">
+              &#10003; 카메라 5대<br>
+              &#10003; 기록 30일<br>
+              &#10003; 우선 지원
+            </div>
+          </div>
+          <div class="biz-card">
+            <div class="biz-plan">Enterprise</div>
+            <div class="biz-price" style="font-size:14px;">별도 협의</div>
+            <div class="biz-features">
+              &#10003; 카메라 무제한<br>
+              &#10003; HIS 연동<br>
+              &#10003; 24/7 전담
+            </div>
+          </div>
+        </div>
+
+        <div class="info-note">
+          <strong>도입 전략:</strong> 2~4주 무료 PoC(실증 운영) &rarr; 결과 리포트 제공 &rarr; 구독 전환
+        </div>
+
+        <!-- Target Market -->
+        <div class="col-section-title">타겟 시장</div>
+
+        <div class="market-row">
+          <div class="market-stat">
+            <div class="market-num">7.7조</div>
+            <div class="market-label">디지털 헬스케어 (2025)</div>
+          </div>
+          <div class="market-stat">
+            <div class="market-num" style="color: var(--warning);">12.8%</div>
+            <div class="market-label">글로벌 CAGR 성장률</div>
+          </div>
+          <div class="market-stat">
+            <div class="market-num" style="color: var(--danger);">7,700</div>
+            <div class="market-label">요양병원+시설 (곳)</div>
+          </div>
+        </div>
+
+        <ol class="target-list">
+          <li><strong>1차:</strong> 요양병원 1,900곳 + 요양시설 5,800곳 (안전 의무화)</li>
+          <li><strong>2차:</strong> 재활/종합병원 - 대기실, 복도 안전 관리</li>
+          <li><strong>3차:</strong> 독거노인 180만 가구 (B2G 돌봄 서비스)</li>
+        </ol>
+
+        <!-- Key Metrics Summary -->
+        <div class="col-section-title">핵심 요약</div>
+        <table class="perf-table">
+          <thead>
+            <tr>
+              <th>지표</th>
+              <th>수치</th>
+              <th>의미</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:600; color:var(--text);">감지율</td>
+              <td class="hl">95.2%</td>
+              <td>20건 중 19건 자동 포착</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600; color:var(--text);">정밀도</td>
+              <td class="hl-cyan">94.6%</td>
+              <td>오알림 5% 미만</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600; color:var(--text);">F1 Score</td>
+              <td class="hl">94.9</td>
+              <td>감지율+정밀도 종합 점수</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600; color:var(--text);">검증 규모</td>
+              <td class="hl-cyan">424건</td>
+              <td>AI Hub 공인 데이터셋 독립 검증</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600; color:var(--text);">처리 속도</td>
+              <td class="hl">26ms</td>
+              <td>실시간 30fps 처리 가능</td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER: Contact -->
+  <div class="page2-footer">
+    <div class="footer-content">
+      <div class="footer-left">
+        <div class="footer-name">석유민</div>
+        <div class="footer-role">물리치료사 출신 AI 개발자 &middot; Team Uminy</div>
+        <div class="footer-contact">
+          <strong>Tel.</strong> 010.5535.6843<br>
+          <strong>Email.</strong> ymymym6843@gmail.com
+        </div>
+      </div>
+      <div class="footer-right">
+        <div class="footer-logo">SENTIO <span>AI</span></div>
+        <div class="footer-slogan">"현장의 문제를 아는 사람이 가장 좋은 솔루션을 만듭니다"</div>
+        <div class="footer-course">
+          디지털 재활 헬스케어 AI 개발자 양성 과정 1기<br>
+          2026.02
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

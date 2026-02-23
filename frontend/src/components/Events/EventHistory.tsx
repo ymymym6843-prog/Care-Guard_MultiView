@@ -23,7 +23,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
+import { cn, formatPersonId } from "@/lib/utils";
 import { apiCall } from "@/lib/auth";
 import { useMonitoringStore } from "@/store/monitoring";
 import { useTranslation } from "react-i18next";
@@ -58,6 +58,21 @@ const levelColors: Record<string, string> = {
   warning: "text-warning",
   danger: "text-danger",
 };
+
+/** Confidence color bar: high = danger, mid = warning, low = safe */
+function ConfidenceBar({ value }: { value: number }) {
+  const pct = Math.min(value * 100, 100);
+  const barColor =
+    pct >= 80 ? "bg-danger" : pct >= 60 ? "bg-warning" : "bg-safe";
+  return (
+    <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden shrink-0">
+      <div
+        className={cn("h-full rounded-full transition-all", barColor)}
+        style={{ width: `${pct}%` }}
+      />
+    </div>
+  );
+}
 
 export function EventHistory({ mode = "history" }: EventHistoryProps) {
   const { t, i18n } = useTranslation();
@@ -243,10 +258,11 @@ export function EventHistory({ mode = "history" }: EventHistoryProps) {
         </div>
       </div>
 
-      {/* 필터 */}
+      {/* 필터 - 그룹 구분 (1-4) */}
       <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-sm text-muted-foreground">
-          {t("events.filter", "필터")}:
+        {/* 위험도 필터 그룹 */}
+        <span className="text-xs font-medium text-muted-foreground">
+          {t("events.filterLevel", "위험도")}:
         </span>
         {[
           { key: null, label: t("events.filterAll", "전체") },
@@ -266,6 +282,10 @@ export function EventHistory({ mode = "history" }: EventHistoryProps) {
 
         <div className="w-px h-5 bg-border mx-1" />
 
+        {/* 상태 필터 그룹 */}
+        <span className="text-xs font-medium text-muted-foreground">
+          {t("events.filterStatus", "상태")}:
+        </span>
         {[
           { key: null, label: t("events.ackAll", "전체") },
           { key: false, label: t("events.unacknowledged", "미확인") },
@@ -352,31 +372,48 @@ export function EventHistory({ mode = "history" }: EventHistoryProps) {
                         </Badge>
                       )}
 
+                      {/* 1-2: Person ID 친화적 표시 */}
                       {event.person_id && (
                         <span className="text-xs text-muted-foreground shrink-0">
-                          {event.person_id}
+                          {t("events.person")} {formatPersonId(event.person_id)}
                         </span>
                       )}
 
-                      <span className="text-xs font-mono text-muted-foreground shrink-0">
-                        {event.confidence > 0
-                          ? `${(event.confidence * 100).toFixed(0)}%`
-                          : ""}
-                      </span>
+                      {/* 1-1: 신뢰도 레이블 + 값 + 1-3: 컬러바 */}
+                      {event.confidence > 0 && (
+                        <span className="flex items-center gap-1.5 shrink-0">
+                          <span className="text-[10px] text-muted-foreground">
+                            {t("events.confidence")}
+                          </span>
+                          <span className="text-xs font-mono text-muted-foreground">
+                            {(event.confidence * 100).toFixed(0)}%
+                          </span>
+                          <ConfidenceBar value={event.confidence} />
+                        </span>
+                      )}
 
+                      {/* 1-1: 응답 시간 레이블 */}
                       {event.duration > 0 && (
-                        <span className="text-xs text-muted-foreground shrink-0">
-                          {event.duration.toFixed(1)}s
+                        <span className="flex items-center gap-1 shrink-0">
+                          <span className="text-[10px] text-muted-foreground">
+                            {t("events.responseTime")}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {event.duration.toFixed(1)}s
+                          </span>
                         </span>
                       )}
 
                       <div className="flex-1" />
 
+                      {/* 1-5: 확인 상태 차별화 */}
                       {event.acknowledged ? (
-                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 text-safe border-safe/30 shrink-0">
-                          <CheckCircle className="h-2.5 w-2.5 mr-0.5" />
-                          {event.acknowledged_by ?? t("events.confirmed", "확인")}
-                        </Badge>
+                        <span className="flex items-center gap-1 text-[10px] text-muted-foreground shrink-0">
+                          <CheckCircle className="h-3 w-3 text-safe" />
+                          <span className="text-safe/70">
+                            {event.acknowledged_by ?? t("events.acknowledgedLabel", "확인됨")}
+                          </span>
+                        </span>
                       ) : (
                         <Button
                           size="sm"

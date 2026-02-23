@@ -96,6 +96,11 @@
     "batchAcknowledge": "Acknowledge All",
     "batchAcknowledged": "{{count}} events acknowledged.",
     "confirmed": "Confirmed",
+    "confidence": "Confidence",
+    "responseTime": "Response",
+    "person": "Person",
+    "filterLevel": "Level",
+    "filterStatus": "Status",
     "noEvents": "No events found.",
     "noAlerts": "No unacknowledged alerts.",
     "exportSuccess": "{{format}} export completed",
@@ -116,6 +121,7 @@
     "acknowledged": " acknowledged",
     "refresh": "Refresh",
     "days": "days",
+    "recentDays": "Last {{days}}d",
     "event": "Event"
   },
   "report": {
@@ -167,6 +173,7 @@
       "safeDesc": "Normal monitoring",
       "warningDesc": "Abnormal posture detected",
       "dangerDesc": "Fall detected!",
+      "dangerAction": "Immediate attention required",
       "person": "Person",
       "totalPersons": "Total Persons",
       "lastUpdate": "Last Update",
@@ -186,6 +193,8 @@
       "fallen": "Fallen",
       "aidLost": "Aid Lost",
       "noPersons": "No persons detected",
+      "ruleScoreTooltip": "Rule-based score: calculated from posture angle, duration, and predefined rules",
+      "mlScoreTooltip": "ML score: fall probability predicted by deep learning model",
       "walkingAidAlert": "Walking aid user <strong>{{count}}</strong> detected",
       "postures": {
         "standing": "Standing",
@@ -297,7 +306,10 @@
     "connection": {
       "connected": "Connected",
       "connecting": "Connecting...",
-      "disconnected": "Disconnected"
+      "connectingDesc": "Auto-reconnecting...",
+      "disconnected": "Disconnected",
+      "disconnectedDesc": "Connection to server lost",
+      "connectedDesc": "Connected to server"
     },
     "demo": {
       "title": "Demo",

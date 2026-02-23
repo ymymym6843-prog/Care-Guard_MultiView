@@ -96,6 +96,11 @@
     "batchAcknowledge": "모두 확인",
     "batchAcknowledged": "{{count}}건 이벤트가 확인되었습니다.",
     "confirmed": "확인",
+    "confidence": "신뢰도",
+    "responseTime": "응답",
+    "person": "인원",
+    "filterLevel": "위험도",
+    "filterStatus": "상태",
     "noEvents": "이벤트가 없습니다.",
     "noAlerts": "미확인 알림이 없습니다.",
     "exportSuccess": "{{format}} 내보내기 완료",
@@ -116,6 +121,7 @@
     "acknowledged": "건 확인 완료",
     "refresh": "새로고침",
     "days": "일",
+    "recentDays": "최근 {{days}}일",
     "event": "이벤트"
   },
   "report": {
@@ -167,6 +173,7 @@
       "safeDesc": "정상 모니터링 중",
       "warningDesc": "이상 자세 감지됨",
       "dangerDesc": "낙상이 감지되었습니다!",
+      "dangerAction": "즉시 확인이 필요합니다",
       "person": "인물",
       "totalPersons": "총 인원",
       "lastUpdate": "마지막 업데이트",
@@ -186,6 +193,8 @@
       "fallen": "낙상",
       "aidLost": "도구분실",
       "noPersons": "감지된 인원이 없습니다",
+      "ruleScoreTooltip": "규칙 기반 점수: 자세 각도, 지속시간 등 사전 정의된 규칙으로 산출",
+      "mlScoreTooltip": "ML 점수: 딥러닝 모델이 예측한 낙상 확률",
       "walkingAidAlert": "보행도구 사용자 <strong>{{count}}명</strong> 감지 중",
       "postures": {
         "standing": "서있음",
@@ -297,7 +306,10 @@
     "connection": {
       "connected": "연결됨",
       "connecting": "연결 중...",
-      "disconnected": "연결 끊김"
+      "connectingDesc": "자동 재연결 중...",
+      "disconnected": "연결 끊김",
+      "disconnectedDesc": "서버와의 연결이 끊어졌습니다",
+      "connectedDesc": "서버와 정상적으로 연결되어 있습니다"
     },
     "demo": {
       "title": "데모 시연",

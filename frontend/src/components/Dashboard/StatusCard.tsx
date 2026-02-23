@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { cn, formatPersonId } from "@/lib/utils";
 import { useMonitoringStore, type AlertLevel } from "@/store/monitoring";
 import { useTranslation } from "react-i18next";
 import { Camera } from "lucide-react";
@@ -154,6 +154,11 @@ export function StatusCard() {
             <p className="text-sm text-muted-foreground mt-1">
               {config.description}
             </p>
+            {currentAlert === "danger" && (
+              <p className="text-xs font-semibold text-danger mt-1 animate-pulse">
+                {t("dashboard.status.dangerAction")}
+              </p>
+            )}
           </div>
         </div>
 
@@ -170,7 +175,7 @@ export function StatusCard() {
             <div className="flex items-center gap-2 mb-1.5">
               <UserRound className={cn("h-4 w-4", triggerConfig.textClass)} />
               <span className={cn("text-sm font-bold", triggerConfig.textClass)}>
-                {dangerPerson.personId}
+                {t("events.person", "인원")} {formatPersonId(dangerPerson.personId)}
               </span>
               {dangerCamName && (
                 <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4">

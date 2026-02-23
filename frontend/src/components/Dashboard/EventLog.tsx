@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, formatPersonId } from "@/lib/utils";
 import { useMonitoringStore, type AlertLevel } from "@/store/monitoring";
 import { useTranslation } from "react-i18next";
 
@@ -108,7 +108,7 @@ export function EventLog() {
                               : "text-muted-foreground",
                         )}
                       >
-                        {entry.personId}
+                        {t("events.person", "인원")} {formatPersonId(entry.personId)}
                       </Badge>
                     )}
                     {fallLabel && (
