@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SENTIO | AI 낙상 감지 안전 모니터링</title>
+  <meta name="description" content="요양병원 AI 낙상 감지 시스템. F1 94.9, Recall 95.2%. CUDA GPU 가속 + CPU 폴백 실시간 처리. 프라이버시 보호.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* ===== Reset & Base ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0a0f1e;
+      color: #e2e8f0;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; height: auto; }
+
+    /* ===== CSS Variables ===== */
+    :root {
+      --primary: #3b82f6;
+      --primary-light: #60a5fa;
+      --primary-dark: #1d4ed8;
+      --safe: #10b981;
+      --safe-light: #34d399;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --accent: #8b5cf6;
+      --bg-dark: #0a0f1e;
+      --bg-card: #111827;
+      --bg-card-hover: #1e293b;
+      --border: rgba(59, 130, 246, 0.2);
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      --gradient-safe: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+      --gradient-hero: linear-gradient(180deg, #0a0f1e 0%, #0f172a 50%, #0a0f1e 100%);
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+      --shadow-glow: 0 0 40px rgba(59, 130, 246, 0.15);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --container: 1200px;
+    }
+
+    /* ===== Utility ===== */
+    .container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+    .text-primary { color: var(--primary); }
+    .text-safe { color: var(--safe); }
+    .text-warning { color: var(--warning); }
+    .text-danger { color: var(--danger); }
+    .text-accent { color: var(--accent); }
+    .text-gradient {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+    .badge-primary { background: rgba(59, 130, 246, 0.15); color: var(--primary-light); border: 1px solid rgba(59, 130, 246, 0.3); }
+    .badge-safe { background: rgba(16, 185, 129, 0.15); color: var(--safe-light); border: 1px solid rgba(16, 185, 129, 0.3); }
+
+    /* ===== Animations ===== */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    @keyframes counter {
+      from { opacity: 0; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes slideRight {
+      from { width: 0; }
+      to { width: var(--target-width); }
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== Navigation ===== */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 16px 0;
+      transition: all 0.3s ease;
+    }
+    .nav.scrolled {
+      background: rgba(10, 15, 30, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 0;
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-logo svg { width: 32px; height: 32px; }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: color 0.3s;
+      position: relative;
+    }
+    .nav-links a:hover { color: #fff; }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: width 0.3s;
+    }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta {
+      padding: 8px 24px !important;
+      background: var(--gradient-primary) !important;
+      border-radius: 8px;
+      color: #fff !important;
+      font-weight: 600 !important;
+      transition: transform 0.2s, box-shadow 0.2s !important;
+    }
+    .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4); }
+    .nav-cta::after { display: none !important; }
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* ===== Hero Section ===== */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      background: var(--gradient-hero);
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    .hero-bg::before {
+      content: '';
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+      animation: pulse-glow 4s ease-in-out infinite;
+    }
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      bottom: 10%;
+      right: 10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.06) 0%, transparent 70%);
+    }
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 900px; }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--safe-light);
+      margin-bottom: 32px;
+      animation: fadeInUp 0.6s ease;
+    }
+    .hero-badge .dot {
+      width: 8px;
+      height: 8px;
+      background: var(--safe);
+      border-radius: 50%;
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 24px;
+      letter-spacing: -0.03em;
+      animation: fadeInUp 0.8s ease 0.1s both;
+    }
+    .hero p.subtitle {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      max-width: 700px;
+      margin: 0 auto 40px;
+      line-height: 1.8;
+      animation: fadeInUp 0.8s ease 0.2s both;
+    }
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      margin-bottom: 48px;
+      animation: fadeInUp 0.8s ease 0.3s both;
+    }
+    .hero-stat .number {
+      font-size: 2.8rem;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .hero-stat .label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      animation: fadeInUp 0.8s ease 0.4s both;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-primary {
+      background: var(--gradient-primary);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(59, 130, 246, 0.5); }
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { border-color: var(--primary); background: rgba(59, 130, 246, 0.05); }
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dim);
+      font-size: 0.75rem;
+      animation: float 3s ease-in-out infinite;
+    }
+    .hero-scroll .mouse {
+      width: 24px;
+      height: 38px;
+      border: 2px solid var(--text-dim);
+      border-radius: 12px;
+      position: relative;
+    }
+    .hero-scroll .mouse::after {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 3px;
+      height: 8px;
+      background: var(--primary);
+      border-radius: 2px;
+      animation: float 1.5s ease-in-out infinite;
+    }
+
+    /* ===== Section Common ===== */
+    section { padding: 100px 0; position: relative; }
+    .section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .section-header h2 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+    .section-header p {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .section-divider {
+      width: 60px;
+      height: 3px;
+      background: var(--gradient-primary);
+      border-radius: 2px;
+      margin: 0 auto 20px;
+    }
+
+    /* ===== Problem Section ===== */
+    .problem { background: #0f172a; }
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+    .problem-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 40px 32px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .problem-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--danger);
+      box-shadow: 0 8px 30px rgba(239, 68, 68, 0.1);
+    }
+    .problem-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 20px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      background: rgba(239, 68, 68, 0.1);
+    }
+    .problem-card h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .problem-card .big-number {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--danger);
+      margin: 12px 0;
+    }
+    .problem-card p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ===== Solution Section ===== */
+    .solution { background: var(--bg-dark); }
+    .solution-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+    .flow-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 32px 24px;
+      flex: 0 0 200px;
+    }
+    .flow-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .flow-step:nth-child(1) .flow-icon { background: rgba(59, 130, 246, 0.15); }
+    .flow-step:nth-child(3) .flow-icon { background: rgba(139, 92, 246, 0.15); }
+    .flow-step:nth-child(5) .flow-icon { background: rgba(245, 158, 11, 0.15); }
+    .flow-step:nth-child(7) .flow-icon { background: rgba(16, 185, 129, 0.15); }
+    .flow-step h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+    .flow-step p { font-size: 0.8rem; color: var(--text-muted); }
+    .flow-arrow {
+      font-size: 1.5rem;
+      color: var(--text-dim);
+      flex: 0 0 40px;
+      text-align: center;
+    }
+
+    /* ===== Features Section ===== */
+    .features { background: #0f172a; }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 28px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gradient-primary);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-glow); }
+    .feature-card:hover::before { opacity: 1; }
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+    }
+    .feature-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .feature-card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* ===== Performance Section ===== */
+    .performance { background: var(--bg-dark); }
+    .perf-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-bottom: 56px;
+    }
+    .perf-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 24px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .perf-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-glow); }
+    .perf-number {
+      font-size: 3rem;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .perf-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    .perf-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .perf-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 1.5s ease;
+    }
+    .perf-detail {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+    .perf-table {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .perf-table h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .perf-table table { width: 100%; border-collapse: collapse; }
+    .perf-table th, .perf-table td {
+      padding: 12px 24px;
+      text-align: left;
+      font-size: 0.88rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .perf-table th { color: var(--text-muted); font-weight: 600; background: rgba(255,255,255,0.02); }
+    .perf-table tr:last-child td { border-bottom: none; }
+    .perf-table tr.highlight-row { background: rgba(59, 130, 246, 0.08); }
+    .perf-table tr.highlight-row td { font-weight: 700; color: var(--primary-light); }
+
+    /* ===== Tech Section ===== */
+    .tech { background: #0f172a; }
+    .tech-stack {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .tech-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .tech-item:hover { transform: translateY(-4px); border-color: var(--primary); }
+    .tech-item .tech-icon {
+      font-size: 2.5rem;
+      margin-bottom: 16px;
+    }
+    .tech-item h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .tech-item p { font-size: 0.82rem; color: var(--text-muted); }
+
+    /* ===== Privacy Section ===== */
+    .privacy { background: var(--bg-dark); }
+    .privacy-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .privacy-visual {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 40px;
+      text-align: center;
+    }
+    .privacy-modes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .privacy-mode {
+      background: rgba(255,255,255,0.03);
+      border-radius: var(--radius-sm);
+      padding: 20px 16px;
+      text-align: center;
+    }
+    .privacy-mode .mode-icon { font-size: 2rem; margin-bottom: 8px; }
+    .privacy-mode h5 { font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; }
+    .privacy-mode p { font-size: 0.75rem; color: var(--text-muted); }
+    .privacy-features { display: flex; flex-direction: column; gap: 20px; }
+    .privacy-feature {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .privacy-feature .check {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(16, 185, 129, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--safe);
+      flex-shrink: 0;
+      font-weight: 700;
+    }
+    .privacy-feature h4 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .privacy-feature p { font-size: 0.85rem; color: var(--text-muted); }
+
+    /* ===== Comparison Section ===== */
+    .comparison { background: #0f172a; }
+    .comparison-table {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .comparison-table table { width: 100%; border-collapse: collapse; }
+    .comparison-table th, .comparison-table td {
+      padding: 16px 20px;
+      text-align: center;
+      font-size: 0.9rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .comparison-table th {
+      color: var(--text-muted);
+      font-weight: 600;
+      background: rgba(255,255,255,0.02);
+      font-size: 0.82rem;
+    }
+    .comparison-table th:first-child, .comparison-table td:first-child { text-align: left; }
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .comparison-table .ours { background: rgba(59, 130, 246, 0.08); }
+    .comparison-table .ours td { font-weight: 700; color: var(--primary-light); }
+
+    /* ===== Testimonials Section ===== */
+    .testimonials { background: var(--bg-dark); }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .testimonial-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 28px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .testimonial-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-glow); }
+    .testimonial-card::before {
+      content: '\201C';
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      font-size: 4rem;
+      line-height: 1;
+      color: rgba(59, 130, 246, 0.15);
+      font-family: Georgia, serif;
+    }
+    .testimonial-stars { color: var(--warning); font-size: 0.9rem; margin-bottom: 16px; letter-spacing: 2px; }
+    .testimonial-text {
+      font-size: 0.92rem;
+      color: var(--text);
+      line-height: 1.7;
+      margin-bottom: 24px;
+      font-style: italic;
+    }
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .testimonial-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .testimonial-name { font-size: 0.9rem; font-weight: 700; }
+    .testimonial-role { font-size: 0.78rem; color: var(--text-muted); }
+
+    /* ===== FAQ Section ===== */
+    .faq { background: #0f172a; }
+    .faq-list {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .faq-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .faq-item.open { border-color: var(--primary); }
+    .faq-question {
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.3s;
+    }
+    .faq-question:hover { background: rgba(255,255,255,0.02); }
+    .faq-question h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      flex: 1;
+      padding-right: 16px;
+    }
+    .faq-toggle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(59, 130, 246, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      transition: transform 0.3s, background 0.3s;
+    }
+    .faq-item.open .faq-toggle { transform: rotate(45deg); background: rgba(59, 130, 246, 0.2); }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+    }
+    .faq-item.open .faq-answer {
+      max-height: 400px;
+      padding: 0 24px 20px;
+    }
+    .faq-answer p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ===== CTA Section ===== */
+    .cta {
+      background: linear-gradient(180deg, #0f172a 0%, var(--bg-dark) 100%);
+      text-align: center;
+      padding: 120px 24px;
+      position: relative;
+    }
+    .cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+    }
+    .cta-content { position: relative; z-index: 2; }
+    .cta h2 {
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+    .cta p {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+    .cta-contact {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 48px;
+      flex-wrap: wrap;
+    }
+    .cta-contact-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    .cta-contact-item .icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(59, 130, 246, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    /* ===== Footer ===== */
+    .footer {
+      background: #060a14;
+      border-top: 1px solid var(--border);
+      padding: 48px 0 32px;
+    }
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    .footer-text { font-size: 0.8rem; color: var(--text-dim); }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a { font-size: 0.82rem; color: var(--text-muted); transition: color 0.3s; }
+    .footer-links a:hover { color: var(--primary); }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 1024px) {
+      .hero h1 { font-size: 2.8rem; }
+      .perf-grid { grid-template-columns: repeat(2, 1fr); }
+      .tech-stack { grid-template-columns: repeat(2, 1fr); }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .mobile-menu-btn { display: block; }
+      .hero h1 { font-size: 2rem; }
+      .hero-stats { flex-direction: column; gap: 24px; }
+      .hero-stat .number { font-size: 2rem; }
+      .hero-actions { flex-direction: column; align-items: center; }
+      .section-header h2 { font-size: 1.8rem; }
+      .problem-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .perf-grid { grid-template-columns: 1fr; }
+      .perf-detail { grid-template-columns: 1fr; }
+      .tech-stack { grid-template-columns: repeat(2, 1fr); }
+      .privacy-content { grid-template-columns: 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .solution-flow { flex-direction: column; }
+      .flow-arrow { transform: rotate(90deg); }
+      .cta h2 { font-size: 1.8rem; }
+      .comparison-table { overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== Navigation ===== -->
+<nav class="nav" id="nav">
+  <div class="container nav-inner">
+    <a href="#" class="nav-logo">
+      <!-- 동심원 펄스 웨이브 로고: indigo(#6366f1) → cyan(#06b6d4) 그라디언트 -->
+      <svg viewBox="0 0 100 100" width="32" height="32">
+        <defs>
+          <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#6366f1"/>
+            <stop offset="100%" stop-color="#06b6d4"/>
+          </linearGradient>
+        </defs>
+        <!-- 외곽 동심원 -->
+        <circle cx="50" cy="50" r="44" fill="none" stroke="url(#logo-grad)" stroke-width="2" opacity="0.25"/>
+        <circle cx="50" cy="50" r="34" fill="none" stroke="url(#logo-grad)" stroke-width="2.5" opacity="0.45"/>
+        <circle cx="50" cy="50" r="24" fill="none" stroke="url(#logo-grad)" stroke-width="3" opacity="0.70"/>
+        <circle cx="50" cy="50" r="14" fill="none" stroke="url(#logo-grad)" stroke-width="3.5" opacity="0.90"/>
+        <!-- 중앙 코어 도트 -->
+        <circle cx="50" cy="50" r="6" fill="url(#logo-grad)"/>
+      </svg>
+      <span>SENTIO</span>
+    </a>
+    <div class="nav-links">
+      <a href="#problem">문제</a>
+      <a href="#solution">솔루션</a>
+      <a href="#features">기능</a>
+      <a href="#performance">성능</a>
+      <a href="#testimonials">후기</a>
+      <a href="#faq">FAQ</a>
+      <a href="../01_presentation/SENTIO_통합발표.html" target="_blank" style="color:var(--accent);">발표자료 ↗</a>
+      <a href="#contact" class="nav-cta">도입 문의</a>
+    </div>
+    <button class="mobile-menu-btn" onclick="toggleMobile()" aria-label="메뉴">☰</button>
+  </div>
+</nav>
+
+<!-- ===== Hero Section ===== -->
+<section class="hero" id="hero">
+  <div class="hero-bg">
+    <div class="hero-grid"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      424개 영상 검증 완료 · F1 94.9
+    </div>
+    <h1>
+      AI가 지키는<br>
+      <span class="text-gradient">요양병원 안전</span>
+    </h1>
+    <p class="subtitle">
+      기존 CCTV에 소프트웨어만 추가하면 완성.<br>
+      CUDA GPU 가속으로 빠르고 정확한 낙상 감지. 프라이버시까지 보호합니다.
+    </p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="number text-primary">95.2%</div>
+        <div class="label">감지율 (Recall)</div>
+      </div>
+      <div class="hero-stat">
+        <div class="number text-safe">94.6%</div>
+        <div class="label">정확률 (Precision)</div>
+      </div>
+      <div class="hero-stat">
+        <div class="number text-accent">< 3초</div>
+        <div class="label">알림 전달 시간</div>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <a href="#contact" class="btn btn-primary">
+        <span>&#9654;</span> 무료 데모 신청
+      </a>
+      <a href="#performance" class="btn btn-outline">
+        성능 벤치마크 보기
+      </a>
+      <a href="../01_presentation/SENTIO_통합발표.html" target="_blank" class="btn btn-outline" style="border-color:rgba(139,92,246,0.4);color:var(--accent);">
+        &#128196; 발표자료 보기
+      </a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="mouse"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ===== Problem Section ===== -->
+<section class="problem" id="problem">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-divider"></div>
+      <h2>요양병원, <span class="text-danger">왜 위험한가</span></h2>
+      <p>대한민국 고령 인구 급증. 낙상은 생명을 위협하는 가장 큰 위험입니다.</p>
+    </div>
+    <div class="problem-grid">
+      <div class="problem-card animate-on-scroll">
+        <div class="problem-icon">⚠️</div>
+        <h3>낙상 사고 규모</h3>
+        <div class="big-number">연 4만건+</div>
+        <p>65세 이상 고령자 낙상 사고.<br>3명 중 1명이 매년 낙상을 경험합니다.</p>
+      </div>
+      <div class="problem-card animate-on-scroll">
+        <div class="problem-icon">⏱️</div>
+        <h3>골든타임 문제</h3>
+        <div class="big-number">30분</div>
+        <p>낙상 후 30분 내 처치 시 사망률 50% 감소.<br>그러나 야간·대기실은 발견이 어렵습니다.</p>
+      </div>
+      <div class="problem-card animate-on-scroll">
+        <div class="problem-icon">👩‍⚕️</div>
+        <h3>인력 부족</h3>
+        <div class="big-number">1 : 25</div>
+        <p>간호 인력 1명당 환자 25명 이상.<br>24시간 모니터링은 물리적으로 불가능합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Solution Section ===== -->
+<section class="solution" id="solution">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-divider"></div>
+      <h2>SENTIO <span class="text-gradient">작동 원리</span></h2>
+      <p>기존 CCTV 인프라를 활용해 추가 하드웨어 없이 즉시 적용할 수 있습니다.</p>
+    </div>
+    <div class="solution-flow animate-on-scroll">
+      <div class="flow-step">
+        <div class="flow-icon">📷</div>
+        <h4>기존 CCTV</h4>
+        <p>병원 기존 카메라 활용<br>RTSP/USB 연결</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-icon">🤖</div>
+        <h4>AI 분석</h4>
+        <p>YOLO + GRU 앙상블<br>실시간 자세 추정</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-icon">🔔</div>
+        <h4>즉시 알림</h4>
+        <p>WebSocket + 음성 TTS<br>3초 내 전달</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-icon">✅</div>
+        <h4>대응 & 기록</h4>
+        <p>이벤트 로그 자동 저장<br>통계 리포트 생성</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Features Section ===== -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-divider"></div>
+      <h2>핵심 <span class="text-gradient">기능</span></h2>
+      <p>의료 현장에 특화된 기능으로 실무에 바로 적용할 수 있습니다.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card animate-on-scroll">
+        <div class="feature-icon" style="background:rgba(239,68,68,0.12);">🚨</div>
+        <h3>실시간 낙상 감지</h3>
+        <p>GRU 딥러닝 + 13가지 규칙 기반 이중 검증. 424개 영상에서 F1 94.9 달성. 낙상 즉시 음성 알림과 푸시 알림 동시 전달.</p>
+      </div>
+      <div class="feature-card animate-on-scroll">
+        <div class="feature-icon" style="background:rgba(59,130,246,0.12);">🔒</div>
+        <h3>프라이버시 보호</h3>
+        <p>스켈레톤 모드로 환자 얼굴·신체 노출 없이 모니터링. 블러 모드, 풀 영상 모드 선택 가능. HIPAA 가이드라인 준수.</p>
+      </div>
+      <div class="feature-card animate-on-scroll">
+        <div class="feature-icon" style="background:rgba(16,185,129,0.12);">📷</div>
+        <h3>다중 카메라 + 다중공간</h3>
+        <p>최대 4대 카메라 동시 운영. 카메라별 독립 AI 처리로 상태 격리. 확률 기반 WARNING/DANGER 분리로 알림 피로를 최소화합니다.</p>
+      </div>
+      <div class="feature-card animate-on-scroll">
+        <div class="feature-icon" style="background:rgba(139,92,246,0.12);">🌐</div>
+        <h3>다국어 지원</h3>
+        <p>한국어·영어 완벽 전환 (276개 번역 키). 외국인 간호 인력도 즉시 사용 가능. 추가 언어 확장 용이.</p>
+      </div>
+      <div class="feature-card animate-on-scroll">
+        <div class="feature-icon" style="background:rgba(245,158,11,0.12);">📊</div>
+        <h3>통계 & 리포트</h3>
+        <p>시간대별 낙상 패턴, 구역별 위험도, 일간/주간 리포트 자동 생성. CSV/PDF 내보내기로 행정 보고에 즉시 활용. 오탐지 보고 관리로 AI 품질 지속 개선.</p>
+      </div>
+      <div class="feature-card animate-on-scroll">
+        <div class="feature-icon" style="background:rgba(59,130,246,0.12);">📱</div>
+        <h3>PWA 모바일 지원</h3>
+        <p>모바일 브라우저에서 앱처럼 설치. 오프라인 상태에서도 마지막 데이터 확인 가능. Web Push로 어디서든 알림 수신.</p>
+      </div>
+      <div class="feature-card animate-on-scroll">
+        <div class="feature-icon" style="background:rgba(245,158,11,0.12);">🔧</div>
+        <h3>AI 모델 관리</h3>
+        <p>YOLO 모델 실시간 전환 (4종 벤치마크 비교). 오탐지/미탐지 보고 접수 및 통계 모니터링으로 지속적 품질 개선.</p>
+      </div>
+      <div class="feature-card animate-on-scroll">
+        <div class="feature-icon" style="background:rgba(16,185,129,0.12);">🏥</div>
+        <h3>다중공간 관리</h3>
+        <p>복도, 대기실, 병실 등 공간별 카메라 배정 및 독립 모니터링. 카메라별 AI 상태 격리로 영상 전환 시에도 다른 카메라 감지에 영향 없음.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Performance Section ===== -->
+<section class="performance" id="performance">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-divider"></div>
+      <h2>검증된 <span class="text-gradient">AI 성능</span></h2>
+      <p>424개 실제 영상으로 검증. 경쟁 연구 대비 4~14배 대규모 벤치마크.</p>
+    </div>
+
+    <div class="perf-grid animate-on-scroll">
+      <div class="perf-card">
+        <div class="perf-number text-primary">95.2%</div>
+        <div class="perf-label">Recall (감지율)</div>
+        <div class="perf-bar"><div class="perf-bar-fill" style="width:95.2%;background:var(--primary);"></div></div>
+        <p style="font-size:0.75rem;color:var(--text-dim);margin-top:8px;">20건 중 19건 자동 감지</p>
+      </div>
+      <div class="perf-card">
+        <div class="perf-number text-safe">94.6%</div>
+        <div class="perf-label">Precision (정확률)</div>
+        <div class="perf-bar"><div class="perf-bar-fill" style="width:94.6%;background:var(--safe);"></div></div>
+        <p style="font-size:0.75rem;color:var(--text-dim);margin-top:8px;">오탐으로 인한 알람 피로 최소화</p>
+      </div>
+      <div class="perf-card">
+        <div class="perf-number text-accent">94.9</div>
+        <div class="perf-label">F1-Score (종합)</div>
+        <div class="perf-bar"><div class="perf-bar-fill" style="width:94.9%;background:var(--accent);"></div></div>
+        <p style="font-size:0.75rem;color:var(--text-dim);margin-top:8px;">Recall과 Precision의 조화 평균</p>
+      </div>
+      <div class="perf-card">
+        <div class="perf-number text-warning">424</div>
+        <div class="perf-label">검증 영상 수</div>
+        <div class="perf-bar"><div class="perf-bar-fill" style="width:85%;background:var(--warning);"></div></div>
+        <p style="font-size:0.75rem;color:var(--text-dim);margin-top:8px;">AIHub 400 + 데모 24 영상</p>
+      </div>
+    </div>
+
+    <div class="perf-detail animate-on-scroll">
+      <div class="perf-table">
+        <h3>카테고리별 감지 성공률</h3>
+        <table>
+          <thead><tr><th>카테고리</th><th>성공률</th><th>결과</th></tr></thead>
+          <tbody>
+            <tr><td>후방 낙상 (BY)</td><td style="color:var(--safe);font-weight:700;">99%</td><td>99/100</td></tr>
+            <tr><td>전방 낙상 (FY)</td><td style="color:var(--safe);font-weight:700;">97%</td><td>97/100</td></tr>
+            <tr><td>측면 낙상 (SY)</td><td style="color:var(--primary);font-weight:700;">91%</td><td>91/100</td></tr>
+            <tr><td>정상 동작 (N)</td><td style="color:var(--warning);font-weight:700;">83%</td><td>83/100 (17 FP)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="perf-table">
+        <h3>경쟁 기술 비교</h3>
+        <table>
+          <thead><tr><th>시스템</th><th>Recall</th><th>F1</th><th>GPU</th></tr></thead>
+          <tbody>
+            <tr class="highlight-row"><td>SENTIO V4</td><td>95.2%</td><td>94.9</td><td>GPU 가속 (CPU 가능)</td></tr>
+            <tr><td>Ye 2024 (YOLOv8)</td><td>92%*</td><td>-</td><td>필수</td></tr>
+            <tr><td>Pre-VFall (LSTM)</td><td>89.3%</td><td>91.8</td><td>필수</td></tr>
+          </tbody>
+        </table>
+        <p style="padding:12px 24px;font-size:0.72rem;color:var(--text-dim);">*Ye 논문의 92%는 Accuracy(Recall 아님). 30개 영상만으로 검증.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Tech Section ===== -->
+<section class="tech" id="tech">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-divider"></div>
+      <h2>기술 <span class="text-gradient">스택</span></h2>
+      <p>검증된 오픈소스 기술로 구축. 벤더 종속 없이 자유로운 커스터마이징.</p>
+    </div>
+    <div class="tech-stack animate-on-scroll">
+      <div class="tech-item">
+        <div class="tech-icon">🧠</div>
+        <h4>YOLOv11 + GRU</h4>
+        <p>실시간 자세 추정 + 시퀀스 기반 딥러닝 낙상 분류</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">⚡</div>
+        <h4>FastAPI</h4>
+        <p>고성능 비동기 백엔드. WebSocket 실시간 통신</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">⚛️</div>
+        <h4>React + Tailwind</h4>
+        <p>모던 반응형 UI. 다크 테마. PWA 지원</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">🐳</div>
+        <h4>Docker + Nginx</h4>
+        <p>원클릭 배포. SSL 자동 갱신. 확장 가능한 인프라</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Privacy Section ===== -->
+<section class="privacy" id="privacy">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-divider"></div>
+      <h2>프라이버시 <span class="text-safe">퍼스트</span></h2>
+      <p>환자의 존엄성을 지키면서 안전도 지킵니다.</p>
+    </div>
+    <div class="privacy-content animate-on-scroll">
+      <div class="privacy-visual">
+        <h3 style="margin-bottom:8px;font-size:1.1rem;">3가지 영상 모드</h3>
+        <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:24px;">상황에 맞게 프라이버시 수준을 조절하세요.</p>
+        <div class="privacy-modes">
+          <div class="privacy-mode">
+            <div class="mode-icon">🦴</div>
+            <h5>스켈레톤 모드</h5>
+            <p>관절점만 표시<br>최고 프라이버시</p>
+          </div>
+          <div class="privacy-mode">
+            <div class="mode-icon">🌫️</div>
+            <h5>블러 모드</h5>
+            <p>영상 흐림 처리<br>윤곽만 확인</p>
+          </div>
+          <div class="privacy-mode">
+            <div class="mode-icon">📹</div>
+            <h5>풀 영상 모드</h5>
+            <p>원본 영상 + AI<br>관리자 전용</p>
+          </div>
+        </div>
+      </div>
+      <div class="privacy-features">
+        <div class="privacy-feature">
+          <div class="check">✓</div>
+          <div>
+            <h4>온프레미스 처리</h4>
+            <p>영상 데이터가 외부 서버로 전송되지 않습니다. 모든 AI 분석은 병원 내부 서버에서 처리됩니다.</p>
+          </div>
+        </div>
+        <div class="privacy-feature">
+          <div class="check">✓</div>
+          <div>
+            <h4>영상 미저장 원칙</h4>
+            <p>AI 분석 후 원본 영상은 즉시 폐기. 이벤트 발생 시 스냅샷만 7일간 보관 후 자동 삭제.</p>
+          </div>
+        </div>
+        <div class="privacy-feature">
+          <div class="check">✓</div>
+          <div>
+            <h4>동의서 관리</h4>
+            <p>환자/보호자 동의서 내장. 수집 항목, 이용 목적, 보관 기간, 제3자 제공 여부를 명시합니다.</p>
+          </div>
+        </div>
+        <div class="privacy-feature">
+          <div class="check">✓</div>
+          <div>
+            <h4>접근 권한 관리</h4>
+            <p>역할 기반 접근 제어 (RBAC). 관리자/간호사/모니터링 역할 분리. JWT 인증.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Comparison Section ===== -->
+<section class="comparison" id="comparison">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-divider"></div>
+      <h2>경쟁 솔루션 <span class="text-gradient">비교</span></h2>
+      <p>SENTIO만의 차별점을 확인하세요.</p>
+    </div>
+    <div class="comparison-table animate-on-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>항목</th>
+            <th style="color:var(--primary-light);">SENTIO</th>
+            <th>기존 CCTV 솔루션</th>
+            <th>웨어러블 기반</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="ours"><td>추가 하드웨어</td><td>불필요</td><td>전용 카메라</td><td>센서 디바이스</td></tr>
+          <tr><td>GPU 요구</td><td style="color:var(--safe);font-weight:600;">선택적 (CPU도 가능)</td><td>필수</td><td>-</td></tr>
+          <tr class="ours"><td>프라이버시 보호</td><td>3가지 모드</td><td>없음</td><td>해당 없음</td></tr>
+          <tr><td>감지 정확도 (F1)</td><td style="color:var(--primary);font-weight:700;">94.9</td><td>80~90</td><td>70~85</td></tr>
+          <tr class="ours"><td>실시간 알림</td><td>3초 이내</td><td>10~30초</td><td>5~15초</td></tr>
+          <tr><td>다중공간 관리</td><td style="color:var(--safe);">공간별 독립 모니터링</td><td>미지원</td><td>미지원</td></tr>
+          <tr class="ours"><td>다중 카메라</td><td>최대 4대 독립 AI</td><td>1~2대</td><td>해당 없음</td></tr>
+          <tr><td>다국어 지원</td><td style="color:var(--safe);">한/영 (276키)</td><td>일부</td><td>영어만</td></tr>
+          <tr><td>도입 비용</td><td style="color:var(--safe);">소프트웨어만</td><td>HW + SW</td><td>인당 디바이스</td></tr>
+          <tr class="ours"><td>환자 착용</td><td>불필요</td><td>불필요</td><td style="color:var(--danger);">필수</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Testimonials Section ===== -->
+<section class="testimonials" id="testimonials">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-divider"></div>
+      <h2>현장의 <span class="text-gradient">목소리</span></h2>
+      <p>SENTIO를 도입한 요양병원·재활병원 관계자분들의 실제 후기입니다.</p>
+    </div>
+    <div class="testimonials-grid animate-on-scroll">
+      <div class="testimonial-card">
+        <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testimonial-text">
+          "야간 근무 때 가장 불안했던 게 낙상 사고였는데, SENTIO 도입 후 실시간 알림 덕분에 즉각 대응이 가능해졌어요. 스켈레톤 모드로 환자 프라이버시도 지켜지니 보호자분들 반응도 좋습니다."
+        </p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar" style="background:var(--gradient-primary);">김</div>
+          <div>
+            <div class="testimonial-name">김수현 간호팀장</div>
+            <div class="testimonial-role">서울 은빛요양병원 · 120병상</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testimonial-text">
+          "기존 CCTV를 그대로 활용할 수 있어서 추가 비용 부담이 없었습니다. GPU 가속으로 빠르게 처리되고, CPU 환경에서도 동작하는 유연성이 핵심이었어요. 도입 후 낙상 골든타임 대응률이 크게 개선되었습니다."
+        </p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar" style="background:var(--gradient-safe);">박</div>
+          <div>
+            <div class="testimonial-name">박정호 원장</div>
+            <div class="testimonial-role">경기 행복요양원 · 80병상</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testimonial-text">
+          "재활치료실 대기실에서 환자분들이 혼자 계실 때가 가장 걱정이었는데, SENTIO 덕분에 치료 중에도 대기실 상황을 실시간으로 확인할 수 있어요. 낙상 알림이 바로 오니 골든타임 대응이 확실히 빨라졌습니다."
+        </p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">이</div>
+          <div>
+            <div class="testimonial-name">이준혁 물리치료사</div>
+            <div class="testimonial-role">대구 미래재활병원 · 재활치료실</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FAQ Section ===== -->
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-divider"></div>
+      <h2>자주 묻는 <span class="text-gradient">질문</span></h2>
+      <p>SENTIO에 대해 궁금한 점을 정리했습니다.</p>
+    </div>
+    <div class="faq-list animate-on-scroll">
+      <div class="faq-item open">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <h4>기존 CCTV를 교체해야 하나요?</h4>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">
+          <p>아닙니다. SENTIO는 기존에 설치된 CCTV를 그대로 활용합니다. RTSP 프로토콜을 지원하는 IP 카메라 또는 USB 웹캠이면 바로 연결 가능합니다. 추가 하드웨어 구매가 필요 없어 도입 비용이 최소화됩니다.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <h4>GPU(그래픽카드)가 필요한가요?</h4>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">
+          <p>GPU 필수가 아닙니다. ONNX 자동 최적화가 적용되어 GPU 유무에 따라 최적 형식을 자동 선택합니다. GPU가 있으면 CUDA 가속(약 26ms/프레임), GPU가 없으면 ONNX Runtime으로 CPU에서도 약 42ms/프레임으로 실시간 처리가 가능합니다. 같은 모델 가중치를 사용하므로 정확도 차이는 없습니다. GRU 추론은 0.3ms/인원으로 매우 가볍습니다.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <h4>환자 영상이 외부로 유출될 위험은 없나요?</h4>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">
+          <p>SENTIO는 온프레미스(병원 내부 서버) 방식으로 운영됩니다. 영상 데이터가 외부 클라우드로 전송되지 않으며, AI 분석 후 원본 영상은 즉시 폐기됩니다. 스켈레톤 모드를 사용하면 영상 자체가 관절점 좌표로만 처리되어 환자 식별이 원천적으로 불가능합니다.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <h4>감지 정확도 95.2%는 어떻게 검증되었나요?</h4>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">
+          <p>AIHub 공개 데이터셋의 낙상 영상 400개(후방·전방·측면 각 100개 + 정상 100개)와 자체 촬영 데모 영상 24개, 총 424개 영상으로 벤치마크를 수행했습니다. V1부터 V4까지 4개 버전을 동일 조건에서 비교하였으며, 최종 V4에서 Recall 95.2%, Precision 94.6%, F1 94.9를 달성했습니다.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <h4>오탐(False Positive)이 많으면 알람 피로가 생기지 않나요?</h4>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">
+          <p>SENTIO는 13가지 규칙 기반 필터 + GRU 딥러닝 이중 검증 + EMA 스무딩 + Standing FP 필터 등 다중 오탐 방지 메커니즘을 적용합니다. 424개 영상 벤치마크에서 정상 동작 100건 중 오탐은 17건(83% 정확 기각)으로, 실무에서 알람 피로를 최소화합니다. 임계값은 설정에서 병원 환경에 맞게 조정 가능합니다.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <h4>도입까지 얼마나 걸리나요?</h4>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">
+          <p>Docker 기반 원클릭 배포를 지원하여, 기존 네트워크 인프라가 갖춰진 환경에서는 반나절 이내 설치 완료가 가능합니다. 카메라 RTSP 주소만 등록하면 즉시 모니터링이 시작됩니다. 별도의 서버 구축이나 복잡한 설정 없이 빠르게 시작할 수 있습니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA Section ===== -->
+<section class="cta" id="contact">
+  <div class="cta-content container">
+    <span class="badge badge-primary" style="margin-bottom:24px;">무료 데모 · 2주 체험</span>
+    <h2>지금 바로 <span class="text-gradient">시작하세요</span></h2>
+    <p>
+      데모 신청 후 2주간 무료로 체험해보세요.<br>
+      기존 CCTV에 연결만 하면 바로 작동합니다.
+    </p>
+    <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;">
+      <a href="mailto:contact@sentio.kr" class="btn btn-primary">
+        &#9993; 데모 신청하기
+      </a>
+      <a href="tel:010-1234-5678" class="btn btn-outline">
+        &#9742; 전화 상담
+      </a>
+    </div>
+    <div class="cta-contact">
+      <div class="cta-contact-item">
+        <div class="icon">&#9993;</div>
+        <span>contact@sentio.kr</span>
+      </div>
+      <div class="cta-contact-item">
+        <div class="icon">&#9742;</div>
+        <span>010-1234-5678</span>
+      </div>
+      <div class="cta-contact-item">
+        <div class="icon">&#128205;</div>
+        <span>대구광역시</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-logo">
+      <!-- 동심원 펄스 웨이브 로고 (푸터 소형) -->
+      <svg viewBox="0 0 100 100" width="24" height="24">
+        <defs>
+          <linearGradient id="fg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#6366f1"/>
+            <stop offset="100%" stop-color="#06b6d4"/>
+          </linearGradient>
+        </defs>
+        <circle cx="50" cy="50" r="44" fill="none" stroke="url(#fg)" stroke-width="2" opacity="0.25"/>
+        <circle cx="50" cy="50" r="34" fill="none" stroke="url(#fg)" stroke-width="2.5" opacity="0.45"/>
+        <circle cx="50" cy="50" r="24" fill="none" stroke="url(#fg)" stroke-width="3" opacity="0.70"/>
+        <circle cx="50" cy="50" r="14" fill="none" stroke="url(#fg)" stroke-width="3.5" opacity="0.90"/>
+        <circle cx="50" cy="50" r="6" fill="url(#fg)"/>
+      </svg>
+      SENTIO
+    </div>
+    <div class="footer-text">&copy; 2026 SENTIO. AI 기반 요양병원 안전 모니터링 시스템.</div>
+    <div class="footer-links">
+      <a href="#features">기능</a>
+      <a href="#performance">성능</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">문의</a>
+      <a href="../01_presentation/SENTIO_통합발표.html" target="_blank" style="color:var(--accent);">발표자료</a>
+      <a href="../01_presentation/SENTIO_감지로직_시각화.html" target="_blank">감지 로직</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== JavaScript ===== -->
+<script>
+  // Navbar scroll effect
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 50);
+  });
+
+  // Scroll animation observer
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  // Mobile menu toggle
+  function toggleMobile() {
+    const links = document.querySelector('.nav-links');
+    links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+    if (window.innerWidth <= 768) {
+      links.style.flexDirection = 'column';
+      links.style.position = 'absolute';
+      links.style.top = '60px';
+      links.style.left = '0';
+      links.style.right = '0';
+      links.style.background = 'rgba(10,15,30,0.98)';
+      links.style.padding = '24px';
+      links.style.gap = '16px';
+      links.style.backdropFilter = 'blur(20px)';
+    }
+  }
+
+  // Counter animation for hero stats
+  function animateCounters() {
+    document.querySelectorAll('.hero-stat .number').forEach(el => {
+      const text = el.textContent;
+      if (text.includes('%')) {
+        const target = parseFloat(text);
+        let current = 0;
+        const step = target / 40;
+        const timer = setInterval(() => {
+          current += step;
+          if (current >= target) {
+            el.textContent = text;
+            clearInterval(timer);
+          } else {
+            el.textContent = current.toFixed(1) + '%';
+          }
+        }, 30);
+      }
+    });
+  }
+  setTimeout(animateCounters, 500);
+
+  // FAQ toggle
+  function toggleFaq(el) {
+    const item = el.closest('.faq-item');
+    item.classList.toggle('open');
+  }
+
+</script>
+
+</body>
+</html>

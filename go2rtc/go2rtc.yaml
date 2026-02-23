@@ -1,0 +1,25 @@
+# go2rtc 스트림 설정 (SENTIO)
+# MJPEG -> WebRTC 변환을 위한 설정
+
+streams:
+  # 기본 카메라 스트림 (백엔드 내부 MJPEG에서 수신)
+  # INTERNAL_STREAM_KEY는 .env.docker에서 설정
+  camera_default:
+    - "http://backend:8000/api/stream/internal-mjpeg?key=${INTERNAL_STREAM_KEY}"
+
+  # RTSP 카메라 예시 (주석 해제 후 사용)
+  # camera_rtsp_1:
+  #   - "rtsp://admin:password@192.168.1.100:554/stream1"
+  # camera_rtsp_2:
+  #   - "rtsp://admin:password@192.168.1.101:554/stream1"
+
+webrtc:
+  # ICE 서버 설정 (STUN/TURN)
+  ice_servers:
+    - urls: ["stun:stun.l.google.com:19302"]
+
+api:
+  listen: ":1984"
+
+log:
+  level: "info"

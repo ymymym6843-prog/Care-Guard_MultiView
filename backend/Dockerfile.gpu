@@ -1,0 +1,52 @@
+# CARE-GUARD GPU Dockerfile
+# NVIDIA CUDA 12.4 + cuDNN 9 기반 (YOLO, ONNX Runtime GPU 지원)
+FROM nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
+
+# Python 3.11 설치
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.11 \
+    python3.11-venv \
+    python3-pip \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender1 \
+    curl \
+    && ln -sf /usr/bin/python3.11 /usr/bin/python \
+    && ln -sf /usr/bin/python3.11 /usr/bin/python3 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# 의존성 설치 (레이어 캐시 활용)
+COPY requirements.txt .
+COPY requirements-gpu.txt .
+
+# CPU 의존성 먼저, GPU 의존성 덮어쓰기
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir -r requirements-gpu.txt
+
+# MediaPipe 모델 빌드 타임 다운로드
+RUN mkdir -p /app/models && \
+    curl -L -o /app/models/pose_landmarker_full.task \
+    "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task"
+
+# YOLO11s-pose 모델 빌드 타임 다운로드
+RUN python -c "from ultralytics import YOLO; model = YOLO('yolo11s-pose.pt')" && \
+    mv yolo11s-pose.pt /app/models/ 2>/dev/null || true
+
+# 소스 코드 복사
+COPY . .
+
+EXPOSE 8000
+
+# 싱글 워커 (싱글톤 서비스 유지)
+CMD ["gunicorn", "app.main:app", \
+     "-k", "uvicorn.workers.UvicornWorker", \
+     "-w", "1", \
+     "--bind", "0.0.0.0:8000", \
+     "--proxy-headers", \
+     "--max-requests", "1000", \
+     "--timeout", "120", \
+     "--graceful-timeout", "30"]

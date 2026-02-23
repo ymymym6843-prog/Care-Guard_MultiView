@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SENTIO AI - 통합 발표자료</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
+  <style>
+    @font-face {
+      font-family: 'Pretendard';
+      src: url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
+    }
+    :root {
+      --r-main-font: 'Pretendard', 'Noto Sans KR', -apple-system, sans-serif;
+      --r-heading-font: 'Pretendard', 'Noto Sans KR', -apple-system, sans-serif;
+      --r-main-color: #e2e8f0;
+      --r-heading-color: #e2e8f0;
+      --r-background-color: #0f172a;
+      --primary: #6366f1;
+      --primary-light: #818cf8;
+      --accent: #06b6d4;
+      --accent2: #2dd4bf;
+      --safe: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+      --muted: #94a3b8;
+      --surface: rgba(255,255,255,0.03);
+      --border: rgba(148,163,184,0.12);
+    }
+
+    .reveal {
+      font-size: 22px;
+      font-family: 'Pretendard', 'Noto Sans KR', -apple-system, sans-serif;
+      word-break: keep-all;
+      letter-spacing: -0.01em;
+    }
+    .reveal h1 { font-size: 2.2em; font-weight: 800; letter-spacing: -0.03em; color: #fff; }
+    .reveal h2 { font-size: 1.5em; font-weight: 700; color: #fff; margin-bottom: 0.6em; }
+    .reveal h3 { font-size: 1.1em; font-weight: 600; color: var(--muted); }
+    .reveal p, .reveal li { font-weight: 400; line-height: 1.65; color: var(--muted); }
+    .reveal strong { color: #f1f5f9; }
+
+    .highlight { color: var(--accent); }
+    .text-safe { color: var(--safe); }
+    .text-danger { color: var(--danger); }
+    .text-warning { color: var(--warning); }
+    .text-white { color: #fff; }
+
+    /* ===== NAV BAR ===== */
+    .slide-nav {
+      display: flex; justify-content: center; gap: 0;
+      padding: 0; margin: -0.5em auto 0.6em;
+      background: rgba(17, 24, 39, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      border-radius: 8px; max-width: fit-content;
+    }
+    .slide-nav .nav-item {
+      padding: 7px 14px; font-size: 10px; font-weight: 600;
+      color: #6b7280; border-bottom: 2px solid transparent;
+      transition: all 0.2s; letter-spacing: 0.02em;
+    }
+    .slide-nav .nav-item.active {
+      color: var(--accent); border-bottom-color: var(--accent);
+    }
+
+    /* ===== STAT BOX ===== */
+    .stat-grid { display: grid; gap: 0.8rem; margin: 0.8rem auto; }
+    .stat-grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .stat-grid-4 { grid-template-columns: repeat(4, 1fr); }
+    .stat-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 0.8rem 0.6rem; text-align: center;
+    }
+    .stat-number { font-size: 2em; font-weight: 800; color: var(--safe); }
+    .stat-label { font-size: 0.65em; color: var(--muted); margin-top: 0.2rem; font-weight: 500; line-height: 1.4; }
+
+    /* ===== CARDS ===== */
+    .card-grid { display: grid; gap: 0.7rem; margin: 0.6rem 0; }
+    .card-grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .card-grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 0.9rem; text-align: left;
+    }
+    .card h4 { font-size: 0.85em; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
+    .card p { font-size: 0.7em; color: var(--muted); line-height: 1.5; }
+    .card.compact { padding: 0.6rem 0.8rem; }
+    .card-icon { font-size: 1.2em; margin-bottom: 4px; }
+    .card-accent { border-color: rgba(6,182,212,0.25); background: linear-gradient(135deg, rgba(6,182,212,0.06), rgba(99,102,241,0.04)); }
+
+    /* ===== INFO BOX ===== */
+    .info-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 0.7rem 1rem; font-size: 0.7em; color: var(--muted);
+    }
+    .info-box.safe { border-color: rgba(52,211,153,0.25); background: rgba(52,211,153,0.06); }
+    .info-box.danger { border-color: rgba(248,113,113,0.25); background: rgba(248,113,113,0.06); }
+
+    /* ===== BADGE ===== */
+    .badge {
+      display: inline-block; padding: 2px 10px; border-radius: 20px;
+      font-size: 0.6em; font-weight: 600; margin: 2px;
+    }
+    .badge-safe { background: rgba(52,211,153,0.12); color: var(--safe); }
+    .badge-danger { background: rgba(248,113,113,0.12); color: var(--danger); }
+    .badge-primary { background: rgba(6,182,212,0.12); color: var(--accent); }
+    .badge-blue { background: rgba(99,102,241,0.15); color: #818cf8; }
+    .badge-amber { background: rgba(245,158,11,0.15); color: #fbbf24; }
+
+    /* ===== DATA TABLE (from Renewal) ===== */
+    .table-wrap {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+    }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.68em; }
+    .data-table th {
+      background: rgba(30,60,110,0.5); color: #fff; font-weight: 700;
+      padding: 14px 20px; text-align: left;
+      border-bottom: 2px solid rgba(100,160,255,0.2); font-size: 0.95em;
+    }
+    .data-table td {
+      padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.06);
+      color: #e2e8f0; font-size: 0.95em;
+    }
+    .data-table tbody tr:nth-child(odd) { background: rgba(15,25,50,0.4); }
+    .data-table tbody tr:nth-child(even) { background: rgba(25,40,70,0.4); }
+    .data-table td.hl { color: var(--accent2); font-weight: 700; text-shadow: 0 0 8px rgba(45,212,191,0.3); }
+    .data-table td.dim { color: rgba(200,210,230,0.45); }
+    .data-table .col-cg { background: rgba(20,60,70,0.4) !important; border-left: 3px solid var(--accent2); }
+    .data-table tbody tr:nth-child(even) .col-cg { background: rgba(25,70,80,0.4) !important; }
+
+    /* ===== COMPARE TABLE ===== */
+    .compare-table {
+      width: 100%; border-collapse: collapse; margin: 0.5rem 0; font-size: 0.72em;
+    }
+    .compare-table th, .compare-table td {
+      padding: 0.5rem 0.7rem; text-align: center; border: 1px solid var(--border);
+    }
+    .compare-table th { background: rgba(6,182,212,0.1); color: var(--accent); font-weight: 700; }
+    .compare-table td { color: var(--muted); }
+
+    /* ===== PROGRESS BARS ===== */
+    .progress-row { margin-bottom: 10px; }
+    .progress-label {
+      font-size: 0.5em; color: rgba(255,255,255,0.6); margin-bottom: 3px;
+      display: flex; justify-content: space-between;
+    }
+    .progress-bar-bg { height: 10px; background: rgba(255,255,255,0.06); border-radius: 5px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; border-radius: 5px; background: linear-gradient(90deg, var(--primary), var(--accent2)); }
+
+    /* ===== STEPS ===== */
+    .step { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 18px; }
+    .step-num {
+      flex-shrink: 0; width: 42px; height: 42px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6em; font-weight: 700; color: #fff;
+    }
+    .step-num.blue { background: linear-gradient(135deg, var(--primary), #818cf8); }
+    .step-num.cyan { background: linear-gradient(135deg, var(--accent), var(--primary)); }
+    .step-num.amber { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+    .step-title { font-size: 0.8em; font-weight: 700; color: #fff; }
+    .step-desc { font-size: 0.58em; color: rgba(255,255,255,0.5); margin-top: 4px; line-height: 1.5; }
+
+    /* ===== PRICE CARDS ===== */
+    .price-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px 18px; text-align: center;
+    }
+    .price-card.featured {
+      border-color: rgba(6,182,212,0.3);
+      background: linear-gradient(135deg, rgba(6,182,212,0.08), rgba(99,102,241,0.04));
+    }
+    .price-card .plan-name { font-size: 0.55em; color: var(--muted); font-weight: 500; }
+    .price-card .plan-badge { font-size: 0.4em; color: var(--accent); font-weight: 600; }
+    .price-card .price { font-size: 1.2em; font-weight: 900; color: #fff; margin: 6px 0; }
+    .price-card .price-features { font-size: 0.45em; color: rgba(255,255,255,0.45); line-height: 1.8; text-align: left; padding-left: 6px; }
+
+    /* ===== FLOW DIAGRAM ===== */
+    .flow { display: flex; align-items: center; justify-content: center; gap: 0.4rem; flex-wrap: wrap; }
+    .flow-step {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 0.5rem 0.9rem; font-size: 0.7em; text-align: center;
+    }
+    .flow-arrow { color: var(--accent); font-size: 1.1em; }
+
+    /* ===== DEMO VIDEO GRID ===== */
+    .demo-video-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem; margin: 0.3rem auto; max-width: 92%;
+    }
+    .demo-video-item {
+      position: relative;
+      border: 1px solid var(--border); border-radius: 10px;
+      overflow: hidden; background: #0a0f1a;
+    }
+    .demo-video-item img {
+      width: 100%; height: 26vh; object-fit: contain; display: block; background: #0a0f1a;
+    }
+    .demo-caption {
+      padding: 0.25rem; font-size: 0.6em; color: var(--muted);
+      text-align: center; background: rgba(17,24,39,0.95);
+    }
+
+    /* ===== TWO COLUMN ===== */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; align-items: start; }
+
+    /* ===== TIMELINE ===== */
+    .timeline-item { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+    .timeline-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+    .timeline-dot.orange { background: #f59e0b; }
+    .timeline-dot.blue { background: var(--primary); }
+    .timeline-dot.cyan { background: var(--accent); }
+    .timeline-dot.green { background: #22c55e; }
+    .timeline-dot.purple { background: #a855f7; }
+    .timeline-text { font-size: 0.55em; color: rgba(255,255,255,0.6); }
+    .timeline-text strong { color: #fff; }
+
+    /* ===== FRAGMENT ANIMATIONS ===== */
+    .reveal .fragment.fade-up { transform: translateY(20px); opacity: 0; }
+    .reveal .fragment.fade-up.visible { transform: translateY(0); opacity: 1; transition: all 0.4s ease-out; }
+    .reveal .fragment.zoom-in { transform: scale(0.9); opacity: 0; }
+    .reveal .fragment.zoom-in.visible { transform: scale(1); opacity: 1; transition: all 0.4s cubic-bezier(0.26,0.53,0.74,1.48); }
+
+    /* ===== MISC ===== */
+    .scenario-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 0.7rem; text-align: center;
+    }
+    .scenario-card h4 { font-size: 0.8em; font-weight: 700; margin-bottom: 0.2rem; }
+    .scenario-card p { font-size: 0.65em; color: var(--muted); line-height: 1.4; }
+    .slide-content { padding-top: 0; }
+    .divider { height: 1px; background: rgba(255,255,255,0.06); margin: 12px 0; }
+    .foot-note { font-size: 0.42em; color: rgba(255,255,255,0.25); text-align: center; margin-top: 12px; }
+    .market-badge {
+      display: inline-block; padding: 3px 10px; border-radius: 20px;
+      font-size: 0.45em; font-weight: 600; margin-top: 3px;
+    }
+    .market-badge.primary { background: rgba(6,182,212,0.15); color: var(--accent); }
+    .market-badge.secondary { background: rgba(99,102,241,0.15); color: #818cf8; }
+    .market-badge.opportunity { background: rgba(245,158,11,0.15); color: #fbbf24; }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ====== 1. 표지 ====== -->
+      <section data-background-gradient="linear-gradient(160deg, #111827 0%, #1f2937 50%, #111827 100%)">
+        <div class="slide-nav">
+          <div class="nav-item active">표지</div>
+          <div class="nav-item">문제</div>
+          <div class="nav-item">솔루션</div>
+          <div class="nav-item">데모</div>
+          <div class="nav-item">AI기술</div>
+          <div class="nav-item">사용흐름</div>
+          <div class="nav-item">차별점</div>
+          <div class="nav-item">성능</div>
+          <div class="nav-item">시장</div>
+          <div class="nav-item">Q&A</div>
+        </div>
+
+        <div class="slide-content">
+          <div style="margin-bottom: 0.5em;">
+            <!-- Sentio 동심원 펄스 로고 -->
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:72px; height:72px; display:inline-block; vertical-align:middle;">
+              <defs><linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+              <circle cx="50" cy="50" r="45" fill="url(#sg)" opacity="0.15"/>
+              <circle cx="50" cy="50" r="35" fill="url(#sg)" opacity="0.25"/>
+              <circle cx="50" cy="50" r="25" fill="url(#sg)" opacity="0.5"/>
+              <circle cx="50" cy="50" r="14" fill="url(#sg)"/>
+              <circle cx="50" cy="50" r="6" fill="white" opacity="0.9"/>
+            </svg>
+          </div>
+          <p style="font-size: 1.1em; font-weight: 400; color: var(--danger); margin-bottom: 0.2em;">
+            "매년 노인 <strong style="font-size:1.2em; color:#fff;">3명 중 1명</strong>이 넘어집니다"
+          </p>
+          <h1 style="margin: 0.2em 0;">SENTIO <span style="color: var(--accent);">AI</span></h1>
+          <p style="font-size: 0.85em; color: var(--muted); letter-spacing: 0.35em; font-weight: 600; text-transform: uppercase; margin-bottom: 0.3em;">Sense · Protect · Care</p>
+          <p style="font-size: 0.8em; color: var(--muted);">
+            기존 CCTV에 AI를 연결하면, 환자가 넘어지는 순간 <strong>즉시</strong> 알려줍니다
+          </p>
+
+          <div class="stat-grid stat-grid-3" style="max-width: 750px; margin: 1.2rem auto 0;">
+            <div class="stat-box">
+              <div class="stat-number" style="font-size: 1.8em;">95.2%</div>
+              <div class="stat-label">감지율 (Recall)<br>20건 중 19건 자동 감지</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-number" style="font-size: 1.8em; color: var(--accent);">94.6%</div>
+              <div class="stat-label">정밀도 (Precision)<br>오알림 5% 미만</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-number" style="font-size: 1.8em; color: #fff;">F1 94.9</div>
+              <div class="stat-label">종합 AI Score<br>424건 독립 검증</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== 2. 문제 정의 ====== -->
+      <section data-background-gradient="linear-gradient(160deg, #1c1013 0%, #111827 100%)">
+        <div class="slide-nav">
+          <div class="nav-item">표지</div>
+          <div class="nav-item active">문제</div>
+          <div class="nav-item">솔루션</div>
+          <div class="nav-item">데모</div>
+          <div class="nav-item">AI기술</div>
+          <div class="nav-item">사용흐름</div>
+          <div class="nav-item">차별점</div>
+          <div class="nav-item">성능</div>
+          <div class="nav-item">시장</div>
+          <div class="nav-item">Q&A</div>
+        </div>
+
+        <div class="slide-content">
+          <h2>왜 필요한가?</h2>
+
+          <div class="two-col" style="gap: 1.5rem; align-items: center;">
+            <div>
+              <img src="gen_images/slide2_hospital_fall.png" alt="병원 낙상 상황" style="max-height:42vh; border-radius:12px; border:1px solid var(--border); display:block; margin:0 auto;">
+            </div>
+            <div>
+              <div class="stat-grid" style="grid-template-columns: 1fr; gap: 0.5rem;">
+                <div class="stat-box fragment fade-up" style="display:flex; align-items:center; gap:0.8rem; text-align:left; padding:0.6rem 0.8rem;">
+                  <div class="stat-number" style="color: var(--danger); font-size: 1.5em; min-width:3em;">28~35%</div>
+                  <div class="stat-label" style="text-align:left;">65세 이상 연간 낙상 경험률</div>
+                </div>
+                <div class="stat-box fragment fade-up" style="display:flex; align-items:center; gap:0.8rem; text-align:left; padding:0.6rem 0.8rem;">
+                  <div class="stat-number" style="color: var(--warning); font-size: 1.5em; min-width:3em;">47%</div>
+                  <div class="stat-label" style="text-align:left;">낙상 발생 장소: 대기실/복도 (사각지대)</div>
+                </div>
+                <div class="stat-box fragment fade-up" style="display:flex; align-items:center; gap:0.8rem; text-align:left; padding:0.6rem 0.8rem;">
+                  <div class="stat-number" style="color: var(--danger); font-size: 1.5em; min-width:3em;">1:30</div>
+                  <div class="stat-label" style="text-align:left;">간호사:환자 비율, 24시간 감시 불가</div>
+                </div>
+                <div class="stat-box fragment fade-up" style="display:flex; align-items:center; gap:0.8rem; text-align:left; padding:0.6rem 0.8rem;">
+                  <div class="stat-number" style="color: var(--danger); font-size: 1.5em; min-width:3em;">2위</div>
+                  <div class="stat-label" style="text-align:left;">의료사고 원인 순위 (치명적)</div>
+                </div>
+              </div>
+              <div class="info-box danger fragment" style="margin-top: 0.5rem;">
+                <strong style="color: var(--danger);">핵심:</strong>
+                넘어진 뒤 <strong class="text-white">발견까지 걸리는 시간</strong>이 생사를 가릅니다.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== 3. 솔루션 소개 ====== -->
+      <section data-background-gradient="linear-gradient(160deg, #111827 0%, #1e293b 100%)">
+        <div class="slide-nav">
+          <div class="nav-item">표지</div>
+          <div class="nav-item">문제</div>
+          <div class="nav-item active">솔루션</div>
+          <div class="nav-item">데모</div>
+          <div class="nav-item">AI기술</div>
+          <div class="nav-item">사용흐름</div>
+          <div class="nav-item">차별점</div>
+          <div class="nav-item">성능</div>
+          <div class="nav-item">시장</div>
+          <div class="nav-item">Q&A</div>
+        </div>
+
+        <div class="slide-content">
+          <h2>SENTIO AI</h2>
+          <p style="font-size: 0.8em; margin-bottom: 0.5rem;">기존 CCTV를 활용한 AI 기반 실시간 낙상 감지 시스템</p>
+
+          <div class="two-col" style="gap: 1rem; align-items: start;">
+            <div style="text-align:center;">
+              <img src="gen_images/slide3_smart_cctv.png" alt="AI CCTV 모니터링" style="max-height:38vh; border-radius:12px; border:1px solid var(--border);">
+            </div>
+            <div>
+              <div class="card-grid card-grid-2" style="gap: 0.5rem;">
+                <div class="card compact fragment fade-up" style="border-color: rgba(99,102,241,0.3);">
+                  <div class="card-icon"><svg width="24" height="24" viewBox="0 0 32 32" fill="none"><rect x="4" y="8" width="24" height="16" rx="3" stroke="#818cf8" stroke-width="2" fill="rgba(99,102,241,0.1)"/><circle cx="16" cy="16" r="5" stroke="#818cf8" stroke-width="2"/><circle cx="16" cy="16" r="2" fill="#818cf8"/><path d="M16 24v4M12 28h8" stroke="#818cf8" stroke-width="2" stroke-linecap="round"/></svg></div>
+                  <h4 style="color: var(--primary-light); font-size:0.75em;">기존 CCTV 그대로</h4>
+                  <p style="font-size:0.6em;">추가 장비 없이 기존 카메라 연결. 초기 비용 최소화</p>
+                </div>
+                <div class="card compact card-accent fragment fade-up">
+                  <div class="card-icon"><svg width="24" height="24" viewBox="0 0 32 32" fill="none"><path d="M16 4v8l5-3" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="16" r="11" stroke="#06b6d4" stroke-width="2" fill="rgba(6,182,212,0.08)"/><path d="M16 16l7 4" stroke="#06b6d4" stroke-width="2" stroke-linecap="round"/></svg></div>
+                  <h4 style="color: var(--accent); font-size:0.75em;">실시간 AI 감지</h4>
+                  <p style="font-size:0.6em;">넘어지는 순간 포착, 3초 안에 자동 알림 전송</p>
+                </div>
+                <div class="card compact fragment fade-up" style="border-color: rgba(99,102,241,0.3);">
+                  <div class="card-icon"><svg width="24" height="24" viewBox="0 0 32 32" fill="none"><rect x="8" y="14" width="16" height="14" rx="3" stroke="#818cf8" stroke-width="2" fill="rgba(99,102,241,0.1)"/><path d="M12 14V10a4 4 0 018 0v4" stroke="#818cf8" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="21" r="2.5" fill="#818cf8"/></svg></div>
+                  <h4 style="color: var(--primary-light); font-size:0.75em;">프라이버시 보호</h4>
+                  <p style="font-size:0.6em;">관절 좌표만 분석, 개인정보 유출 원천 차단</p>
+                </div>
+                <div class="card compact fragment fade-up" style="border-color: rgba(99,102,241,0.3);">
+                  <div class="card-icon"><svg width="24" height="24" viewBox="0 0 32 32" fill="none"><circle cx="10" cy="10" r="4" stroke="#818cf8" stroke-width="2" fill="rgba(99,102,241,0.15)"/><circle cx="22" cy="10" r="4" stroke="#818cf8" stroke-width="2" fill="rgba(99,102,241,0.15)"/><circle cx="16" cy="18" r="3" stroke="#06b6d4" stroke-width="2" fill="rgba(6,182,212,0.15)"/><path d="M6 26c0-3 2-5 4-5M26 26c0-3-2-5-4-5M10 28c0-3 2.5-5 6-5s6 2 6 5" stroke="#818cf8" stroke-width="2" stroke-linecap="round"/></svg></div>
+                  <h4 style="color: var(--primary-light); font-size:0.75em;">다중 인원 추적</h4>
+                  <p style="font-size:0.6em;">대기실 내 모든 환자를 개별 식별하여 추적</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== 4. 데모 영상 ====== -->
+      <section data-background-gradient="linear-gradient(160deg, #111827 0%, #1e293b 100%)">
+        <div class="slide-nav">
+          <div class="nav-item">표지</div>
+          <div class="nav-item">문제</div>
+          <div class="nav-item">솔루션</div>
+          <div class="nav-item active">데모</div>
+          <div class="nav-item">AI기술</div>
+          <div class="nav-item">사용흐름</div>
+          <div class="nav-item">차별점</div>
+          <div class="nav-item">성능</div>
+          <div class="nav-item">시장</div>
+          <div class="nav-item">Q&A</div>
+        </div>
+
+        <div class="slide-content" style="padding-top: 1.8rem;">
+          <h2 style="margin-bottom: 0.2rem;">실제 AI 감지 데모</h2>
+          <p style="font-size: 0.65em; margin-bottom: 0.3rem;">
+            YOLO11 AI 분석 결과 — 초록 박스가 <span class="text-danger">빨간 박스</span>로 바뀌면 낙상 감지
+          </p>
+
+          <div class="demo-video-grid">
+            <div class="demo-video-item" style="border-color: rgba(248,113,113,0.4);">
+              <img src="rendered_demos/scene5_front.gif" alt="전방 낙상">
+              <div class="demo-caption"><span class="text-danger">&#9679;</span> 전방 낙상 — <strong class="text-danger">97% 감지</strong></div>
+            </div>
+            <div class="demo-video-item" style="border-color: rgba(248,113,113,0.4);">
+              <img src="rendered_demos/scene5_back.gif" alt="후방 낙상">
+              <div class="demo-caption"><span class="text-danger">&#9679;</span> 후방 낙상 — <strong class="text-danger">99% 감지</strong></div>
+            </div>
+            <div class="demo-video-item" style="border-color: rgba(251,191,36,0.4);">
+              <img src="rendered_demos/scene5_side.gif" alt="측면 낙상">
+              <div class="demo-caption"><span class="text-warning">&#9679;</span> 측면 낙상 — <strong class="text-warning">91% 감지</strong></div>
+            </div>
+            <div class="demo-video-item" style="border-color: rgba(52,211,153,0.4);">
+              <img src="rendered_demos/scene5_normal.gif" alt="정상 행동">
+              <div class="demo-caption"><span class="text-safe">&#9679;</span> 정상 행동 — <strong class="text-safe">오탐 없음</strong></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== 5. AI 기술 메커니즘 (from Renewal) ====== -->
+      <section data-background-gradient="linear-gradient(160deg, #0f172a 0%, #1e293b 100%)">
+        <div class="slide-nav">
+          <div class="nav-item">표지</div>
+          <div class="nav-item">문제</div>
+          <div class="nav-item">솔루션</div>
+          <div class="nav-item">데모</div>
+          <div class="nav-item active">AI기술</div>
+          <div class="nav-item">사용흐름</div>
+          <div class="nav-item">차별점</div>
+          <div class="nav-item">성능</div>
+          <div class="nav-item">시장</div>
+          <div class="nav-item">Q&A</div>
+        </div>
+
+        <div class="slide-content">
+          <h2>지능형 낙상 판정 메커니즘</h2>
+          <p style="font-size: 0.7em; margin-bottom: 0.6rem; color: var(--muted);">AI는 어떻게 낙상을 판별하나?</p>
+
+          <div class="two-col" style="grid-template-columns: 1.2fr 1fr; gap: 1.5rem; align-items: center;">
+            <div>
+              <div class="step fragment fade-up" data-fragment-index="0">
+                <div class="step-num blue">1</div>
+                <div>
+                  <div class="step-title">관절 키포인트 추적 (YOLO11)</div>
+                  <div class="step-desc">머리, 엉덩이, 무릎 등 33개 관절의 움직임을 실시간 추적</div>
+                </div>
+              </div>
+              <div class="step fragment fade-up" data-fragment-index="1">
+                <div class="step-num cyan">2</div>
+                <div>
+                  <div class="step-title">물리 규칙 분석 (13 Rules)</div>
+                  <div class="step-desc">머리-엉덩이 역전, 수직 하강 속도 등 물리 법칙 기반 계산</div>
+                </div>
+              </div>
+              <div class="step fragment fade-up" data-fragment-index="2">
+                <div class="step-num amber">3</div>
+                <div>
+                  <div class="step-title">GRU 딥러닝 앙상블</div>
+                  <div class="step-desc">66만 건 학습 데이터 기반 시계열 분석으로 최종 판정</div>
+                </div>
+              </div>
+
+              <div class="fragment fade-up" data-fragment-index="3" style="display:flex; gap:10px; margin-top:0.8rem;">
+                <span class="badge badge-blue" style="font-size:0.6em; padding:6px 14px;">물리 규칙 13종</span>
+                <span class="badge badge-primary" style="font-size:0.6em; padding:6px 14px;">GRU 딥러닝</span>
+                <span class="badge badge-amber" style="font-size:0.6em; padding:6px 14px;">EMA 평활화</span>
+              </div>
+            </div>
+            <div>
+              <div class="card card-accent fragment fade-up" data-fragment-index="0" style="text-align:center; padding:0; overflow:hidden;">
+                <div style="position:relative;">
+                  <img src="gen_images/slide5_ai_pose_analysis.png" alt="AI 포즈 분석" style="width:100%; height:200px; object-fit:cover; border-radius:12px 12px 0 0;">
+                  <div style="position:absolute; bottom:0; left:0; right:0; height:40px; background:linear-gradient(transparent, rgba(15,23,42,0.9));"></div>
+                </div>
+                <div style="padding:12px 16px;">
+                  <div style="font-size:0.6em; font-weight:700; color:#fff; margin-bottom:4px;">실제 SENTIO 감지 화면</div>
+                  <div style="font-size:0.45em; color:rgba(255,255,255,0.45); line-height:1.5;">
+                    블러 모드 + 스켈레톤 오버레이로<br>
+                    프라이버시를 보호하며 낙상을 감지합니다.
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-box safe fragment fade-up" data-fragment-index="3" style="margin-top: 0.5rem; font-size: 0.6em;">
+                <strong>프라이버시:</strong> 이미지 저장이 아닌 33개 관절 좌표값만 추출. 원본 영상 즉시 소멸. 3가지 가시성 모드 제공 (스켈레톤/블러/원본)
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== 6. 사용 흐름 ====== -->
+      <section data-background-gradient="linear-gradient(160deg, #1e293b 0%, #111827 100%)">
+        <div class="slide-nav">
+          <div class="nav-item">표지</div>
+          <div class="nav-item">문제</div>
+          <div class="nav-item">솔루션</div>
+          <div class="nav-item">데모</div>
+          <div class="nav-item">AI기술</div>
+          <div class="nav-item active">사용흐름</div>
+          <div class="nav-item">차별점</div>
+          <div class="nav-item">성능</div>
+          <div class="nav-item">시장</div>
+          <div class="nav-item">Q&A</div>
+        </div>
+
+        <div class="slide-content">
+          <h2>병원에서 이렇게 사용합니다</h2>
+
+          <div class="flow fragment fade-up" style="margin-top: 0.8rem;">
+            <div class="flow-step" style="padding: 0.5rem 1rem;">
+              <strong>1. 연결</strong><br>
+              <span style="font-size:0.9em;">기존 CCTV →<br>AI 서버 연결</span>
+            </div>
+            <span class="flow-arrow">&#8594;</span>
+            <div class="flow-step" style="padding: 0.5rem 1rem;">
+              <strong>2. 감시</strong><br>
+              <span style="font-size:0.9em;">AI가 24시간<br>자동 모니터링</span>
+            </div>
+            <span class="flow-arrow">&#8594;</span>
+            <div class="flow-step" style="padding: 0.5rem 1rem; border-color: rgba(248,113,113,0.3);">
+              <strong class="text-danger">3. 감지</strong><br>
+              <span style="font-size:0.9em;">낙상 발생 시<br>즉시 판별</span>
+            </div>
+            <span class="flow-arrow">&#8594;</span>
+            <div class="flow-step" style="padding: 0.5rem 1rem; border-color: rgba(52,211,153,0.3);">
+              <strong class="text-safe">4. 알림</strong><br>
+              <span style="font-size:0.9em;">간호사 화면 +<br>음성 경고</span>
+            </div>
+          </div>
+
+          <div class="two-col fragment" style="margin-top: 1rem;">
+            <div style="display: flex; gap: 0.5rem;">
+              <div class="demo-video-item" style="border-color: rgba(52,211,153,0.3); flex: 1;">
+                <img src="rendered_demos/scene4_full.gif" alt="Full 모드" style="height: 20vh;">
+                <div class="demo-caption"><strong class="text-safe">Full 모드</strong> — 원본 + AI</div>
+              </div>
+              <div class="demo-video-item" style="border-color: rgba(6,182,212,0.3); flex: 1;">
+                <img src="rendered_demos/scene4_blur.gif" alt="Blur 모드" style="height: 20vh;">
+                <div class="demo-caption"><strong style="color:var(--primary-light);">Blur 모드</strong> — 프라이버시</div>
+              </div>
+            </div>
+            <div>
+              <div class="scenario-card" style="margin-bottom: 0.4rem;">
+                <h4 class="text-safe">간호사 스테이션</h4>
+                <p>대시보드에서 모든 카메라 한눈에 확인<br>낙상 발생 시 화면 경고 + 음성 알림</p>
+              </div>
+              <div class="scenario-card">
+                <h4 style="color: var(--accent);">원장/관리자</h4>
+                <p>낙상 이벤트 통계 리포트<br>안전 관리 증빙 자료로 활용</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== 7. 차별점 (Renewal 대형 테이블) ====== -->
+      <section data-background-gradient="linear-gradient(160deg, #111827 0%, #1e293b 100%)">
+        <div class="slide-nav">
+          <div class="nav-item">표지</div>
+          <div class="nav-item">문제</div>
+          <div class="nav-item">솔루션</div>
+          <div class="nav-item">데모</div>
+          <div class="nav-item">AI기술</div>
+          <div class="nav-item">사용흐름</div>
+          <div class="nav-item active">차별점</div>
+          <div class="nav-item">성능</div>
+          <div class="nav-item">시장</div>
+          <div class="nav-item">Q&A</div>
+        </div>
+
+        <div class="slide-content">
+          <h2>독보적인 경쟁력 비교</h2>
+
+          <div class="table-wrap" style="margin-top: 0.5rem;">
+            <table class="data-table" style="font-size: 0.72em;">
+              <thead>
+                <tr>
+                  <th style="width:18%;">비교 항목</th>
+                  <th style="width:22%;">기존 CCTV</th>
+                  <th style="width:22%;">레이더 센서<br><span style="font-weight:400; font-size:0.85em;">(Vayyar Care)</span></th>
+                  <th class="col-cg" style="color:var(--accent2); width:38%;">SENTIO AI</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="fragment fade-up" data-fragment-index="0">
+                  <td style="font-weight:600; color:#fff;">낙상 감지</td>
+                  <td class="dim">사람이 직접 확인</td>
+                  <td class="dim">레이더 신호 분석</td>
+                  <td class="col-cg hl">AI 자동 감지 (YOLO11+GRU)</td>
+                </tr>
+                <tr class="fragment fade-up" data-fragment-index="0">
+                  <td style="font-weight:600; color:#fff;">추가 장비</td>
+                  <td class="dim">-</td>
+                  <td class="dim">전용 레이더 설치 (방당 50만+)</td>
+                  <td class="col-cg hl">0원 (기존 인프라)</td>
+                </tr>
+                <tr class="fragment fade-up" data-fragment-index="1">
+                  <td style="font-weight:600; color:#fff;">프라이버시</td>
+                  <td class="dim">영상 녹화 저장</td>
+                  <td class="dim">영상 없음</td>
+                  <td class="col-cg hl">스켈레톤 좌표만 처리</td>
+                </tr>
+                <tr class="fragment fade-up" data-fragment-index="1">
+                  <td style="font-weight:600; color:#fff;">다인 추적</td>
+                  <td class="dim">불가</td>
+                  <td class="dim">불가</td>
+                  <td class="col-cg hl">동시 N명 개별 추적</td>
+                </tr>
+                <tr class="fragment fade-up" data-fragment-index="1">
+                  <td style="font-weight:600; color:#fff;">전용 GPU</td>
+                  <td class="dim">-</td>
+                  <td class="dim">불필요</td>
+                  <td class="col-cg hl">선택적 (일반 PC 가능)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="display:flex; gap:12px; margin-top:1.2rem; justify-content:center;">
+            <span class="badge badge-primary" style="font-size:0.65em; padding:5px 14px;">추가 장비 0원</span>
+            <span class="badge badge-blue" style="font-size:0.65em; padding:5px 14px;">개인정보 보호 내장</span>
+            <span class="badge badge-amber" style="font-size:0.65em; padding:5px 14px;">다인 동시 추적</span>
+            <span class="badge badge-danger" style="font-size:0.65em; padding:5px 14px;">월 정액 SaaS</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== 8. 성능 검증 (Renewal 진행률바 + 통합 테이블) ====== -->
+      <section data-background-gradient="linear-gradient(160deg, #1e293b 0%, #111827 100%)">
+        <div class="slide-nav">
+          <div class="nav-item">표지</div>
+          <div class="nav-item">문제</div>
+          <div class="nav-item">솔루션</div>
+          <div class="nav-item">데모</div>
+          <div class="nav-item">AI기술</div>
+          <div class="nav-item">사용흐름</div>
+          <div class="nav-item">차별점</div>
+          <div class="nav-item active">성능</div>
+          <div class="nav-item">시장</div>
+          <div class="nav-item">Q&A</div>
+        </div>
+
+        <div class="slide-content" style="padding-top: 1rem;">
+          <h2 style="margin-bottom: 0.3em;">424개 영상으로 검증된 성능</h2>
+
+          <div class="two-col" style="gap: 1.5rem; align-items: start;">
+            <div>
+              <div class="stat-grid stat-grid-3" style="margin: 0 0 0.8rem; gap: 0.5rem;">
+                <div class="stat-box fragment zoom-in" data-fragment-index="0" style="padding: 0.6rem 0.4rem;">
+                  <div class="stat-number" style="font-size: 1.6em;">95.2%</div>
+                  <div class="stat-label">감지율<br>(Recall)</div>
+                </div>
+                <div class="stat-box fragment zoom-in" data-fragment-index="0" style="padding: 0.6rem 0.4rem;">
+                  <div class="stat-number" style="font-size: 1.6em; color: var(--accent);">94.6%</div>
+                  <div class="stat-label">정밀도<br>(Precision)</div>
+                </div>
+                <div class="stat-box fragment zoom-in" data-fragment-index="0" style="padding: 0.6rem 0.4rem;">
+                  <div class="stat-number" style="font-size: 1.6em; color: var(--warning);">F1 94.9</div>
+                  <div class="stat-label">종합<br>점수</div>
+                </div>
+              </div>
+
+              <div style="font-size:0.6em; font-weight:600; color:rgba(255,255,255,0.6); margin-bottom:8px;">낙상 유형별 감지율</div>
+              <div class="progress-row fragment fade-up" data-fragment-index="1">
+                <div class="progress-label"><span>뒤로 넘어짐 <span style="color:var(--muted);">(가장 위험)</span></span><span style="color:var(--accent2); font-weight:700;">99%</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:99%;"></div></div>
+              </div>
+              <div class="progress-row fragment fade-up" data-fragment-index="1">
+                <div class="progress-label"><span>앞으로 넘어짐</span><span style="color:var(--accent2); font-weight:700;">97%</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:97%;"></div></div>
+              </div>
+              <div class="progress-row fragment fade-up" data-fragment-index="1">
+                <div class="progress-label"><span>옆으로 쓰러짐</span><span style="color:var(--accent2); font-weight:700;">91%</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:91%;"></div></div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:0.6em; font-weight:600; color:rgba(255,255,255,0.6); margin-bottom:8px;">타 연구 대비 검증 규모</div>
+              <div class="table-wrap fragment fade-up" data-fragment-index="0">
+                <table class="data-table" style="font-size: 0.9em;">
+                  <thead>
+                    <tr>
+                      <th style="width:28%;">구분</th>
+                      <th class="col-cg" style="color:var(--accent2); width:36%;">SENTIO</th>
+                      <th style="width:36%;">타 연구</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style="font-weight:600; color:#fff;">검증 영상</td>
+                      <td class="col-cg hl">424개</td>
+                      <td class="dim">80개 이하</td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight:600; color:#fff;">핵심 지표</td>
+                      <td class="col-cg hl">F1 94.9</td>
+                      <td class="dim">Accuracy 기준*</td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight:600; color:#fff;">다인 추적</td>
+                      <td class="col-cg hl">ByteTrack</td>
+                      <td class="dim">미지원</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="info-box safe fragment fade-up" data-fragment-index="1" style="margin-top: 0.6rem; font-size: 0.6em;">
+                <strong>검증 기준:</strong> AI Hub 공인 데이터셋 424건 — 학습에 사용하지 않은 별도 영상으로 독립 검증
+              </div>
+              <div class="foot-note">* Accuracy와 F1은 측정 기준이 다릅니다. F1은 실제 낙상 감지 능력을 측정합니다.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== 9. 시장 & 사업 모델 ====== -->
+      <section data-background-gradient="linear-gradient(160deg, #111827 0%, #1e293b 100%)">
+        <div class="slide-nav">
+          <div class="nav-item">표지</div>
+          <div class="nav-item">문제</div>
+          <div class="nav-item">솔루션</div>
+          <div class="nav-item">데모</div>
+          <div class="nav-item">AI기술</div>
+          <div class="nav-item">사용흐름</div>
+          <div class="nav-item">차별점</div>
+          <div class="nav-item">성능</div>
+          <div class="nav-item active">시장</div>
+          <div class="nav-item">Q&A</div>
+        </div>
+
+        <div class="slide-content">
+          <h2>시장 & 사업 모델</h2>
+
+          <div class="two-col" style="gap: 1.2rem; align-items: start;">
+            <!-- 좌: 타겟 시장 + 도입 프로세스 -->
+            <div>
+              <h3 style="color: var(--primary-light); margin-bottom: 0.4rem; font-size: 0.85em;">타겟 시장</h3>
+              <div class="card fragment fade-up" data-fragment-index="0" style="margin-bottom: 0.35rem; border-color: rgba(248,113,113,0.3); padding:0.55rem 0.7rem;">
+                <h4 class="text-danger" style="font-size:0.8em;">1차: 요양병원/시설</h4>
+                <p style="font-size:0.65em;">요양병원 1,900곳 + 시설 5,800곳 <span class="badge badge-danger" style="font-size:0.85em;">의무화</span></p>
+              </div>
+              <div class="card fragment fade-up" data-fragment-index="0" style="margin-bottom: 0.35rem; padding:0.55rem 0.7rem;">
+                <h4 style="font-size:0.8em;">2차: 재활/종합병원</h4>
+                <p style="font-size:0.65em;">재활 환자 모니터링, 대기실 안전</p>
+              </div>
+              <div class="card fragment fade-up" data-fragment-index="0" style="margin-bottom: 0.35rem; padding:0.55rem 0.7rem;">
+                <h4 class="text-safe" style="font-size:0.8em;">3차: 독거노인 돌봄</h4>
+                <p style="font-size:0.65em;">고령자 180만명 <span class="badge badge-safe" style="font-size:0.85em;">B2G</span></p>
+              </div>
+              <div style="display:flex; gap:0.4rem; margin-top:0.3rem;">
+                <div class="stat-box" style="padding:0.35rem 0.5rem; flex:1; text-align:center;">
+                  <div class="stat-number" style="font-size:1em; color:var(--accent);">7.7조원</div>
+                  <div class="stat-label" style="font-size:0.5em;">디지털 헬스케어 (2025)</div>
+                </div>
+                <div class="stat-box" style="padding:0.35rem 0.5rem; flex:1; text-align:center;">
+                  <div class="stat-number" style="font-size:1em; color:var(--warning);">CAGR 12.8%</div>
+                  <div class="stat-label" style="font-size:0.5em;">글로벌 낙상감지 성장률</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 우: SaaS 요금제 -->
+            <div>
+              <h3 style="color: var(--accent); margin-bottom: 0.4rem; font-size: 0.85em;">SaaS 구독 요금제</h3>
+              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.4rem;">
+                <div class="price-card fragment fade-up" data-fragment-index="0">
+                  <div class="plan-name">Basic</div>
+                  <div class="price">30만원</div>
+                  <div class="divider"></div>
+                  <div class="price-features">
+                    &#10003; 카메라 2대<br>
+                    &#10003; 낙상 감지<br>
+                    &#10003; 모바일 알림
+                  </div>
+                </div>
+                <div class="price-card featured fragment fade-up" data-fragment-index="0">
+                  <div class="plan-badge">추천</div>
+                  <div class="plan-name">Pro</div>
+                  <div class="price">70만원</div>
+                  <div class="divider"></div>
+                  <div class="price-features">
+                    &#10003; 카메라 5대<br>
+                    &#10003; 기록 30일<br>
+                    &#10003; 우선 지원
+                  </div>
+                </div>
+                <div class="price-card fragment fade-up" data-fragment-index="0">
+                  <div class="plan-name">Enterprise</div>
+                  <div class="price" style="font-size:1em;">별도 협의</div>
+                  <div class="divider"></div>
+                  <div class="price-features">
+                    &#10003; 카메라 무제한<br>
+                    &#10003; HIS 연동<br>
+                    &#10003; 24/7 전담
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-box fragment" data-fragment-index="1" style="margin-top:0.5rem; font-size:0.65em; text-align:center; padding:0.5rem;">
+                <strong>전략:</strong> 2~4주 무료 PoC(실증 운영) → 결과 리포트 → 구독 전환
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== 10. Q&A ====== -->
+      <section data-background-gradient="linear-gradient(160deg, #111827 0%, #1f2937 50%, #111827 100%)">
+        <div class="slide-nav">
+          <div class="nav-item">표지</div>
+          <div class="nav-item">문제</div>
+          <div class="nav-item">솔루션</div>
+          <div class="nav-item">데모</div>
+          <div class="nav-item">AI기술</div>
+          <div class="nav-item">사용흐름</div>
+          <div class="nav-item">차별점</div>
+          <div class="nav-item">성능</div>
+          <div class="nav-item">시장</div>
+          <div class="nav-item active">Q&A</div>
+        </div>
+
+        <div class="slide-content" style="padding-top: 2rem;">
+          <div style="text-align:center;">
+            <!-- Sentio 동심원 펄스 로고 (Q&A) -->
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:64px; height:64px; display:inline-block;">
+              <circle cx="50" cy="50" r="45" fill="url(#sg)" opacity="0.15"/>
+              <circle cx="50" cy="50" r="35" fill="url(#sg)" opacity="0.25"/>
+              <circle cx="50" cy="50" r="25" fill="url(#sg)" opacity="0.5"/>
+              <circle cx="50" cy="50" r="14" fill="url(#sg)"/>
+              <circle cx="50" cy="50" r="6" fill="white" opacity="0.9"/>
+            </svg>
+          </div>
+
+          <h1 style="font-size: 2em; text-align:center;">SENTIO <span style="color: var(--accent);">AI</span></h1>
+          <p style="font-size: 0.85em; text-align:center; color: var(--muted); letter-spacing: 0.1em;">감사합니다</p>
+
+          <div class="stat-grid stat-grid-3" style="margin-top: 1.5rem; max-width: 650px;">
+            <div class="stat-box">
+              <div class="stat-number" style="font-size: 1.5em;">19/20</div>
+              <div class="stat-label">낙상 감지</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-number" style="font-size: 1.5em; color: var(--accent);">424건</div>
+              <div class="stat-label">검증 규모</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-number" style="font-size: 1.5em; color: var(--safe);">Ready</div>
+              <div class="stat-label">시범 운영 준비 완료</div>
+            </div>
+          </div>
+
+          <p style="margin-top: 1.2rem; font-size: 0.75em; color: #6b7280; text-align:center;">
+            요양병원 실시간 모니터링의 골든타임, AI가 지킵니다.
+          </p>
+          <p style="text-align:center;">
+            <span class="badge badge-safe">20건 중 19건 감지</span>
+            <span class="badge badge-primary">오알림 5% 미만</span>
+            <span class="badge badge-danger">프라이버시 보호</span>
+          </p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: 'c/t',
+      transition: 'slide',
+      transitionSpeed: 'default',
+      controls: true,
+      progress: true,
+      center: true,
+      width: 1280,
+      height: 720,
+      margin: 0.04,
+      autoAnimate: true,
+      autoAnimateDuration: 0.6
+    });
+  </script>
+</body>
+</html>

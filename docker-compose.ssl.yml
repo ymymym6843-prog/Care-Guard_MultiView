@@ -1,0 +1,30 @@
+# SENTIO SSL/HTTPS 오버라이드
+# 사용법: docker compose -f docker-compose.yml -f docker-compose.ssl.yml up -d
+#
+# 사전 요구:
+#   1. DOMAIN 환경 변수 설정 (.env.docker에 추가)
+#   2. certbot으로 초기 인증서 발급:
+#      docker compose -f docker-compose.yml -f docker-compose.ssl.yml run --rm certbot \
+#        certonly --webroot -w /var/www/certbot -d $DOMAIN
+
+services:
+  nginx:
+    ports:
+      - "${HTTPS_PORT:-443}:443"
+    volumes:
+      - ./nginx/nginx-ssl.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - certbot_conf:/etc/letsencrypt:ro
+      - certbot_www:/var/www/certbot:ro
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+volumes:
+  certbot_conf:
+  certbot_www:

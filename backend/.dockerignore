@@ -1,0 +1,19 @@
+__pycache__
+*.pyc
+.venv
+venv
+.env
+.env.local
+*.db
+*.sqlite
+*.log
+.pytest_cache
+htmlcov
+.coverage
+.git
+.gitignore
+
+# 모델 파일 - 데모 시연용 모두 포함 (백업 포함, 후보 모델 비교 어필용)
+incidents/
+reports/
+scripts/

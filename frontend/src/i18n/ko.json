@@ -1,0 +1,500 @@
+{
+  "nav": {
+    "dashboard": "대시보드",
+    "cameras": "카메라",
+    "alerts": "알림 이벤트",
+    "history": "이벤트 기록",
+    "stats": "통계",
+    "reports": "리포트",
+    "settings": "설정"
+  },
+  "header": {
+    "subtitle": "낙상 감지 시스템",
+    "mainHeader": "메인 헤더",
+    "connected": "연결됨",
+    "disconnected": "연결 끊김",
+    "serverConnected": "백엔드 서버 정상 연결",
+    "serverDisconnected": "백엔드 서버 연결 실패 - 재연결 시도 중",
+    "noAlerts": "알림 없음",
+    "unreadAlerts": "미확인 알림 {{count}}건",
+    "clickToAcknowledge": "클릭하여 알림 확인 (비프음 중지)",
+    "acknowledged": "확인",
+    "acknowledgeMessage": "의료진이 낙상 알림을 확인했습니다.",
+    "lightMode": "라이트 모드",
+    "darkMode": "다크 모드",
+    "switchToLight": "라이트 모드로 전환",
+    "switchToDark": "다크 모드로 전환"
+  },
+  "sidebar": {
+    "mainNav": "주요 탐색",
+    "expand": "사이드바 펼치기",
+    "collapse": "사이드바 접기"
+  },
+  "room": {
+    "allRooms": "전체 공간",
+    "selectRoom": "공간 선택",
+    "room": "공간",
+    "noRooms": "등록된 공간이 없습니다",
+    "cameraCount": "카메라 {{count}}대"
+  },
+  "views": {
+    "cameraManagement": "카메라 관리",
+    "skipToContent": "본문으로 건너뛰기"
+  },
+  "common": {
+    "loading": "로딩 중...",
+    "save": "저장",
+    "cancel": "취소",
+    "delete": "삭제",
+    "export": "내보내기",
+    "download": "다운로드",
+    "generate": "생성",
+    "confirm": "확인",
+    "search": "검색",
+    "noData": "데이터가 없습니다",
+    "offline": "서버에 연결할 수 없습니다. 백엔드 서버 상태를 확인해주세요.",
+    "seconds": "초"
+  },
+  "auth": {
+    "login": "로그인",
+    "logout": "로그아웃",
+    "username": "아이디",
+    "password": "비밀번호",
+    "register": "회원가입",
+    "loginLoading": "로그인 중...",
+    "loginFailed": "로그인에 실패했습니다",
+    "serverError": "서버에 연결할 수 없습니다",
+    "labelUsername": "사용자명",
+    "labelPassword": "비밀번호",
+    "labelFullName": "이름 (선택)",
+    "labelConfirmPassword": "비밀번호 확인",
+    "registerLoading": "등록 중...",
+    "createAdmin": "관리자 계정 생성",
+    "initialSetup": "초기 관리자 계정 설정",
+    "noUsersMessage": "시스템에 등록된 사용자가 없습니다.",
+    "firstAccountAdmin": "첫 번째 계정은 자동으로 <strong>관리자</strong> 권한을 받습니다.",
+    "passwordMismatch": "비밀번호가 일치하지 않습니다",
+    "passwordTooShort": "비밀번호는 8자 이상이어야 합니다",
+    "registerFailed": "등록에 실패했습니다",
+    "registerSuccessLoginFailed": "등록은 완료되었으나 자동 로그인에 실패했습니다. 로그인 화면에서 다시 시도하세요."
+  },
+  "events": {
+    "title": "이벤트 기록",
+    "alertsTitle": "알림 이벤트",
+    "subtitleAll": "전체 공간 이벤트 총 {{total}}건",
+    "subtitleRoom": "{{room}} 이벤트 총 {{total}}건",
+    "alertsSubtitleAll": "전체 공간 미확인 알림 {{total}}건",
+    "alertsSubtitleRoom": "{{room}} 미확인 알림 {{total}}건",
+    "filter": "필터",
+    "filterAll": "전체",
+    "ackAll": "전체",
+    "unacknowledged": "미확인",
+    "acknowledgedLabel": "확인됨",
+    "acknowledged": "이벤트가 확인되었습니다.",
+    "acknowledgeError": "확인 처리에 실패했습니다.",
+    "acknowledge": "확인",
+    "batchAcknowledge": "모두 확인",
+    "batchAcknowledged": "{{count}}건 이벤트가 확인되었습니다.",
+    "confirmed": "확인",
+    "noEvents": "이벤트가 없습니다.",
+    "noAlerts": "미확인 알림이 없습니다.",
+    "exportSuccess": "{{format}} 내보내기 완료",
+    "exportError": "내보내기에 실패했습니다."
+  },
+  "stats": {
+    "title": "통계 대시보드",
+    "subtitle": "최근 {{days}}일간 낙상 이벤트 통계",
+    "loading": "통계 데이터 불러오는 중...",
+    "totalEvents": "총 이벤트",
+    "dangerEvents": "위험 이벤트",
+    "warningEvents": "주의 이벤트",
+    "acknowledgmentRate": "확인율",
+    "avgResponseTime": "평균 응답 시간",
+    "dailyTrend": "일별 이벤트 추이",
+    "hourlyFrequency": "시간대별 빈도",
+    "noData": "데이터가 없습니다",
+    "acknowledged": "건 확인 완료",
+    "refresh": "새로고침",
+    "days": "일",
+    "event": "이벤트"
+  },
+  "report": {
+    "title": "리포트",
+    "subtitle": "낙상 이벤트 분석 리포트 생성 및 데이터 내보내기",
+    "generate": "리포트 생성",
+    "period": "조회 기간",
+    "days": "일",
+    "availableReports": "생성된 리포트",
+    "noReports": "생성된 리포트가 없습니다",
+    "exportCSV": "CSV 내보내기",
+    "exportExcel": "Excel 내보내기",
+    "generating": "생성 중...",
+    "generateDays": "{{days}}일 리포트 생성",
+    "generateSuccess": "{{days}}일간 리포트 생성 완료",
+    "generateError": "리포트 생성 실패",
+    "generateException": "리포트 생성 중 오류 발생",
+    "listError": "리포트 목록을 불러올 수 없습니다",
+    "downloadSuccess": "다운로드 완료",
+    "downloadError": "다운로드 실패",
+    "downloadException": "다운로드 중 오류 발생",
+    "exportData": "데이터",
+    "exportSuccess": "{{format}} 내보내기 완료",
+    "exportError": "내보내기 실패",
+    "exportException": "내보내기 중 오류 발생"
+  },
+  "consent": {
+    "title": "개인정보 수집 동의",
+    "agree": "동의합니다",
+    "required": "서비스 이용을 위해 개인정보 수집에 동의해주세요.",
+    "collectedItems": "수집 항목",
+    "videoData": "영상 데이터 (실시간 처리 후 미보관)",
+    "poseLandmarks": "포즈 랜드마크 좌표",
+    "fallEvents": "낙상 이벤트 기록",
+    "purpose": "수집 목적",
+    "purposeDesc": "환자 안전 모니터링 및 낙상 사고 예방",
+    "retention": "보관 기간",
+    "eventRetention": "이벤트 기록: 90일 후 자동 삭제",
+    "snapshotRetention": "스냅샷: 30일 후 자동 삭제",
+    "thirdParty": "제3자 제공",
+    "thirdPartyDesc": "의료진에 한정, EMR 연동 시 해당 의료기관",
+    "legalNotice": "본 시스템은 개인정보보호법(PIPA)을 준수하며, 동의 철회는 설정에서 가능합니다."
+  },
+  "dashboard": {
+    "status": {
+      "safe": "안전",
+      "warning": "주의",
+      "danger": "위험",
+      "safeDesc": "정상 모니터링 중",
+      "warningDesc": "이상 자세 감지됨",
+      "dangerDesc": "낙상이 감지되었습니다!",
+      "person": "인물",
+      "totalPersons": "총 인원",
+      "lastUpdate": "마지막 업데이트",
+      "label": "상태"
+    },
+    "metrics": {
+      "posture": "자세",
+      "fallType": "낙상 종류",
+      "confidence": "신뢰도",
+      "walkingAid": "보행도구",
+      "realtime": "실시간 측정값",
+      "fallProbability": "낙상 확률",
+      "rule": "규칙",
+      "ml": "ML",
+      "angle": "각도",
+      "duration": "지속",
+      "fallen": "낙상",
+      "aidLost": "도구분실",
+      "noPersons": "감지된 인원이 없습니다",
+      "walkingAidAlert": "보행도구 사용자 <strong>{{count}}명</strong> 감지 중",
+      "postures": {
+        "standing": "서있음",
+        "sitting": "앉아있음",
+        "lying": "누워있음",
+        "bending": "숙이는 중",
+        "unknown": "분석 중"
+      },
+      "fallTypes": {
+        "normal": "정상",
+        "front_fall": "전방낙상",
+        "back_fall": "후방낙상",
+        "side_fall": "측면낙상",
+        "pre_impact": "충격전",
+        "unknown": "-"
+      },
+      "fallTypesShort": {
+        "front_fall": "전방",
+        "back_fall": "후방",
+        "side_fall": "측면",
+        "pre_impact": "충격전",
+        "unknown": "낙상"
+      }
+    },
+    "eventLog": {
+      "title": "이벤트 로그",
+      "clear": "지우기",
+      "noEvents": "이벤트가 없습니다."
+    },
+    "video": {
+      "title": "실시간 모니터링",
+      "live": "LIVE",
+      "start": "시작",
+      "stop": "중지",
+      "mjpeg": "MJPEG로 전환",
+      "webrtc": "WebRTC로 전환",
+      "fullscreen": "전체화면",
+      "exitFullscreen": "전체화면 해제",
+      "inactive": "카메라 비활성",
+      "inactiveDesc": "시작 버튼을 눌러 모니터링을 시작하세요",
+      "streamDisconnected": "스트림 연결 끊김",
+      "cameraInactive": "카메라가 비활성 상태입니다",
+      "privacy": {
+        "skeleton": "스켈레톤",
+        "skeletonDesc": "스켈레톤만 표시 (최대 프라이버시)",
+        "blur": "블러",
+        "blurDesc": "블러 처리된 영상",
+        "full": "원본",
+        "fullDesc": "원본 영상 표시"
+      },
+      "status": {
+        "safe": "안전",
+        "warning": "주의",
+        "danger": "위험 - 낙상 감지"
+      },
+      "connection": {
+        "connected": "연결됨",
+        "connecting": "연결 중",
+        "disconnected": "연결 끊김"
+      },
+      "selectCamera": "카메라 선택",
+      "switchingCamera": "카메라 전환 중...",
+      "detectingCameras": "카메라 탐색 중...",
+      "noCameraFound": "사용 가능한 카메라가 없습니다",
+      "cameraIndex": "카메라 {{index}}",
+      "multiCamera": "다중 카메라",
+      "addCamera": "카메라 추가",
+      "removeCamera": "카메라 제거",
+      "cameraName": "카메라 이름",
+      "cameraSource": "카메라 소스"
+    },
+    "settings": {
+      "title": "감지 설정",
+      "warningTime": "주의 알림 시간",
+      "dangerTime": "위험 알림 시간",
+      "sensitivity": "감지 감도",
+      "volume": "알림음량",
+      "soundEnabled": "소리 알림",
+      "ttsEnabled": "음성 안내",
+      "pushEnabled": "푸시 알림",
+      "subscribe": "구독",
+      "unsubscribe": "구독 취소",
+      "notSupported": "브라우저 미지원",
+      "privacyMode": "프라이버시 모드",
+      "skeletonOverlay": "스켈레톤 표시"
+    },
+    "dangerAlert": {
+      "title": "낙상이 감지되었습니다!",
+      "checkPatient": "즉시 환자 상태를 확인해주세요.",
+      "duration": "지속 시간",
+      "detectedAt": "감지 시각",
+      "acknowledge": "확인 및 조치 완료"
+    },
+    "safeZone": {
+      "title": "Safe-Zone 설정",
+      "addZone": "영역 추가",
+      "zoneName": "영역 이름",
+      "newZone": "새 영역",
+      "safeZone": "안전 영역",
+      "dangerZone": "위험 영역",
+      "exclusionZone": "제외 영역",
+      "save": "저장",
+      "cancel": "취소",
+      "vertices": "개 꼭짓점",
+      "minVertices": "최소 3개 필요",
+      "canSave": "저장 가능",
+      "deleteZone": "{{name}} 삭제"
+    },
+    "connection": {
+      "connected": "연결됨",
+      "connecting": "연결 중...",
+      "disconnected": "연결 끊김"
+    },
+    "demo": {
+      "title": "데모 시연",
+      "stop": "중지",
+      "playing": "재생중",
+      "more": "개 더...",
+      "envWarning": ".env에 DEMO_VIDEO_DIR을 설정하세요",
+      "showRecommended": "추천만 보기",
+      "showAll": "전체 보기",
+      "categories": {
+        "front_fall": "전면 낙상",
+        "back_fall": "후면 낙상",
+        "side_fall": "측면 낙상",
+        "normal": "정상",
+        "pre_impact": "전조 감지",
+        "unknown": "기타"
+      },
+      "alerts": {
+        "warning": "이상 자세가 감지되었습니다",
+        "danger": "낙상이 감지되었습니다!",
+        "preImpact": "전조 증상이 감지되었습니다",
+        "ttsDanger": "위험. 낙상 사고가 감지되었습니다."
+      }
+    },
+    "units": {
+      "people": "명",
+      "seconds": "초",
+      "duration": "지속 시간",
+      "more": "개 더...",
+      "hour": "시",
+      "count": "건"
+    },
+    "modelManager": {
+      "title": "AI 모델 관리",
+      "description": "YOLO 감지 모델을 교체하고 AI 성능을 관리합니다.",
+      "yoloModels": "YOLO 포즈 감지 모델",
+      "classifierTitle": "낙상 분류 시스템 (항상 활성화)",
+      "falsePositiveTitle": "오탐지 데이터 보고",
+      "speed": "속도",
+      "accuracy": "정확도",
+      "size": "크기",
+      "active": "사용 중",
+      "switch": "교체",
+      "target": "대상",
+      "alwaysActive": "항상 활성화",
+      "models": {
+        "nano": {
+          "title": "YOLO11 Nano",
+          "speed": "27ms/frame (GPU)",
+          "accuracy": "낙상 감지율 88%",
+          "description": "경량 모델 (2.6M), CPU 환경에 적합하나 감지 정확도 낮음",
+          "badge": "경량"
+        },
+        "small": {
+          "title": "YOLO11 Small",
+          "speed": "26ms/frame (GPU)",
+          "accuracy": "낙상 감지율 97%",
+          "description": "최고 성능 - 속도와 정확도 모두 최적, GPU 환경 추천",
+          "badge": "추천"
+        },
+        "yolo26n": {
+          "title": "YOLO26 Nano",
+          "speed": "28ms/frame (GPU)",
+          "accuracy": "낙상 감지율 87%",
+          "description": "최신 아키텍처 경량 모델 (2.9M), YOLO11n과 유사한 성능",
+          "badge": "최신"
+        },
+        "yolo26s": {
+          "title": "YOLO26 Small",
+          "speed": "30ms/frame (GPU)",
+          "accuracy": "낙상 감지율 96%",
+          "description": "최신 아키텍처 (10.4M), YOLO11s보다 약간 느리고 감지율 소폭 낮음",
+          "badge": "최신"
+        },
+        "gru": {
+          "title": "낙상 분류기 (GRU)",
+          "speed": "N/A",
+          "accuracy": "오탐 방지율 97%",
+          "description": "YOLO와 함께 사용, 30프레임 시퀀스 분석으로 오탐지 감소",
+          "badge": "분류기"
+        },
+        "custom": {
+          "title": "사용자 정의 모델",
+          "speed": "알 수 없음",
+          "accuracy": "알 수 없음",
+          "description": "사용자 정의 모델",
+          "badge": "커스텀"
+        }
+      },
+      "yolo26Info": {
+        "title": "4종 모델 벤치마크 결과 (222개 영상)",
+        "description": "YOLO11 Small이 감지율 97%, 속도 26ms로 최고 성능입니다. YOLO26은 최신 아키텍처이나 YOLO11s 대비 감지율 -1%, 속도 +4ms로 YOLO11s를 기본 모델로 사용합니다."
+      },
+      "classifierInfo": "YOLO 모델과 함께 자동으로 사용되며 교체할 수 없습니다",
+      "upload": {
+        "title": "오탐지된 이미지 업로드",
+        "description": "모델이 잘못 인식한(낙상인데 아님, 아닌데 낙상 등) 스크린샷을 업로드해주세요. 다음 모델 학습 시 반영됩니다.",
+        "button": "이미지 선택",
+        "uploading": "업로드 중..."
+      },
+      "toasts": {
+        "listError": "모델 목록을 불러오지 못했습니다.",
+        "connectionError": "서버 연결 실패",
+        "switchConfirm": "정말로 모델을 교체하시겠습니까?",
+        "switchWarning": "잠시 동안 감지가 중단될 수 있습니다.",
+        "switchSuccess": "모델이 교체되었습니다.",
+        "switchError": "모델 교체 실패",
+        "serverError": "서버 오류가 발생했습니다.",
+        "uploadSuccess": "학습 데이터 업로드 완료",
+        "uploadError": "업로드 실패",
+        "uploadingError": "업로드 중 오류 발생"
+      }
+    },
+    "falseReport": {
+      "title": "오탐지/미탐지 보고",
+      "description": "낙상 감지 결과가 잘못된 경우 보고해주세요. 모델 개선에 활용됩니다.",
+      "newReport": "새 보고 작성",
+      "reportType": "보고 유형",
+      "types": {
+        "falsePositive": "오탐지 (낙상 아닌데 감지)",
+        "falseNegative": "미탐지 (낙상인데 미감지)"
+      },
+      "eventId": "이벤트 ID",
+      "eventIdPlaceholder": "관련 이벤트 번호 (선택)",
+      "notes": "메모",
+      "notesPlaceholder": "상황 설명을 입력해주세요",
+      "image": "스크린샷",
+      "selectImage": "이미지 선택",
+      "submit": "보고 제출",
+      "submitting": "제출 중...",
+      "reportList": "보고 목록",
+      "noReports": "등록된 보고가 없습니다",
+      "hasImage": "이미지",
+      "filter": {
+        "all": "전체",
+        "falsePositive": "오탐지",
+        "falseNegative": "미탐지"
+      },
+      "summary": {
+        "total": "총 보고",
+        "falsePositive": "오탐지",
+        "falseNegative": "미탐지",
+        "thisWeek": "이번 주 {{count}}건 보고",
+        "attentionBanner": "보고가 다수 누적되었습니다. 모델 개선을 검토해주세요."
+      },
+      "toasts": {
+        "createSuccess": "보고가 등록되었습니다",
+        "createError": "보고 등록에 실패했습니다",
+        "deleteConfirm": "이 보고를 삭제하시겠습니까?",
+        "deleteSuccess": "보고가 삭제되었습니다",
+        "deleteError": "삭제에 실패했습니다"
+      }
+    }
+  },
+  "roomManager": {
+    "title": "공간 관리",
+    "addRoom": "공간 추가",
+    "name": "공간 이름",
+    "description": "설명",
+    "namePlaceholder": "예: 대기실 A",
+    "descPlaceholder": "예: 1층 대기실",
+    "add": "추가",
+    "edit": "수정",
+    "noRooms": "등록된 공간이 없습니다. 공간을 추가해주세요.",
+    "noDescription": "설명 없음",
+    "assignCameras": "카메라 배정",
+    "noCameras": "감지된 카메라가 없습니다",
+    "noCameraAssigned": "미배정",
+    "assigned": "배정됨",
+    "loadError": "공간 목록을 불러올 수 없습니다",
+    "connectionError": "서버 연결 실패"
+  },
+  "userManagement": {
+    "title": "사용자 관리",
+    "addUser": "사용자 추가",
+    "refresh": "새로고침",
+    "username": "사용자명",
+    "fullName": "이름",
+    "password": "비밀번호",
+    "role": "역할",
+    "staff": "Staff",
+    "admin": "Admin",
+    "add": "추가",
+    "cancel": "취소",
+    "loading": "불러오는 중...",
+    "noUsers": "등록된 사용자가 없습니다",
+    "inactive": "비활성",
+    "placeholders": {
+      "username": "사용자 아이디 (예: staff01)",
+      "fullName": "성함 (예: 홍길동)"
+    },
+    "toasts": {
+      "listError": "사용자 목록을 불러올 수 없습니다",
+      "connectionError": "서버에 연결할 수 없습니다",
+      "passwordShort": "비밀번호는 8자 이상이어야 합니다",
+      "addError": "사용자 추가에 실패했습니다",
+      "addSuccess": "계정이 생성되었습니다"
+    }
+  }
+}

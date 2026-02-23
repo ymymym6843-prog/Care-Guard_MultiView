@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SENTIO AI - 1min Promo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+
+  /* ===== AUTO-SCALE WRAPPER ===== */
+  #canvas {
+    width: 1920px; height: 1080px;
+    position: absolute; top: 50%; left: 50%;
+    transform-origin: center center;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #fff; background: #0a0a1a;
+    overflow: hidden;
+  }
+
+  /* ===== PROGRESS BAR ===== */
+  #progress-bar {
+    position: absolute; top: 0; left: 0; height: 4px;
+    background: linear-gradient(90deg, #00d4ff, #7b2ff7);
+    z-index: 9999; transition: width 0.3s linear; width: 0%;
+  }
+
+  /* ===== SCENES ===== */
+  .scene {
+    position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.8s ease; pointer-events: none;
+  }
+  .scene.active { opacity: 1; pointer-events: auto; }
+
+  /* ===== SUBTITLE ===== */
+  #subtitle-bar {
+    position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);
+    max-width: 1500px; width: 85%; text-align: center;
+    font-size: 34px; font-weight: 500; color: #fff;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.9);
+    z-index: 9998; padding: 18px 48px;
+    background: rgba(0,0,0,0.6); border-radius: 14px;
+    backdrop-filter: blur(12px); opacity: 0;
+    transition: opacity 0.4s ease; line-height: 1.5; letter-spacing: -0.02em;
+  }
+  #subtitle-bar.visible { opacity: 1; }
+
+  /* ===== TIMER ===== */
+  #timer {
+    position: absolute; top: 18px; right: 28px;
+    z-index: 9999; font-size: 18px; color: rgba(255,255,255,0.3);
+    font-variant-numeric: tabular-nums;
+    font-family: 'Noto Sans KR', monospace;
+  }
+
+  /* ===== PARTICLES ===== */
+  .particles { position: absolute; width: 100%; height: 100%; overflow: hidden; pointer-events: none; }
+  .particle {
+    position: absolute; width: 4px; height: 4px;
+    background: rgba(0,212,255,0.3); border-radius: 50%;
+    animation: float-up linear infinite;
+  }
+  @keyframes float-up {
+    0% { transform: translateY(1080px) scale(0); opacity: 0; }
+    10% { opacity: 1; } 90% { opacity: 1; }
+    100% { transform: translateY(-20px) scale(1); opacity: 0; }
+  }
+
+  /* ===== SCENE 1: HOOK ===== */
+  #scene1 { flex-direction: column; gap: 30px; }
+  #scene1 .bg-img {
+    position: absolute; width: 100%; height: 100%; object-fit: cover;
+    filter: brightness(0.25) blur(3px);
+  }
+  #scene1 .content { position: relative; z-index: 2; text-align: center; }
+  #scene1 .big-stat {
+    font-size: 200px; font-weight: 900;
+    background: linear-gradient(135deg, #ff4444, #ff8800);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    opacity: 0; transform: scale(0.5);
+    transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  #scene1 .big-stat.show { opacity: 1; transform: scale(1); }
+  #scene1 .stat-label {
+    font-size: 52px; font-weight: 300; color: #ddd; margin-top: 10px;
+    opacity: 0; transform: translateY(30px);
+    transition: all 0.6s ease 0.3s;
+  }
+  #scene1 .stat-label.show { opacity: 1; transform: translateY(0); }
+  .danger-pulse {
+    position: absolute; width: 700px; height: 700px; z-index: 1;
+    border-radius: 50%; border: 2px solid rgba(255,68,68,0.3);
+    animation: pulse-ring 2s ease-out infinite;
+  }
+  @keyframes pulse-ring { 0%{transform:scale(0.8);opacity:0.6}100%{transform:scale(1.6);opacity:0} }
+
+  /* ===== SCENE 2: PROBLEM ===== */
+  #scene2 { flex-direction: column; gap: 40px; }
+  #scene2 .bg-img {
+    position: absolute; width: 100%; height: 100%; object-fit: cover;
+    filter: brightness(0.2) blur(2px);
+  }
+  #scene2 .problem-cards {
+    display: flex; gap: 50px; position: relative; z-index: 2;
+  }
+  .p-card {
+    width: 380px; padding: 50px 36px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,68,68,0.25);
+    border-radius: 24px; text-align: center;
+    backdrop-filter: blur(8px);
+    opacity: 0; transform: translateY(50px);
+    transition: all 0.6s ease;
+  }
+  .p-card.show { opacity: 1; transform: translateY(0); }
+  .p-card .card-img { width: 80px; height: 80px; margin: 0 auto 20px; border-radius: 16px; object-fit: cover; }
+  .p-card .num { font-size: 60px; font-weight: 900; color: #ff4444; }
+  .p-card .desc { font-size: 24px; color: #bbb; margin-top: 10px; line-height: 1.5; }
+
+  /* ===== SCENE 3: SOLUTION REVEAL ===== */
+  #scene3 { flex-direction: column; gap: 24px; }
+  #scene3 .bg-img {
+    position: absolute; width: 100%; height: 100%; object-fit: cover;
+    filter: brightness(0.15);
+  }
+  #scene3 .content { position: relative; z-index: 2; text-align: center; }
+  .logo-reveal {
+    opacity: 0; transform: scale(0.3);
+    transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .logo-reveal.show { opacity: 1; transform: scale(1); }
+  .logo-text {
+    font-size: 130px; font-weight: 900;
+    background: linear-gradient(135deg, #00d4ff, #7b2ff7, #00d4ff);
+    background-size: 200% auto;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    animation: grad-shift 3s ease infinite;
+  }
+  @keyframes grad-shift { 0%,100%{background-position:0% center}50%{background-position:100% center} }
+  .tagline {
+    font-size: 44px; font-weight: 300; color: #88ccff;
+    opacity: 0; transform: translateY(20px);
+    transition: all 0.8s ease; margin-top: 16px;
+  }
+  .tagline.show { opacity: 1; transform: translateY(0); }
+
+  /* ===== SCENE 4: DEMO VIDEO ===== */
+  #scene4 { background: #000; flex-direction: column; }
+  .demo-container {
+    position: relative; width: 1440px; height: 810px;
+    border-radius: 16px; overflow: hidden;
+    box-shadow: 0 0 80px rgba(0,212,255,0.15);
+    border: 2px solid rgba(0,212,255,0.25);
+  }
+  .demo-container video { width: 100%; height: 100%; object-fit: cover; }
+  .demo-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+
+  /* AI 분석 배지 - 실제 앱 StatusBadge 스타일 */
+  .ai-badge {
+    position: absolute; top: 16px; left: 16px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 14px; font-weight: 600;
+    padding: 6px 14px; border-radius: 9999px;
+    background: rgba(34,197,94,0.8);
+    color: #fff;
+    transition: all 0.3s ease;
+  }
+  .ai-badge.danger {
+    background: rgba(239,68,68,0.8);
+    animation: danger-pulse-badge 1s ease infinite;
+  }
+  @keyframes danger-pulse-badge {
+    0%,100%{opacity:1}50%{opacity:0.7}
+  }
+  .ai-badge .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #fff; animation: blink 1s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.3} }
+
+  /* ===== SCENE 5: MULTI-ANGLE ===== */
+  #scene5 { background: #050510; flex-direction: column; gap: 30px; }
+  .multi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 1500px; }
+  .grid-cell {
+    position: relative; border-radius: 14px; overflow: hidden;
+    border: 2px solid rgba(0,212,255,0.15);
+    opacity: 0; transform: scale(0.9); transition: all 0.6s ease;
+  }
+  .grid-cell.show { opacity: 1; transform: scale(1); }
+  .grid-cell video { width: 100%; height: 310px; object-fit: cover; }
+  .cell-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    padding: 36px 20px 14px; font-size: 20px; font-weight: 500;
+  }
+  .cell-badge {
+    position: absolute; top: 12px; right: 12px;
+    padding: 5px 14px; border-radius: 20px;
+    font-size: 15px; font-weight: 700;
+  }
+  .cell-badge.detect { background: rgba(239,68,68,0.85); }
+  .cell-badge.normal { background: rgba(34,197,94,0.85); }
+  .section-title {
+    font-size: 42px; font-weight: 700; color: #00d4ff;
+    opacity: 0; transition: opacity 0.6s ease;
+  }
+  .section-title.show { opacity: 1; }
+
+  /* ===== SCENE 6: RESULTS ===== */
+  #scene6 {
+    background: radial-gradient(ellipse at center, #0a1a2a 0%, #0a0a1a 70%);
+    flex-direction: column; gap: 60px;
+  }
+  .result-title {
+    font-size: 44px; font-weight: 300; color: #88ccff;
+    opacity: 0; transform: translateY(20px); transition: all 0.6s ease;
+  }
+  .result-title.show { opacity: 1; transform: translateY(0); }
+  .result-row { display: flex; gap: 100px; }
+  .result-circle {
+    width: 300px; height: 300px; border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative;
+    opacity: 0; transform: scale(0.5);
+    transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .result-circle.show { opacity: 1; transform: scale(1); }
+  .result-circle .value { font-size: 68px; font-weight: 900; z-index: 1; }
+  .result-circle .label { font-size: 20px; color: #aaa; z-index: 1; margin-top: 4px; }
+  .ring-svg {
+    position: absolute; width: 100%; height: 100%;
+    transform: rotate(-90deg);
+  }
+  .ring-svg circle {
+    fill: none; stroke-width: 6; stroke-linecap: round;
+    stroke-dasharray: 880; stroke-dashoffset: 880;
+    transition: stroke-dashoffset 1.5s ease;
+  }
+
+  /* ===== SCENE 7: DASHBOARD VIEWS (실제 앱 매칭) ===== */
+  #scene7 {
+    background: #0a0a1a;
+    flex-direction: column; gap: 20px;
+  }
+  .dash-title {
+    font-size: 42px; font-weight: 700; color: #00d4ff;
+    opacity: 0; transition: opacity 0.6s ease;
+  }
+  .dash-title.show { opacity: 1; }
+  .dash-views-container {
+    width: 1700px; height: 850px;
+    position: relative;
+  }
+  .dash-view {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0; transition: opacity 0.8s ease;
+    border-radius: 12px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: #0f172a;
+    display: flex;
+  }
+  .dash-view.active { opacity: 1; }
+
+  /* 좌측 네비게이션 (실제 앱) */
+  .dash-left-nav {
+    width: 200px; background: #0f172a;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    padding: 16px 12px; display: flex; flex-direction: column; gap: 2px;
+    flex-shrink: 0;
+  }
+  .dash-logo {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 8px 20px; margin-bottom: 4px;
+  }
+  .dash-logo .logo-icon {
+    width: 32px; height: 32px;
+  }
+  .dash-logo .logo-name {
+    font-size: 16px; font-weight: 800;
+    background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .dash-logo .logo-sub { font-size: 9px; color: #4b5563; letter-spacing: 0.1em; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: 8px;
+    font-size: 13px; color: #6b7280; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .nav-item.active { background: rgba(59,130,246,0.1); color: #3b82f6; }
+  .nav-item svg { width: 16px; height: 16px; opacity: 0.7; }
+  .nav-item.active svg { opacity: 1; }
+
+  /* 메인 콘텐츠 영역 */
+  .dash-main {
+    flex: 1; display: flex; flex-direction: column; overflow: hidden;
+  }
+
+  /* 상단 컨트롤 바 - 실제 앱 매칭 */
+  .dash-control-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px; margin: 8px 12px 0;
+    flex-shrink: 0;
+  }
+  .ctrl-btn {
+    padding: 5px 12px; border-radius: 6px;
+    font-size: 11px; font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05); color: #d1d5db;
+    cursor: pointer; white-space: nowrap;
+  }
+  .ctrl-btn.primary { background: #1e293b; border-color: rgba(255,255,255,0.15); color: #f1f5f9; }
+  .ctrl-btn.danger { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.3); color: #ef4444; font-weight: 700; }
+  .ctrl-select {
+    padding: 5px 10px; border-radius: 6px;
+    font-size: 11px; background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1); color: #9ca3af;
+  }
+  .ctrl-right {
+    margin-left: auto; display: flex; align-items: center; gap: 8px;
+  }
+  .ctrl-badge {
+    padding: 3px 10px; border-radius: 12px;
+    font-size: 10px; background: rgba(59,130,246,0.1);
+    color: #60a5fa;
+  }
+  .ctrl-icon-btn {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: transparent; border: 1px solid rgba(255,255,255,0.08);
+    color: #6b7280; font-size: 13px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* 카메라 그리드 (2x2) */
+  .dash-content { flex: 1; display: flex; gap: 12px; padding: 12px; overflow: hidden; }
+  .cam-grid {
+    flex: 1; display: grid; grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr; gap: 12px;
+  }
+  .cam-cell {
+    background: #1e293b; border-radius: 10px; overflow: hidden;
+    border: 2px solid #334155; display: flex; flex-direction: column;
+    position: relative;
+  }
+  .cam-cell.highlight { border-color: #f59e0b; }
+  .cam-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; background: rgba(0,0,0,0.3);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .cam-header .cam-icon { width: 14px; height: 14px; color: #6b7280; }
+  .cam-header .cam-name { font-size: 12px; font-weight: 600; color: #e2e8f0; }
+  .cam-header .live-badge {
+    padding: 1px 8px; border-radius: 4px;
+    font-size: 10px; font-weight: 700;
+    background: #ef4444; color: #fff; animation: blink 1.5s infinite;
+  }
+  .cam-header .cam-controls {
+    margin-left: auto; display: flex; gap: 4px;
+  }
+  .cam-header .cam-ctrl-btn {
+    width: 24px; height: 24px; border-radius: 4px;
+    background: rgba(255,255,255,0.05); border: none;
+    color: #6b7280; font-size: 10px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cam-header .cam-ctrl-btn.stop { background: rgba(239,68,68,0.2); color: #ef4444; }
+  .cam-video {
+    flex: 1; position: relative; background: #000; overflow: hidden;
+  }
+  .cam-video video { width: 100%; height: 100%; object-fit: cover; }
+  .cam-status-badge {
+    position: absolute; top: 8px; left: 8px;
+    padding: 3px 10px; border-radius: 12px;
+    font-size: 11px; font-weight: 600;
+  }
+  .cam-status-badge.safe { background: rgba(34,197,94,0.2); color: #22c55e; }
+  .cam-status-badge.danger { background: rgba(239,68,68,0.2); color: #ef4444; animation: danger-pulse-badge 1s infinite; }
+  .cam-conn-dot {
+    position: absolute; bottom: 8px; right: 8px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #22c55e;
+  }
+
+  /* 우측 사이드바 (실제 앱) */
+  .dash-right {
+    width: 340px; background: #0f172a;
+    border-left: 1px solid rgba(255,255,255,0.06);
+    padding: 12px; display: flex; flex-direction: column; gap: 10px;
+    overflow-y: auto; flex-shrink: 0;
+  }
+  .status-card-real {
+    background: rgba(34,197,94,0.05);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 16px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .status-shield {
+    width: 48px; height: 48px; padding: 10px;
+    background: rgba(34,197,94,0.1); border-radius: 12px;
+    color: #22c55e;
+  }
+  .status-shield svg { width: 100%; height: 100%; }
+  .status-info .s-label {
+    font-size: 28px; font-weight: 800; color: #22c55e;
+  }
+  .status-info .s-desc {
+    font-size: 11px; color: #6b7280; margin-top: 2px;
+  }
+  .status-info .s-count {
+    font-size: 12px; color: #9ca3af; margin-top: 4px;
+  }
+
+  /* 실시간 지표 카드 */
+  .metrics-card-real {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 12px;
+  }
+  .metrics-header {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 10px;
+  }
+  .metrics-header .m-icon { color: #3b82f6; width: 14px; height: 14px; }
+  .metrics-header .m-title { font-size: 12px; font-weight: 600; color: #9ca3af; }
+  .metrics-header .m-badges { margin-left: auto; display: flex; gap: 6px; }
+  .metrics-header .m-badge {
+    padding: 2px 8px; border-radius: 10px;
+    font-size: 10px; font-weight: 600;
+  }
+  .metrics-header .m-badge.people { background: rgba(255,255,255,0.06); color: #d1d5db; }
+  .metrics-header .m-badge.fps { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #9ca3af; }
+
+  /* 카메라별 person 카드 */
+  .cam-section {
+    padding: 8px 0; border-top: 1px solid rgba(255,255,255,0.04);
+  }
+  .cam-section-header {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 6px;
+  }
+  .cam-section-header .cam-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #22c55e;
+  }
+  .cam-section-header .cam-label {
+    font-size: 11px; font-weight: 600; color: #d1d5db;
+  }
+  .cam-section-header .cam-count {
+    padding: 1px 6px; border-radius: 8px;
+    font-size: 9px; background: rgba(255,255,255,0.06); color: #9ca3af;
+  }
+  .cam-section-header .cam-fps {
+    margin-left: auto; font-size: 9px; font-family: monospace; color: #4b5563;
+  }
+  .person-card {
+    border-left: 3px solid; border-radius: 8px;
+    padding: 8px 10px; margin-bottom: 4px;
+    background: rgba(255,255,255,0.02);
+  }
+  .person-card.blue { border-color: #60a5fa; }
+  .person-card.green { border-color: #34d399; }
+  .person-card.violet { border-color: #a78bfa; }
+  .person-card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .person-id { font-size: 12px; font-weight: 600; color: #e2e8f0; display: flex; align-items: center; gap: 4px; }
+  .person-id .p-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .person-posture {
+    padding: 1px 8px; border-radius: 8px; font-size: 10px; font-weight: 600;
+  }
+  .person-posture.standing { background: rgba(34,197,94,0.1); color: #22c55e; }
+  .person-posture.sitting { background: rgba(96,165,250,0.1); color: #60a5fa; }
+  .person-detail-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px;
+    font-size: 10px; color: #6b7280;
+  }
+  .person-detail-grid .d-label { }
+  .person-detail-grid .d-value { text-align: right; font-family: monospace; color: #9ca3af; }
+  .person-detail-grid .d-value.safe { color: #22c55e; }
+
+  /* PiP 모드 레이아웃 */
+  .pip-content { flex: 1; display: flex; gap: 8px; overflow: hidden; }
+  .pip-main-feed {
+    flex: 7; position: relative; background: #000; border-radius: 10px; overflow: hidden;
+    border: 2px solid #334155;
+  }
+  .pip-main-feed video { width: 100%; height: 100%; object-fit: cover; }
+  .pip-main-feed .cam-header {
+    position: absolute; top: 0; left: 0; right: 0;
+    background: rgba(0,0,0,0.5); z-index: 2;
+  }
+  .pip-stack {
+    flex: 3; display: flex; flex-direction: column; gap: 8px;
+  }
+  .pip-feed-cell {
+    flex: 1; position: relative; background: #000; border-radius: 8px; overflow: hidden;
+    border: 2px solid #334155;
+  }
+  .pip-feed-cell.highlight { border-color: #f59e0b; }
+  .pip-feed-cell video { width: 100%; height: 100%; object-fit: cover; }
+  .pip-feed-cell .pip-cam-header {
+    position: absolute; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; gap: 6px;
+    padding: 4px 8px; background: rgba(0,0,0,0.6); z-index: 2;
+    font-size: 11px; color: #d1d5db;
+  }
+  .pip-feed-cell .pip-cam-header .live-badge {
+    padding: 0px 6px; border-radius: 3px;
+    font-size: 9px; font-weight: 700;
+    background: #ef4444; color: #fff;
+  }
+
+
+  /* ===== SCENE 8: FEATURES ===== */
+  #scene8 {
+    background: linear-gradient(135deg, #0a0a2a 0%, #0a1a2a 50%, #0a0a1a 100%);
+    flex-direction: column; gap: 40px;
+  }
+  .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; width: 1500px; }
+  .f-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(0,212,255,0.12);
+    border-radius: 24px; padding: 36px 28px; text-align: center;
+    opacity: 0; transform: translateY(40px); transition: all 0.6s ease;
+    overflow: hidden;
+  }
+  .f-card.show { opacity: 1; transform: translateY(0); }
+  .f-card .f-img {
+    width: 100%; height: 200px; object-fit: cover;
+    border-radius: 16px; margin-bottom: 24px;
+    filter: brightness(0.85);
+  }
+  .f-card .f-title { font-size: 30px; font-weight: 700; margin-bottom: 12px; color: #00d4ff; }
+  .f-card .f-desc { font-size: 22px; color: #999; line-height: 1.6; }
+
+  /* ===== SCENE 9: CLOSING ===== */
+  #scene9 {
+    background: radial-gradient(ellipse at center, #0a1a3a 0%, #0a0a1a 70%);
+    flex-direction: column; gap: 28px;
+  }
+  .closing-logo {
+    font-size: 110px; font-weight: 900;
+    background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    opacity: 0; transform: scale(0.5);
+    transition: all 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .closing-logo.show { opacity: 1; transform: scale(1); }
+  .closing-tagline {
+    font-size: 40px; font-weight: 300; color: #88ccff;
+    opacity: 0; transition: opacity 0.8s ease;
+  }
+  .closing-tagline.show { opacity: 1; }
+  .closing-sub {
+    font-size: 26px; color: #555;
+    opacity: 0; transition: opacity 0.8s ease;
+  }
+  .closing-sub.show { opacity: 1; }
+
+  /* ===== CONTROLS ===== */
+  #controls {
+    position: fixed; bottom: 16px; right: 24px;
+    z-index: 99999; display: flex; gap: 12px;
+  }
+  #controls button {
+    padding: 10px 22px; border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.7); color: #fff;
+    font-size: 15px; cursor: pointer;
+    backdrop-filter: blur(10px); transition: background 0.2s;
+  }
+  #controls button:hover { background: rgba(255,255,255,0.15); }
+  #controls .active-btn { border-color: #00d4ff; color: #00d4ff; }
+  /* Record mode: hide controls */
+  body.record-mode #controls { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- Auto-scaling canvas -->
+<div id="canvas">
+  <div id="progress-bar"></div>
+  <div id="timer">00:00</div>
+  <div id="subtitle-bar"></div>
+
+  <!-- SCENE 1: Hook -->
+  <div id="scene1" class="scene">
+    <img class="bg-img" src="gen_images/scene1_hospital_fall.png" alt="">
+    <div class="particles" id="particles1"></div>
+    <div class="danger-pulse"></div>
+    <div class="content">
+      <div class="big-stat" id="hook-stat">3명 중 1명</div>
+      <div class="stat-label" id="hook-label">65세 이상 노인, 매년 낙상 경험</div>
+    </div>
+  </div>
+
+  <!-- SCENE 2: Problem -->
+  <div id="scene2" class="scene">
+    <img class="bg-img" src="gen_images/scene2_nurse_station.png" alt="">
+    <div class="problem-cards">
+      <div class="p-card" id="pc1">
+        <svg class="card-img" viewBox="0 0 80 80"><rect width="80" height="80" rx="16" fill="#1a0a0a"/><text x="40" y="52" text-anchor="middle" font-size="40" fill="#ff4444">47</text></svg>
+        <div class="num">47%</div>
+        <div class="desc">대기실/복도에서<br>발생하는 낙상</div>
+      </div>
+      <div class="p-card" id="pc2">
+        <svg class="card-img" viewBox="0 0 80 80"><rect width="80" height="80" rx="16" fill="#1a0a0a"/><text x="40" y="50" text-anchor="middle" font-size="28" fill="#ff4444">1:30</text></svg>
+        <div class="num">1 : 30</div>
+        <div class="desc">간호사 1명당<br>담당 환자 수</div>
+      </div>
+      <div class="p-card" id="pc3">
+        <svg class="card-img" viewBox="0 0 80 80"><rect width="80" height="80" rx="16" fill="#1a0a0a"/><circle cx="40" cy="38" r="20" fill="none" stroke="#ff4444" stroke-width="3"/><line x1="40" y1="20" x2="40" y2="38" stroke="#ff4444" stroke-width="3"/><line x1="40" y1="38" x2="52" y2="44" stroke="#ff4444" stroke-width="3"/></svg>
+        <div class="num" style="font-size:44px">골든타임</div>
+        <div class="desc">발견이 늦을수록<br>피해가 커집니다</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 3: Solution Reveal -->
+  <div id="scene3" class="scene">
+    <img class="bg-img" src="gen_images/scene3_ai_technology.png" alt="">
+    <div class="particles" id="particles3"></div>
+    <div class="content">
+      <div class="logo-reveal" id="logo-reveal">
+        <!-- SENTIO 로고: 인디고-시안 그라디언트 동심 펄스 링 디자인 -->
+        <svg width="120" height="120" viewBox="0 0 100 100" style="margin-bottom:16px">
+          <defs>
+            <linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#00d4ff"/>
+              <stop offset="100%" style="stop-color:#6366f1"/>
+            </linearGradient>
+          </defs>
+          <!-- 동심 펄스 링 -->
+          <circle cx="50" cy="50" r="44" fill="none" stroke="url(#sg)" stroke-width="2" opacity="0.25"/>
+          <circle cx="50" cy="50" r="34" fill="none" stroke="url(#sg)" stroke-width="2.5" opacity="0.45"/>
+          <circle cx="50" cy="50" r="24" fill="none" stroke="url(#sg)" stroke-width="3" opacity="0.7"/>
+          <!-- 중심 코어 -->
+          <circle cx="50" cy="50" r="13" fill="url(#sg)" opacity="0.9"/>
+          <!-- 중심 점 -->
+          <circle cx="50" cy="50" r="5" fill="#fff" opacity="1"/>
+        </svg>
+        <div class="logo-text">SENTIO</div>
+      </div>
+      <div class="tagline" id="tagline">AI 낙상 감지 시스템</div>
+    </div>
+  </div>
+
+  <!-- SCENE 4: Demo Video (실제 YOLO 오버레이 렌더링 영상) -->
+  <div id="scene4" class="scene">
+    <div class="demo-container">
+      <!-- Full 모드 영상 -->
+      <video id="demo-video-full" muted preload="auto" style="position:absolute;width:100%;height:100%;object-fit:cover;">
+        <source src="rendered_demos/scene4_main_full_h264.mp4" type="video/mp4">
+      </video>
+      <!-- Blur 모드 영상 -->
+      <video id="demo-video-blur" muted preload="auto" style="position:absolute;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.8s ease;">
+        <source src="rendered_demos/scene4_main_blur_h264.mp4" type="video/mp4">
+      </video>
+      <div class="demo-overlay">
+        <!-- 모드 표시 배지 -->
+        <div style="position:absolute;top:16px;left:16px;display:flex;gap:8px;z-index:10;">
+          <div class="ai-badge" id="status-badge">
+            <div class="dot"></div>
+            <span id="status-text">안전</span>
+          </div>
+          <div id="mode-badge" style="padding:6px 14px;border-radius:9999px;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:13px;font-weight:600;opacity:0;transition:opacity 0.5s ease;">
+            Full 모드
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 5: Multi-angle Demo -->
+  <div id="scene5" class="scene">
+    <div class="section-title" id="multi-title">다양한 각도에서 정확하게 감지</div>
+    <div class="multi-grid">
+      <div class="grid-cell" id="gc1">
+        <video muted preload="auto"><source src="rendered_demos/scene5_front_full_h264.mp4" type="video/mp4"></video>
+        <div class="cell-badge detect">낙상 감지</div>
+        <div class="cell-label">전방 낙상 (97% 감지율)</div>
+      </div>
+      <div class="grid-cell" id="gc2">
+        <video muted preload="auto"><source src="rendered_demos/scene5_back_full_h264.mp4" type="video/mp4"></video>
+        <div class="cell-badge detect">낙상 감지</div>
+        <div class="cell-label">후방 낙상 (99% 감지율)</div>
+      </div>
+      <div class="grid-cell" id="gc3">
+        <video muted preload="auto"><source src="rendered_demos/scene5_side_full_h264.mp4" type="video/mp4"></video>
+        <div class="cell-badge detect">낙상 감지</div>
+        <div class="cell-label">측면 낙상 (91% 감지율)</div>
+      </div>
+      <div class="grid-cell" id="gc4">
+        <video muted preload="auto"><source src="rendered_demos/scene5_normal_full_h264.mp4" type="video/mp4"></video>
+        <div class="cell-badge normal">정상</div>
+        <div class="cell-label">정상 행동 - 오탐 없음</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 6: Results -->
+  <div id="scene6" class="scene">
+    <div class="result-title" id="res-title">424개 실제 영상으로 검증된 성능</div>
+    <div class="result-row">
+      <div class="result-circle" id="rc1">
+        <svg class="ring-svg" viewBox="0 0 300 300">
+          <circle cx="150" cy="150" r="140" stroke="rgba(0,212,255,0.1)"/>
+          <circle cx="150" cy="150" r="140" stroke="#00d4ff" id="ring1"/>
+        </svg>
+        <div class="value" style="color:#00d4ff">95.2%</div>
+        <div class="label">감지율 (Recall)</div>
+      </div>
+      <div class="result-circle" id="rc2">
+        <svg class="ring-svg" viewBox="0 0 300 300">
+          <circle cx="150" cy="150" r="140" stroke="rgba(123,47,247,0.1)"/>
+          <circle cx="150" cy="150" r="140" stroke="#7b2ff7" id="ring2"/>
+        </svg>
+        <div class="value" style="color:#7b2ff7">94.6%</div>
+        <div class="label">정밀도 (Precision)</div>
+      </div>
+      <div class="result-circle" id="rc3">
+        <svg class="ring-svg" viewBox="0 0 300 300">
+          <circle cx="150" cy="150" r="140" stroke="rgba(0,255,136,0.1)"/>
+          <circle cx="150" cy="150" r="140" stroke="#00ff88" id="ring3"/>
+        </svg>
+        <div class="value" style="color:#00ff88">F1 94.9</div>
+        <div class="label">종합 점수</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 7: Dashboard Views (실제 프로젝트 대시보드 매칭) -->
+  <div id="scene7" class="scene">
+    <div class="dash-title" id="dash-title">실제 대시보드 화면</div>
+    <div class="dash-views-container">
+
+      <!-- View 1: 그리드 모드 (스크린샷 매칭) -->
+      <div class="dash-view" id="dash-grid-view">
+        <!-- 좌측 네비게이션 -->
+        <div class="dash-left-nav">
+          <div class="dash-logo">
+            <!-- SENTIO 로고: 인디고-시안 그라디언트 동심 펄스 링 디자인 -->
+            <svg class="logo-icon" viewBox="0 0 100 100">
+              <defs><linearGradient id="lg1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00d4ff"/><stop offset="100%" style="stop-color:#6366f1"/></linearGradient></defs>
+              <circle cx="50" cy="50" r="44" fill="none" stroke="url(#lg1)" stroke-width="2" opacity="0.25"/>
+              <circle cx="50" cy="50" r="34" fill="none" stroke="url(#lg1)" stroke-width="2.5" opacity="0.45"/>
+              <circle cx="50" cy="50" r="24" fill="none" stroke="url(#lg1)" stroke-width="3" opacity="0.7"/>
+              <circle cx="50" cy="50" r="13" fill="url(#lg1)" opacity="0.9"/>
+              <circle cx="50" cy="50" r="5" fill="#fff" opacity="1"/>
+            </svg>
+            <div><div class="logo-name">SENTIO</div><div class="logo-sub">SENSE · PROTECT · CARE</div></div>
+          </div>
+          <div style="font-size:10px;color:#4b5563;padding:4px 12px;margin-bottom:4px;">전체 공간</div>
+          <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>대시보드</div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>카메라</div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>알림 이벤트</div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>이벤트 기록</div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>통계</div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>리포트</div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>설정</div>
+        </div>
+        <!-- 메인 -->
+        <div class="dash-main">
+          <div class="dash-control-bar">
+            <button class="ctrl-btn primary">모든 카메라 중지</button>
+            <button class="ctrl-btn">Safe-zone 편집</button>
+            <button class="ctrl-btn">⚙ 카메라 설정</button>
+            <span class="ctrl-select">MJPEG ▾</span>
+            <div class="ctrl-right">
+              <button class="ctrl-btn danger">긴급 정지</button>
+              <span class="ctrl-badge">3대 / 3대</span>
+              <button class="ctrl-icon-btn">&#128276;</button>
+              <button class="ctrl-icon-btn">&#9881;</button>
+            </div>
+          </div>
+          <div class="dash-content">
+            <!-- 2x2 카메라 그리드 -->
+            <div class="cam-grid">
+              <div class="cam-cell">
+                <div class="cam-header">
+                  <svg class="cam-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  <span class="cam-name">기본 카메라</span>
+                  <span class="live-badge">LIVE</span>
+                  <div class="cam-controls"><button class="cam-ctrl-btn stop">&#9632;</button><button class="cam-ctrl-btn">&#8862;</button></div>
+                </div>
+                <div class="cam-video">
+                  <video muted preload="auto" id="dash-vid-1"><source src="rendered_demos/scene4_main_blur_h264.mp4" type="video/mp4"></video>
+                  <div class="cam-status-badge safe" id="dash-cam0-badge">안전</div>
+                  <div class="cam-conn-dot"></div>
+                </div>
+              </div>
+              <div class="cam-cell">
+                <div class="cam-header">
+                  <svg class="cam-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  <span class="cam-name">2층 복도</span>
+                  <span class="live-badge">LIVE</span>
+                  <div class="cam-controls"><button class="cam-ctrl-btn stop">&#9632;</button><button class="cam-ctrl-btn">&#8862;</button></div>
+                </div>
+                <div class="cam-video">
+                  <video muted preload="auto" id="dash-vid-2"><source src="rendered_demos/scene5_front_full_h264.mp4" type="video/mp4"></video>
+                  <div class="cam-status-badge safe">안전</div>
+                  <div class="cam-conn-dot"></div>
+                </div>
+              </div>
+              <div class="cam-cell">
+                <div class="cam-header">
+                  <svg class="cam-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  <span class="cam-name">3층 대기실</span>
+                  <span class="live-badge">LIVE</span>
+                  <div class="cam-controls"><button class="cam-ctrl-btn stop">&#9632;</button><button class="cam-ctrl-btn">&#8862;</button></div>
+                </div>
+                <div class="cam-video">
+                  <video muted preload="auto" id="dash-vid-3"><source src="rendered_demos/scene5_back_full_h264.mp4" type="video/mp4"></video>
+                  <div class="cam-status-badge safe">안전</div>
+                  <div class="cam-conn-dot"></div>
+                </div>
+              </div>
+              <div class="cam-cell" style="opacity:0.4;">
+                <div class="cam-header">
+                  <svg class="cam-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  <span class="cam-name">로비</span>
+                </div>
+                <div class="cam-video" style="display:flex;align-items:center;justify-content:center;">
+                  <div style="text-align:center;color:#4b5563;"><div style="font-size:36px;opacity:0.3;">&#128247;</div><div style="font-size:11px;margin-top:4px;">카메라 비활성</div></div>
+                </div>
+              </div>
+            </div>
+            <!-- 우측 사이드바 -->
+            <div class="dash-right">
+              <div class="status-card-real" id="dash-status-card">
+                <div class="status-shield" id="dash-status-shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M9 12l2 2 4-4"/></svg></div>
+                <div class="status-info">
+                  <div class="s-label" id="dash-status-label">안전</div>
+                  <div class="s-desc" id="dash-status-desc">현재 모니터링 중</div>
+                  <div class="s-count" id="dash-status-count">총 인원: <b>3명</b> &nbsp; 지속: <b>-</b></div>
+                </div>
+              </div>
+              <div class="metrics-card-real">
+                <div class="metrics-header">
+                  <svg class="m-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                  <span class="m-title">실시간 지표</span>
+                  <div class="m-badges">
+                    <span class="m-badge people">3명</span>
+                    <span class="m-badge fps">29 FPS</span>
+                  </div>
+                </div>
+                <!-- cam0 -->
+                <div class="cam-section">
+                  <div class="cam-section-header">
+                    <div class="cam-dot"></div>
+                    <span class="cam-label">기본 카메라</span>
+                    <span class="cam-count">1명</span>
+                    <span class="cam-fps">15 fps</span>
+                  </div>
+                  <div class="person-card blue" id="dash-person-cam0">
+                    <div class="person-card-header">
+                      <span class="person-id"><span class="p-dot" style="background:#60a5fa;"></span>cam0_person_1</span>
+                      <span class="person-posture standing" id="dash-posture-cam0">서있음</span>
+                    </div>
+                    <div class="person-detail-grid">
+                      <span class="d-label">ML</span><span class="d-value safe" id="dash-ml-cam0">0%</span>
+                      <span class="d-label">규칙</span><span class="d-value safe" id="dash-rule-cam0">0%</span>
+                      <span class="d-label">각도</span><span class="d-value" id="dash-angle-cam0">14°</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- cam1 -->
+                <div class="cam-section">
+                  <div class="cam-section-header">
+                    <div class="cam-dot"></div>
+                    <span class="cam-label">2층 복도</span>
+                    <span class="cam-count">1명</span>
+                    <span class="cam-fps">14 fps</span>
+                  </div>
+                  <div class="person-card green">
+                    <div class="person-card-header">
+                      <span class="person-id"><span class="p-dot" style="background:#34d399;"></span>cam1_person_1</span>
+                      <span class="person-posture standing">서있음</span>
+                    </div>
+                    <div class="person-detail-grid">
+                      <span class="d-label">ML</span><span class="d-value safe">0%</span>
+                      <span class="d-label">규칙</span><span class="d-value safe">0%</span>
+                      <span class="d-label">각도</span><span class="d-value">8°</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- cam2 -->
+                <div class="cam-section">
+                  <div class="cam-section-header">
+                    <div class="cam-dot"></div>
+                    <span class="cam-label">3층 대기실</span>
+                    <span class="cam-count">1명</span>
+                    <span class="cam-fps">14 fps</span>
+                  </div>
+                  <div class="person-card violet">
+                    <div class="person-card-header">
+                      <span class="person-id"><span class="p-dot" style="background:#a78bfa;"></span>cam2_person_1</span>
+                      <span class="person-posture standing">서있음</span>
+                    </div>
+                    <div class="person-detail-grid">
+                      <span class="d-label">ML</span><span class="d-value safe">0%</span>
+                      <span class="d-label">규칙</span><span class="d-value safe">0%</span>
+                      <span class="d-label">각도</span><span class="d-value">11°</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- View 2: PiP 포커스 모드 (스크린샷 매칭) -->
+      <div class="dash-view" id="dash-pip-view">
+        <!-- 좌측 네비게이션 (동일) -->
+        <div class="dash-left-nav">
+          <div class="dash-logo">
+            <!-- SENTIO 로고: 인디고-시안 그라디언트 동심 펄스 링 디자인 -->
+            <svg class="logo-icon" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="44" fill="none" stroke="url(#lg1)" stroke-width="2" opacity="0.25"/>
+              <circle cx="50" cy="50" r="34" fill="none" stroke="url(#lg1)" stroke-width="2.5" opacity="0.45"/>
+              <circle cx="50" cy="50" r="24" fill="none" stroke="url(#lg1)" stroke-width="3" opacity="0.7"/>
+              <circle cx="50" cy="50" r="13" fill="url(#lg1)" opacity="0.9"/>
+              <circle cx="50" cy="50" r="5" fill="#fff" opacity="1"/>
+            </svg>
+            <div><div class="logo-name">SENTIO</div><div class="logo-sub">SENSE · PROTECT · CARE</div></div>
+          </div>
+          <div style="font-size:10px;color:#4b5563;padding:4px 12px;margin-bottom:4px;">전체 공간</div>
+          <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>대시보드</div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>카메라</div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>알림 이벤트</div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>이벤트 기록</div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>통계</div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>리포트</div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>설정</div>
+        </div>
+        <!-- 메인 -->
+        <div class="dash-main">
+          <div class="dash-control-bar">
+            <button class="ctrl-btn primary">모든 카메라 중지</button>
+            <button class="ctrl-btn">Safe-zone 편집</button>
+            <button class="ctrl-btn">⚙ 카메라 설정</button>
+            <span class="ctrl-select">MJPEG ▾</span>
+            <div class="ctrl-right">
+              <button class="ctrl-btn danger">긴급 정지</button>
+              <span class="ctrl-badge">3대 / 3대</span>
+              <button class="ctrl-icon-btn">&#128276;</button>
+              <button class="ctrl-icon-btn">&#9881;</button>
+            </div>
+          </div>
+          <div class="dash-content">
+            <!-- PiP 비디오 영역 -->
+            <div class="pip-content">
+              <!-- 메인 피드 -->
+              <div class="pip-main-feed">
+                <div class="cam-header" style="border-bottom:none;">
+                  <svg class="cam-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  <span class="cam-name">기본 카메라</span>
+                  <span class="live-badge">LIVE</span>
+                  <div class="cam-controls"><button class="cam-ctrl-btn stop">&#9632;</button><button class="cam-ctrl-btn">&#9660;</button><button class="cam-ctrl-btn">&#8862;</button></div>
+                </div>
+                <video muted preload="auto" id="dash-vid-pip-main"><source src="rendered_demos/scene4_main_full_h264.mp4" type="video/mp4"></video>
+                <div class="cam-status-badge safe" style="top:44px;">안전</div>
+                <div class="cam-conn-dot"></div>
+              </div>
+              <!-- PiP 스택 -->
+              <div class="pip-stack">
+                <div class="pip-feed-cell">
+                  <div class="pip-cam-header">
+                    <svg style="width:12px;height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    2층 복도
+                    <span class="live-badge">LIVE</span>
+                  </div>
+                  <video muted preload="auto" id="dash-vid-pip1"><source src="rendered_demos/scene5_front_full_h264.mp4" type="video/mp4"></video>
+                </div>
+                <div class="pip-feed-cell highlight">
+                  <div class="pip-cam-header">
+                    <svg style="width:12px;height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    3층 대기실
+                    <span class="live-badge">LIVE</span>
+                  </div>
+                  <video muted preload="auto" id="dash-vid-pip2"><source src="rendered_demos/scene5_side_full_h264.mp4" type="video/mp4"></video>
+                </div>
+              </div>
+            </div>
+            <!-- 우측 사이드바 (PiP에서도 항상 오른쪽) -->
+            <div class="dash-right">
+            <div class="status-card-real">
+              <div class="status-shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M9 12l2 2 4-4"/></svg></div>
+              <div class="status-info">
+                <div class="s-label">안전</div>
+                <div class="s-desc">현재 모니터링 중</div>
+                <div class="s-count">총 인원: <b>3명</b></div>
+              </div>
+            </div>
+            <div class="metrics-card-real">
+              <div class="metrics-header">
+                <svg class="m-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                <span class="m-title">실시간 지표</span>
+                <div class="m-badges">
+                  <span class="m-badge people">3명</span>
+                  <span class="m-badge fps">29 FPS</span>
+                </div>
+              </div>
+              <div class="cam-section">
+                <div class="cam-section-header">
+                  <div class="cam-dot"></div>
+                  <span class="cam-label">기본 카메라</span>
+                  <span class="cam-count">1명</span>
+                  <span class="cam-fps">15 fps</span>
+                </div>
+                <div class="person-card blue">
+                  <div class="person-card-header">
+                    <span class="person-id"><span class="p-dot" style="background:#60a5fa;"></span>cam0_person_1</span>
+                    <span class="person-posture standing">서있음</span>
+                  </div>
+                  <div class="person-detail-grid">
+                    <span class="d-label">ML</span><span class="d-value safe">0%</span>
+                    <span class="d-label">규칙</span><span class="d-value safe">0%</span>
+                    <span class="d-label">각도</span><span class="d-value">14°</span>
+                  </div>
+                </div>
+              </div>
+              <div class="cam-section">
+                <div class="cam-section-header">
+                  <div class="cam-dot"></div>
+                  <span class="cam-label">3층 대기실</span>
+                  <span class="cam-count">1명</span>
+                  <span class="cam-fps">14 fps</span>
+                </div>
+                <div class="person-card violet">
+                  <div class="person-card-header">
+                    <span class="person-id"><span class="p-dot" style="background:#a78bfa;"></span>cam1_person_5</span>
+                    <span class="person-posture standing">서있음</span>
+                  </div>
+                  <div class="person-detail-grid">
+                    <span class="d-label">ML</span><span class="d-value safe">0%</span>
+                    <span class="d-label">규칙</span><span class="d-value safe">0%</span>
+                    <span class="d-label">각도</span><span class="d-value">42°</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SCENE 8: Features -->
+  <div id="scene8" class="scene">
+    <div class="feature-grid">
+      <div class="f-card" id="fc1">
+        <img class="f-img" src="gen_images/scene7_cctv.png" alt="">
+        <div class="f-title">기존 CCTV 활용</div>
+        <div class="f-desc">새로운 장비 없이<br>기존 카메라만으로 즉시 도입</div>
+      </div>
+      <div class="f-card" id="fc2">
+        <img class="f-img" src="gen_images/scene7_privacy.png" alt="">
+        <div class="f-title">프라이버시 보호</div>
+        <div class="f-desc">관절점만 분석<br>환자 얼굴/신체 노출 없음</div>
+      </div>
+      <div class="f-card" id="fc3">
+        <img class="f-img" src="gen_images/scene7_multitrack.png" alt="">
+        <div class="f-title">다중 환자 추적</div>
+        <div class="f-desc">여러 명 동시 모니터링<br>개별 낙상 감지</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 9: Closing -->
+  <div id="scene9" class="scene">
+    <div class="particles" id="particles9"></div>
+    <div class="closing-logo" id="closing-logo">SENTIO AI</div>
+    <div class="closing-tagline" id="closing-tagline">넘어지기 전에, 미리 지킵니다</div>
+    <div class="closing-sub" id="closing-sub">전조증상 감지부터 낙상 대응까지 — AI 통합 안전 시스템</div>
+  </div>
+</div>
+
+<!-- Pre-loaded TTS Audio (Gemini Kore voice) -->
+<audio id="aud_s1_hook" preload="auto" src="tts_audio/s1_hook.wav"></audio>
+<audio id="aud_s1_danger" preload="auto" src="tts_audio/s1_danger.wav"></audio>
+<audio id="aud_s2_stat" preload="auto" src="tts_audio/s2_stat.wav"></audio>
+<audio id="aud_s2_nurse" preload="auto" src="tts_audio/s2_nurse.wav"></audio>
+<audio id="aud_s3_solution" preload="auto" src="tts_audio/s3_solution.wav"></audio>
+<audio id="aud_s4_realtime" preload="auto" src="tts_audio/s4_realtime.wav"></audio>
+<audio id="aud_s4_detect" preload="auto" src="tts_audio/s4_detect.wav"></audio>
+<audio id="aud_s4_alert" preload="auto" src="tts_audio/s4_alert.wav"></audio>
+<audio id="aud_s5_angles" preload="auto" src="tts_audio/s5_angles.wav"></audio>
+<audio id="aud_s5_normal" preload="auto" src="tts_audio/s5_normal.wav"></audio>
+<audio id="aud_s6_verified" preload="auto" src="tts_audio/s6_verified.wav"></audio>
+<audio id="aud_s6_stats" preload="auto" src="tts_audio/s6_stats.wav"></audio>
+<audio id="aud_s7_dashboard" preload="auto" src="tts_audio/s7_dashboard.wav"></audio>
+<audio id="aud_s7_pip" preload="auto" src="tts_audio/s7_pip.wav"></audio>
+<audio id="aud_s8_features" preload="auto" src="tts_audio/s8_features.wav"></audio>
+<audio id="aud_s9_closing" preload="auto" src="tts_audio/s9_closing.wav"></audio>
+<audio id="bgm" preload="auto" src="audiocoffee-medical-technical-news-131926.mp3" loop></audio>
+
+<!-- Controls -->
+<div id="controls">
+  <button onclick="unlockAndStart()">&#9654; 재생</button>
+  <button onclick="togglePause()" id="pause-btn">&#10074;&#10074; 일시정지</button>
+  <button onclick="unlockAndRestart()">&#8634; 처음부터</button>
+  <button onclick="toggleAudio()" id="audio-btn" class="active-btn">&#128264; 음성 ON</button>
+</div>
+
+<script>
+// ===== VIEWPORT AUTO-SCALE =====
+function scaleCanvas() {
+  const canvas = document.getElementById('canvas');
+  const scaleX = window.innerWidth / 1920;
+  const scaleY = window.innerHeight / 1080;
+  const scale = Math.min(scaleX, scaleY);
+  canvas.style.transform = `translate(-50%, -50%) scale(${scale})`;
+}
+window.addEventListener('resize', scaleCanvas);
+scaleCanvas();
+
+// ===== RECORD MODE (URL ?record) =====
+const isRecordMode = new URLSearchParams(window.location.search).has('record');
+if (isRecordMode) {
+  document.body.classList.add('record-mode');
+  // Show click-to-start overlay (user gesture needed for audio)
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;cursor:pointer;';
+  overlay.innerHTML = '<div style="text-align:center;color:#fff;"><div style="font-size:72px;margin-bottom:20px;">&#9654;</div><div style="font-size:24px;">클릭하면 3초 후 재생 시작</div><div style="font-size:14px;color:#94a3b8;margin-top:8px;">녹화 준비 후 클릭하세요</div></div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', () => {
+    // Unlock audio + start on user gesture (required for audio)
+    unlockAllAudio();
+    startPresentation();
+    // Cover with countdown overlay, then reveal
+    overlay.style.background = 'black';
+    overlay.style.cursor = 'default';
+    overlay.innerHTML = '<div style="text-align:center;color:#fff;font-size:48px;" id="countdown-text">3</div>';
+    // Pause presentation during countdown
+    togglePause();
+    let count = 3;
+    const timer = setInterval(() => {
+      count--;
+      if (count > 0) {
+        document.getElementById('countdown-text').textContent = count;
+      } else {
+        clearInterval(timer);
+        overlay.remove();
+        togglePause(); // Resume
+      }
+    }, 1000);
+  });
+}
+
+// ===== ENGINE STATE =====
+let isPlaying = false, isPaused = false, audioEnabled = true;
+let currentAudio = null;
+let totalElapsed = 0;
+let animFrame = null, lastTs = null;
+
+const TOTAL_DURATION = 91; // TTS 타이밍 맞춤 (s9_closing 8.5s)
+
+// ===== AUDIO UNLOCK (browser autoplay policy) =====
+let audioUnlocked = false;
+function unlockAllAudio() {
+  if (audioUnlocked) return;
+  // Method 1: Resume AudioContext (unlocks Web Audio globally)
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  ctx.resume().then(() => ctx.close());
+  // Method 2: Trigger play on each audio element in user gesture context
+  document.querySelectorAll('audio').forEach(a => {
+    a.muted = true;
+    a.play().then(() => {
+      a.pause();
+      a.muted = false;
+      a.currentTime = 0;
+    }).catch(() => { a.muted = false; });
+  });
+  audioUnlocked = true;
+}
+function unlockAndStart() {
+  unlockAllAudio();
+  // Small delay to let unlock settle before timeline starts audio
+  setTimeout(() => startPresentation(), 100);
+}
+function unlockAndRestart() {
+  unlockAllAudio();
+  setTimeout(() => restartPresentation(), 100);
+}
+
+// ===== AUDIO =====
+function playAudio(id) {
+  if (!audioEnabled) return;
+  if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+  const el = document.getElementById('aud_' + id);
+  if (el) { el.currentTime = 0; el.play().catch(()=>{}); currentAudio = el; }
+}
+function stopAllAudio() {
+  if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; currentAudio = null; }
+  const bgm = document.getElementById('bgm');
+  if (bgm) { bgm.pause(); bgm.currentTime = 0; }
+}
+
+function startBGM() {
+  const bgm = document.getElementById('bgm');
+  if (!bgm || !audioEnabled) return;
+  bgm.volume = 0.4;
+  bgm.currentTime = 0;
+  bgm.play().then(() => {
+    console.log('[BGM] Playing OK, volume:', bgm.volume);
+  }).catch(e => {
+    console.error('[BGM] Play failed:', e.message);
+  });
+}
+function stopBGM() {
+  const bgm = document.getElementById('bgm');
+  if (bgm) { bgm.pause(); bgm.currentTime = 0; }
+}
+
+// ===== HELPERS =====
+function showScene(id) {
+  document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.scene:not(.active) video').forEach(v => v.pause());
+}
+function show(id) { document.getElementById(id)?.classList.add('show'); }
+function subtitle(text) {
+  const bar = document.getElementById('subtitle-bar');
+  if (!text) { bar.classList.remove('visible'); }
+  else { bar.textContent = text; bar.classList.add('visible'); }
+}
+function animateRing(id, percent) {
+  const circ = 2 * Math.PI * 140;  // radius=140 in new SVG
+  const el = document.getElementById(id);
+  if (el) {
+    el.style.strokeDasharray = circ;
+    el.style.strokeDashoffset = circ * (1 - percent / 100);
+  }
+}
+
+// Dashboard view switcher
+function showDashView(viewId) {
+  document.querySelectorAll('.dash-view').forEach(v => v.classList.remove('active'));
+  document.getElementById(viewId)?.classList.add('active');
+}
+
+// ===== ABSOLUTE TIMELINE =====
+const TIMELINE = [
+  // ── Scene 1: Hook (T=0 ~ 7.5) ──
+  { t: 0.0, fn: () => { showScene('scene1'); startBGM(); } },
+  { t: 0.3, fn: () => {
+    show('hook-stat');
+    playAudio('s1_hook');
+    subtitle('매년, 노인 세 명 중 한 명이 넘어집니다.');
+  }},
+  { t: 0.8, fn: () => show('hook-label') },
+  { t: 4.1, fn: () => {
+    playAudio('s1_danger');
+    subtitle('발견이 늦으면, 생명이 위험합니다.');
+  }},
+
+  // ── Scene 2: Problem (T=7.5 ~ 20) ──
+  { t: 7.5, fn: () => {
+    showScene('scene2');
+    subtitle('');
+  }},
+  { t: 8.0, fn: () => {
+    show('pc1');
+    playAudio('s2_stat');
+    subtitle('낙상의 47%가 대기실과 복도에서 발생합니다.');
+  }},
+  { t: 10.5, fn: () => show('pc2') },
+  { t: 12.0, fn: () => show('pc3') },
+  { t: 13.4, fn: () => {
+    playAudio('s2_nurse');
+    subtitle('간호사 1명이 환자 30명 담당. 24시간 감시는 불가능합니다.');
+  }},
+
+  // ── Scene 3: Solution Reveal (T=20 ~ 24.4) ──
+  { t: 20.0, fn: () => {
+    showScene('scene3');
+    subtitle('');
+  }},
+  { t: 20.5, fn: () => show('logo-reveal') },
+  { t: 21.3, fn: () => {
+    show('tagline');
+    playAudio('s3_solution');
+    subtitle('센티오 AI가 해결합니다.');
+  }},
+
+  // ── Scene 4: Demo Video (T=24.4 ~ 37.3) ──
+  // 블러 모드를 더 길고 확실하게 보여줌
+  { t: 24.4, fn: () => {
+    showScene('scene4');
+    const vidFull = document.getElementById('demo-video-full');
+    const vidBlur = document.getElementById('demo-video-blur');
+    vidFull.currentTime = 0; vidFull.play();
+    vidBlur.currentTime = 0; vidBlur.play();
+    vidBlur.style.opacity = '0';
+    const modeBadge = document.getElementById('mode-badge');
+    modeBadge.textContent = 'Full 모드';
+    modeBadge.style.opacity = '1';
+    playAudio('s4_realtime');
+    subtitle('기존 CCTV 영상을 AI가 실시간으로 분석합니다.');
+    const badge = document.getElementById('status-badge');
+    badge.classList.remove('danger');
+    document.getElementById('status-text').textContent = '안전';
+  }},
+  // T=26.5: Blur 모드 전환 (3초간 유지로 확실하게 보여줌)
+  { t: 26.5, fn: () => {
+    document.getElementById('demo-video-blur').style.opacity = '1';
+    const modeBadge = document.getElementById('mode-badge');
+    modeBadge.textContent = 'Blur 모드 (프라이버시 보호)';
+    modeBadge.style.background = 'rgba(123,47,247,0.5)';
+    modeBadge.style.borderColor = 'rgba(123,47,247,0.5)';
+  }},
+  // T=29.5: Full 모드 복귀
+  { t: 29.5, fn: () => {
+    document.getElementById('demo-video-blur').style.opacity = '0';
+    const modeBadge = document.getElementById('mode-badge');
+    modeBadge.textContent = 'Full 모드';
+    modeBadge.style.background = 'rgba(0,0,0,0.5)';
+    modeBadge.style.borderColor = 'rgba(255,255,255,0.2)';
+    playAudio('s4_detect');
+    subtitle('환자가 넘어지는 순간, 자동으로 감지합니다.');
+  }},
+  { t: 30.0, fn: () => {
+    document.getElementById('mode-badge').style.opacity = '0';
+  }},
+  { t: 31.5, fn: () => {
+    // 낙상 감지 - status badge 전환
+    const badge = document.getElementById('status-badge');
+    badge.classList.add('danger');
+    document.getElementById('status-text').textContent = '위험';
+  }},
+  { t: 32.3, fn: () => {
+    // 팝업은 렌더링된 영상에 이미 포함되어 있으므로 HTML 오버레이 팝업 제거
+    // status badge만 위험 상태로 전환
+  }},
+  { t: 33.6, fn: () => {
+    playAudio('s4_alert');
+    subtitle('즉시 알림을 전송하여 빠르게 대응할 수 있습니다.');
+  }},
+
+  // ── Scene 5: Multi-angle (T=37.8 ~ 49.9) ──
+  { t: 37.8, fn: () => {
+    showScene('scene5');
+    show('multi-title');
+    document.querySelectorAll('#scene5 video').forEach(v => { v.currentTime = 2; v.play(); });
+    subtitle('');
+  }},
+  { t: 38.3, fn: () => {
+    show('gc1');
+    playAudio('s5_angles');
+    subtitle('전방, 후방, 측면 - 어떤 각도에서든 정확하게 감지합니다.');
+  }},
+  { t: 39.5, fn: () => show('gc2') },
+  { t: 40.5, fn: () => show('gc3') },
+  { t: 41.5, fn: () => show('gc4') },
+  // 미니 낙상 알림 - 렌더링 영상에 이미 포함됨, HTML 오버레이 불필요
+  { t: 44.7, fn: () => {
+    playAudio('s5_normal');
+    subtitle('정상 행동은 정상으로. 낙상만 정확히 구별합니다.');
+  }},
+
+  // ── Scene 6: Results (T=49.9 ~ 63.4) ──
+  { t: 49.9, fn: () => {
+    showScene('scene6');
+    show('res-title');
+    playAudio('s6_verified');
+    subtitle('424개 실제 영상으로 검증된 성능');
+  }},
+  { t: 51.0, fn: () => { show('rc1'); animateRing('ring1', 95.2); }},
+  { t: 52.0, fn: () => { show('rc2'); animateRing('ring2', 94.6); }},
+  { t: 53.0, fn: () => { show('rc3'); animateRing('ring3', 94.9); }},
+  { t: 54.3, fn: () => {
+    playAudio('s6_stats');
+    subtitle('감지율 95.2%, 정밀도 94.6% - 20건 중 19건을 정확히 감지합니다.');
+  }},
+
+  // ── Scene 7: Dashboard Views (T=63.8 ~ 73) ──
+  { t: 63.8, fn: () => {
+    showScene('scene7');
+    show('dash-title');
+    // 그리드 모드 먼저
+    showDashView('dash-grid-view');
+    ['dash-vid-1','dash-vid-2','dash-vid-3'].forEach(id => {
+      const v = document.getElementById(id);
+      if (v) { v.currentTime = 1; v.play(); }
+    });
+  }},
+  { t: 64.2, fn: () => {
+    playAudio('s7_dashboard');
+    subtitle('실제 대시보드에서 여러 카메라를 한눈에 모니터링합니다.');
+  }},
+  // ── 대시보드 낙상 감지 시뮬레이션 (4단계 점진적 변화) ──
+  // Phase 1: T=65.0 - 균형 불안 감지 시작 (값 살짝 상승)
+  { t: 65.0, fn: () => {
+    const ml = document.getElementById('dash-ml-cam0');
+    if (ml) { ml.textContent = '15%'; ml.style.color = '#fbbf24'; }
+    const rule = document.getElementById('dash-rule-cam0');
+    if (rule) { rule.textContent = '12%'; rule.style.color = '#fbbf24'; }
+    const angle = document.getElementById('dash-angle-cam0');
+    if (angle) { angle.textContent = '74°'; }
+    const desc = document.getElementById('dash-status-desc');
+    if (desc) desc.textContent = '움직임 감지 중...';
+    const posture = document.getElementById('dash-posture-cam0');
+    if (posture) { posture.textContent = '불안정'; posture.style.color = '#fbbf24'; }
+  }},
+  // Phase 2: T=65.7 - 쓰러지는 중, 값 급상승
+  { t: 65.7, fn: () => {
+    const ml = document.getElementById('dash-ml-cam0');
+    if (ml) { ml.textContent = '52%'; ml.style.color = '#f97316'; }
+    const rule = document.getElementById('dash-rule-cam0');
+    if (rule) { rule.textContent = '38%'; rule.style.color = '#f97316'; }
+    const angle = document.getElementById('dash-angle-cam0');
+    if (angle) { angle.textContent = '55°'; angle.style.color = '#fbbf24'; }
+    const label = document.getElementById('dash-status-label');
+    if (label) { label.textContent = '주의'; label.style.color = '#f97316'; }
+    const desc = document.getElementById('dash-status-desc');
+    if (desc) desc.textContent = '낙상 의심...';
+    const shield = document.getElementById('dash-status-shield');
+    if (shield) shield.style.color = '#f97316';
+    const statusCard = document.getElementById('dash-status-card');
+    if (statusCard) statusCard.style.background = 'rgba(249,115,22,0.08)';
+  }},
+  // Phase 3: T=66.3 - 낙상 확정, 최종 위험 상태
+  { t: 66.3, fn: () => {
+    const statusCard = document.getElementById('dash-status-card');
+    if (statusCard) statusCard.style.background = 'rgba(239,68,68,0.1)';
+    const shield = document.getElementById('dash-status-shield');
+    if (shield) shield.style.color = '#ef4444';
+    const label = document.getElementById('dash-status-label');
+    if (label) { label.textContent = '위험'; label.style.color = '#ef4444'; }
+    const desc = document.getElementById('dash-status-desc');
+    if (desc) desc.textContent = '낙상 감지됨!';
+    const count = document.getElementById('dash-status-count');
+    if (count) count.innerHTML = '총 인원: <b>3명</b> &nbsp; 지속: <b style="color:#ef4444;">3.2초</b>';
+    const posture = document.getElementById('dash-posture-cam0');
+    if (posture) { posture.textContent = '누워있음'; posture.className = 'person-posture'; posture.style.background = 'rgba(239,68,68,0.1)'; posture.style.color = '#ef4444'; }
+    const ml = document.getElementById('dash-ml-cam0');
+    if (ml) { ml.textContent = '87%'; ml.style.color = '#ef4444'; ml.className = 'd-value'; }
+    const rule = document.getElementById('dash-rule-cam0');
+    if (rule) { rule.textContent = '72%'; rule.style.color = '#ef4444'; rule.className = 'd-value'; }
+    const angle = document.getElementById('dash-angle-cam0');
+    if (angle) { angle.textContent = '68°'; angle.style.color = '#fbbf24'; }
+    const camBadge = document.getElementById('dash-cam0-badge');
+    if (camBadge) { camBadge.textContent = '위험'; camBadge.className = 'cam-status-badge danger'; }
+    const personCard = document.getElementById('dash-person-cam0');
+    if (personCard) { personCard.style.borderColor = '#ef4444'; personCard.style.background = 'rgba(239,68,68,0.05)'; }
+  }},
+  // PiP 포커스 모드로 전환
+  { t: 68.5, fn: () => {
+    showDashView('dash-pip-view');
+    playAudio('s7_pip');
+    subtitle('PiP 모드로 주요 카메라를 확대하여 집중 관찰할 수 있습니다.');
+    ['dash-vid-pip-main','dash-vid-pip1','dash-vid-pip2'].forEach(id => {
+      const v = document.getElementById(id);
+      if (v) { v.currentTime = 2; v.play(); }
+    });
+  }},
+
+  // ── Scene 8: Features (T=74 ~ 81) ── (s7_pip 4.9s@68.5 → 끝 73.4)
+  { t: 74.0, fn: () => {
+    showScene('scene8');
+    subtitle('');
+  }},
+  { t: 74.3, fn: () => {
+    show('fc1');
+    playAudio('s8_features');
+    subtitle('기존 CCTV 활용, 프라이버시 보호, 다중 환자 동시 추적까지.');
+  }},
+  { t: 76.3, fn: () => show('fc2') },
+  { t: 78.3, fn: () => show('fc3') },
+
+  // ── Scene 9: Closing (T=81 ~ 91) ── (s8_features 5.1s@74.3 → 끝 79.4)
+  { t: 80.5, fn: () => {
+    showScene('scene9');
+    subtitle('');
+  }},
+  { t: 81.0, fn: () => {
+    show('closing-logo');
+    playAudio('s9_closing');
+  }},
+  { t: 82.5, fn: () => {
+    show('closing-tagline');
+    subtitle('넘어지기 전에, 미리 지킵니다.');
+  }},
+  { t: 84.0, fn: () => show('closing-sub') },
+  { t: 88.0, fn: () => {
+    // BGM 페이드아웃 (s9_closing 8.5s@81.0 → 끝 89.5)
+    const bgm = document.getElementById('bgm');
+    if (bgm) {
+      let vol = bgm.volume;
+      const fade = setInterval(() => {
+        vol -= 0.02;
+        if (vol <= 0) { bgm.pause(); clearInterval(fade); }
+        else bgm.volume = vol;
+      }, 100);
+    }
+  }},
+  { t: 91.0, fn: () => {
+    isPlaying = false;
+    subtitle('');
+    stopBGM();
+  }},
+];
+
+// ===== TIMELINE ENGINE =====
+let nextEventIdx = 0;
+
+function processTimeline() {
+  while (nextEventIdx < TIMELINE.length && totalElapsed >= TIMELINE[nextEventIdx].t) {
+    TIMELINE[nextEventIdx].fn();
+    nextEventIdx++;
+  }
+}
+
+// ===== MAIN TICK =====
+function tick(timestamp) {
+  if (!isPlaying || isPaused) return;
+  if (lastTs === null) lastTs = timestamp;
+  const dt = (timestamp - lastTs) / 1000;
+  lastTs = timestamp;
+  totalElapsed += dt;
+
+  const m = Math.floor(totalElapsed / 60), s = Math.floor(totalElapsed % 60);
+  document.getElementById('timer').textContent =
+    `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  document.getElementById('progress-bar').style.width =
+    `${Math.min(100, (totalElapsed / TOTAL_DURATION) * 100)}%`;
+
+  processTimeline();
+
+  if (isPlaying) animFrame = requestAnimationFrame(tick);
+}
+
+// ===== CONTROLS =====
+function startPresentation() {
+  if (isPlaying && !isPaused) return;
+  if (isPaused) { isPaused = false; lastTs = null; animFrame = requestAnimationFrame(tick); return; }
+
+  isPlaying = true; isPaused = false;
+  totalElapsed = 0; nextEventIdx = 0; lastTs = null;
+
+  // Reset visuals
+  document.querySelectorAll('.show').forEach(el => el.classList.remove('show'));
+  document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('video').forEach(v => { v.pause(); v.currentTime = 0; });
+  document.getElementById('subtitle-bar').classList.remove('visible');
+  document.getElementById('status-badge').classList.remove('danger');
+  document.getElementById('status-text').textContent = '안전';
+  const blurVid = document.getElementById('demo-video-blur');
+  if (blurVid) blurVid.style.opacity = '0';
+  const modeBadge = document.getElementById('mode-badge');
+  if (modeBadge) modeBadge.style.opacity = '0';
+  ['ring1','ring2','ring3'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.strokeDashoffset = 880;
+  });
+  document.querySelectorAll('.dash-view').forEach(v => v.classList.remove('active'));
+  // Reset dashboard sidebar state (HTML 초기값과 동일하게)
+  const dsc = document.getElementById('dash-status-card');
+  if (dsc) dsc.style.background = '';
+  const dss = document.getElementById('dash-status-shield');
+  if (dss) dss.style.color = '';
+  const dsl = document.getElementById('dash-status-label');
+  if (dsl) { dsl.textContent = '안전'; dsl.style.color = '#22c55e'; }
+  const dsd = document.getElementById('dash-status-desc');
+  if (dsd) dsd.textContent = '현재 모니터링 중';
+  const dscount = document.getElementById('dash-status-count');
+  if (dscount) dscount.innerHTML = '총 인원: <b>3명</b> &nbsp; 지속: <b>-</b>';
+  const dp = document.getElementById('dash-posture-cam0');
+  if (dp) { dp.textContent = '서있음'; dp.className = 'person-posture standing'; dp.style.background = ''; dp.style.color = ''; }
+  const dm = document.getElementById('dash-ml-cam0');
+  if (dm) { dm.textContent = '0%'; dm.className = 'd-value safe'; dm.style.color = ''; }
+  const dr = document.getElementById('dash-rule-cam0');
+  if (dr) { dr.textContent = '0%'; dr.className = 'd-value safe'; dr.style.color = ''; }
+  const da = document.getElementById('dash-angle-cam0');
+  if (da) { da.textContent = '14°'; da.style.color = ''; }
+  const dcb = document.getElementById('dash-cam0-badge');
+  if (dcb) { dcb.textContent = '안전'; dcb.className = 'cam-status-badge safe'; }
+  const dpc = document.getElementById('dash-person-cam0');
+  if (dpc) { dpc.style.borderColor = ''; dpc.style.background = ''; }
+
+  animFrame = requestAnimationFrame(tick);
+}
+
+function togglePause() {
+  if (!isPlaying) return;
+  isPaused = !isPaused;
+  if (isPaused) {
+    if (animFrame) cancelAnimationFrame(animFrame);
+    if (currentAudio) currentAudio.pause();
+    const bgm = document.getElementById('bgm');
+    if (bgm) bgm.pause();
+    document.querySelectorAll('video').forEach(v => v.pause());
+    document.getElementById('pause-btn').textContent = '\u25B6 재개';
+  } else {
+    lastTs = null;
+    if (currentAudio && currentAudio.currentTime > 0) currentAudio.play();
+    const bgm = document.getElementById('bgm');
+    if (bgm && bgm.currentTime > 0 && audioEnabled) bgm.play();
+    document.querySelectorAll('.scene.active video').forEach(v => v.play().catch(()=>{}));
+    animFrame = requestAnimationFrame(tick);
+    document.getElementById('pause-btn').textContent = '\u23F8 일시정지';
+  }
+}
+
+function restartPresentation() {
+  if (animFrame) cancelAnimationFrame(animFrame);
+  stopAllAudio();
+  isPlaying = false; isPaused = false;
+  startPresentation();
+}
+
+function toggleAudio() {
+  audioEnabled = !audioEnabled;
+  const btn = document.getElementById('audio-btn');
+  if (audioEnabled) {
+    btn.textContent = '\uD83D\uDD0A 음성 ON'; btn.classList.add('active-btn');
+  } else {
+    btn.textContent = '\uD83D\uDD07 음성 OFF'; btn.classList.remove('active-btn');
+    stopAllAudio();
+  }
+}
+
+// ===== PARTICLES =====
+function createParticles(id, n) {
+  const c = document.getElementById(id);
+  if (!c) return;
+  for (let i = 0; i < n; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random()*100+'%';
+    p.style.animationDuration = (5+Math.random()*10)+'s';
+    p.style.animationDelay = Math.random()*5+'s';
+    p.style.width = p.style.height = (2+Math.random()*4)+'px';
+    c.appendChild(p);
+  }
+}
+createParticles('particles1', 30);
+createParticles('particles3', 25);
+createParticles('particles9', 30);
+</script>
+</body>
+</html>

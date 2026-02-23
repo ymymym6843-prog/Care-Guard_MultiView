@@ -1,0 +1,500 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "cameras": "Cameras",
+    "alerts": "Alert Events",
+    "history": "Event History",
+    "stats": "Statistics",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "header": {
+    "subtitle": "Fall Detection System",
+    "mainHeader": "Main Header",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "serverConnected": "Server connected",
+    "serverDisconnected": "Server disconnected - reconnecting",
+    "noAlerts": "No alerts",
+    "unreadAlerts": "{{count}} unread alerts",
+    "clickToAcknowledge": "Click to acknowledge (stop beeps)",
+    "acknowledged": "Acknowledged",
+    "acknowledgeMessage": "Staff acknowledged the fall alert.",
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode",
+    "switchToLight": "Switch to Light Mode",
+    "switchToDark": "Switch to Dark Mode"
+  },
+  "sidebar": {
+    "mainNav": "Main Navigation",
+    "expand": "Expand sidebar",
+    "collapse": "Collapse sidebar"
+  },
+  "room": {
+    "allRooms": "All Rooms",
+    "selectRoom": "Select Room",
+    "room": "Room",
+    "noRooms": "No rooms registered",
+    "cameraCount": "{{count}} cameras"
+  },
+  "views": {
+    "cameraManagement": "Camera Management",
+    "skipToContent": "Skip to content"
+  },
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "export": "Export",
+    "download": "Download",
+    "generate": "Generate",
+    "confirm": "Confirm",
+    "search": "Search",
+    "noData": "No data available",
+    "offline": "Cannot connect to server. Please check backend server status.",
+    "seconds": "s"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "username": "Username",
+    "password": "Password",
+    "register": "Register",
+    "loginLoading": "Logging in...",
+    "loginFailed": "Login failed",
+    "serverError": "Cannot connect to server",
+    "labelUsername": "Username",
+    "labelPassword": "Password",
+    "labelFullName": "Full Name (optional)",
+    "labelConfirmPassword": "Confirm Password",
+    "registerLoading": "Registering...",
+    "createAdmin": "Create Admin Account",
+    "initialSetup": "Initial Admin Setup",
+    "noUsersMessage": "No users registered in the system.",
+    "firstAccountAdmin": "The first account will automatically receive <strong>admin</strong> privileges.",
+    "passwordMismatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "registerFailed": "Registration failed",
+    "registerSuccessLoginFailed": "Registration successful but auto-login failed. Please try logging in manually."
+  },
+  "events": {
+    "title": "Event History",
+    "alertsTitle": "Alert Events",
+    "subtitleAll": "All rooms: {{total}} events total",
+    "subtitleRoom": "{{room}}: {{total}} events total",
+    "alertsSubtitleAll": "All rooms: {{total}} unacknowledged alerts",
+    "alertsSubtitleRoom": "{{room}}: {{total}} unacknowledged alerts",
+    "filter": "Filter",
+    "filterAll": "All",
+    "ackAll": "All",
+    "unacknowledged": "Unacknowledged",
+    "acknowledgedLabel": "Acknowledged",
+    "acknowledged": "Event acknowledged.",
+    "acknowledgeError": "Failed to acknowledge event.",
+    "acknowledge": "Acknowledge",
+    "batchAcknowledge": "Acknowledge All",
+    "batchAcknowledged": "{{count}} events acknowledged.",
+    "confirmed": "Confirmed",
+    "noEvents": "No events found.",
+    "noAlerts": "No unacknowledged alerts.",
+    "exportSuccess": "{{format}} export completed",
+    "exportError": "Export failed."
+  },
+  "stats": {
+    "title": "Statistics Dashboard",
+    "subtitle": "Fall events statistics for the last {{days}} days",
+    "loading": "Loading statistics...",
+    "totalEvents": "Total Events",
+    "dangerEvents": "Danger Events",
+    "warningEvents": "Warning Events",
+    "acknowledgmentRate": "Acknowledgment Rate",
+    "avgResponseTime": "Avg Response Time",
+    "dailyTrend": "Daily Event Trend",
+    "hourlyFrequency": "Hourly Frequency",
+    "noData": "No data available",
+    "acknowledged": " acknowledged",
+    "refresh": "Refresh",
+    "days": "days",
+    "event": "Event"
+  },
+  "report": {
+    "title": "Reports",
+    "subtitle": "Generate fall event analysis reports and export data",
+    "generate": "Generate Report",
+    "period": "Period",
+    "days": "-day",
+    "availableReports": "Available Reports",
+    "noReports": "No reports available",
+    "exportCSV": "Export CSV",
+    "exportExcel": "Export Excel",
+    "generating": "Generating...",
+    "generateDays": "Generate {{days}}-day Report",
+    "generateSuccess": "{{days}}-day report generated",
+    "generateError": "Report generation failed",
+    "generateException": "Error during report generation",
+    "listError": "Could not load report list",
+    "downloadSuccess": "Download complete",
+    "downloadError": "Download failed",
+    "downloadException": "Error during download",
+    "exportData": "Data",
+    "exportSuccess": "{{format}} export complete",
+    "exportError": "Export failed",
+    "exportException": "Error during export"
+  },
+  "consent": {
+    "title": "Privacy Consent",
+    "agree": "I Agree",
+    "required": "Please agree to data collection to use this service.",
+    "collectedItems": "Collected Items",
+    "videoData": "Video data (processed in real-time, not stored)",
+    "poseLandmarks": "Pose landmark coordinates",
+    "fallEvents": "Fall event records",
+    "purpose": "Purpose",
+    "purposeDesc": "Patient safety monitoring and fall accident prevention",
+    "retention": "Retention Period",
+    "eventRetention": "Event records: Auto-deleted after 90 days",
+    "snapshotRetention": "Snapshots: Auto-deleted after 30 days",
+    "thirdParty": "Third Party Disclosure",
+    "thirdPartyDesc": "Limited to medical staff; applicable medical institution for EMR integration",
+    "legalNotice": "This system complies with PIPA. Consent can be withdrawn in settings."
+  },
+  "dashboard": {
+    "status": {
+      "safe": "Safe",
+      "warning": "Warning",
+      "danger": "Danger",
+      "safeDesc": "Normal monitoring",
+      "warningDesc": "Abnormal posture detected",
+      "dangerDesc": "Fall detected!",
+      "person": "Person",
+      "totalPersons": "Total Persons",
+      "lastUpdate": "Last Update",
+      "label": "Status"
+    },
+    "metrics": {
+      "posture": "Posture",
+      "fallType": "Fall Type",
+      "confidence": "Confidence",
+      "walkingAid": "Walking Aid",
+      "realtime": "Real-time Metrics",
+      "fallProbability": "Fall Probability",
+      "rule": "Rule",
+      "ml": "ML",
+      "angle": "Angle",
+      "duration": "Duration",
+      "fallen": "Fallen",
+      "aidLost": "Aid Lost",
+      "noPersons": "No persons detected",
+      "walkingAidAlert": "Walking aid user <strong>{{count}}</strong> detected",
+      "postures": {
+        "standing": "Standing",
+        "sitting": "Sitting",
+        "lying": "Lying",
+        "bending": "Bending",
+        "unknown": "Analyzing"
+      },
+      "fallTypes": {
+        "normal": "Normal",
+        "front_fall": "Front Fall",
+        "back_fall": "Back Fall",
+        "side_fall": "Side Fall",
+        "pre_impact": "Pre-Impact",
+        "unknown": "-"
+      },
+      "fallTypesShort": {
+        "front_fall": "Front",
+        "back_fall": "Back",
+        "side_fall": "Side",
+        "pre_impact": "Pre",
+        "unknown": "Fall"
+      }
+    },
+    "eventLog": {
+      "title": "Event Log",
+      "clear": "Clear",
+      "noEvents": "No events."
+    },
+    "video": {
+      "title": "Live Monitoring",
+      "live": "LIVE",
+      "start": "Start",
+      "stop": "Stop",
+      "mjpeg": "Switch to MJPEG",
+      "webrtc": "Switch to WebRTC",
+      "fullscreen": "Fullscreen",
+      "exitFullscreen": "Exit Fullscreen",
+      "inactive": "Camera Inactive",
+      "inactiveDesc": "Click start to begin monitoring",
+      "streamDisconnected": "Stream disconnected",
+      "cameraInactive": "Camera is inactive",
+      "privacy": {
+        "skeleton": "Skeleton",
+        "skeletonDesc": "Show skeleton only (Maximum privacy)",
+        "blur": "Blur",
+        "blurDesc": "Blurred video stream",
+        "full": "Original",
+        "fullDesc": "Show original video"
+      },
+      "status": {
+        "safe": "Safe",
+        "warning": "Warning",
+        "danger": "Danger - Fall Detected"
+      },
+      "connection": {
+        "connected": "Connected",
+        "connecting": "Connecting",
+        "disconnected": "Disconnected"
+      },
+      "selectCamera": "Select Camera",
+      "switchingCamera": "Switching camera...",
+      "detectingCameras": "Detecting cameras...",
+      "noCameraFound": "No cameras available",
+      "cameraIndex": "Camera {{index}}",
+      "multiCamera": "Multi Camera",
+      "addCamera": "Add Camera",
+      "removeCamera": "Remove Camera",
+      "cameraName": "Camera Name",
+      "cameraSource": "Camera Source"
+    },
+    "settings": {
+      "title": "Detection Settings",
+      "warningTime": "Warning Alert Time",
+      "dangerTime": "Danger Alert Time",
+      "sensitivity": "Detection Sensitivity",
+      "volume": "Alert Volume",
+      "soundEnabled": "Sound Alert",
+      "ttsEnabled": "Voice Guide",
+      "pushEnabled": "Push Notifications",
+      "subscribe": "Subscribe",
+      "unsubscribe": "Unsubscribe",
+      "notSupported": "Not Supported",
+      "privacyMode": "Privacy Mode",
+      "skeletonOverlay": "Show Skeleton"
+    },
+    "dangerAlert": {
+      "title": "Fall Detected!",
+      "checkPatient": "Please check the patient immediately.",
+      "duration": "Duration",
+      "detectedAt": "Detected At",
+      "acknowledge": "Acknowledge & Complete"
+    },
+    "safeZone": {
+      "title": "Safe-Zone Settings",
+      "addZone": "Add Zone",
+      "zoneName": "Zone Name",
+      "newZone": "New Zone",
+      "safeZone": "Safe Zone",
+      "dangerZone": "Danger Zone",
+      "exclusionZone": "Exclusion Zone",
+      "save": "Save",
+      "cancel": "Cancel",
+      "vertices": " vertices",
+      "minVertices": "Min 3 required",
+      "canSave": "Ready to save",
+      "deleteZone": "Delete {{name}}"
+    },
+    "connection": {
+      "connected": "Connected",
+      "connecting": "Connecting...",
+      "disconnected": "Disconnected"
+    },
+    "demo": {
+      "title": "Demo",
+      "stop": "Stop",
+      "playing": "Playing",
+      "more": " more...",
+      "envWarning": "Configure DEMO_VIDEO_DIR in .env",
+      "showRecommended": "Recommended Only",
+      "showAll": "Show All",
+      "categories": {
+        "front_fall": "Front Fall",
+        "back_fall": "Back Fall",
+        "side_fall": "Side Fall",
+        "normal": "Normal",
+        "pre_impact": "Pre-Impact",
+        "unknown": "Other"
+      },
+      "alerts": {
+        "warning": "Abnormal posture detected",
+        "danger": "Fall detected!",
+        "preImpact": "Pre-impact signs detected",
+        "ttsDanger": "Warning. A fall has been detected."
+      }
+    },
+    "units": {
+      "people": "",
+      "seconds": "s",
+      "duration": "Duration",
+      "more": " more...",
+      "hour": "h",
+      "count": " cases"
+    },
+    "modelManager": {
+      "title": "AI Model Management",
+      "description": "Switch YOLO detection models and manage AI performance.",
+      "yoloModels": "YOLO Pose Detection Models",
+      "classifierTitle": "Fall Classification System (Always Active)",
+      "falsePositiveTitle": "False Positive Data Reporting",
+      "speed": "Speed",
+      "accuracy": "Accuracy",
+      "size": "Size",
+      "active": "Active",
+      "switch": "Switch",
+      "target": "Target",
+      "alwaysActive": "Always Active",
+      "models": {
+        "nano": {
+          "title": "YOLO11 Nano",
+          "speed": "27ms/frame (GPU)",
+          "accuracy": "Fall detection 88%",
+          "description": "Lightweight (2.6M), suitable for CPU but lower detection accuracy",
+          "badge": "Light"
+        },
+        "small": {
+          "title": "YOLO11 Small",
+          "speed": "26ms/frame (GPU)",
+          "accuracy": "Fall detection 97%",
+          "description": "Best performance - optimal speed and accuracy, recommended for GPU",
+          "badge": "Recommended"
+        },
+        "yolo26n": {
+          "title": "YOLO26 Nano",
+          "speed": "28ms/frame (GPU)",
+          "accuracy": "Fall detection 87%",
+          "description": "Latest architecture lightweight (2.9M), similar to YOLO11n",
+          "badge": "Latest"
+        },
+        "yolo26s": {
+          "title": "YOLO26 Small",
+          "speed": "30ms/frame (GPU)",
+          "accuracy": "Fall detection 96%",
+          "description": "Latest architecture (10.4M), slightly slower than YOLO11s with lower detection rate",
+          "badge": "Latest"
+        },
+        "gru": {
+          "title": "Fall Classifier (GRU)",
+          "speed": "N/A",
+          "accuracy": "False alarm prevention 97%",
+          "description": "Used with YOLO, 30-frame sequence analysis reduces false positives",
+          "badge": "Classifier"
+        },
+        "custom": {
+          "title": "Custom Model",
+          "speed": "Unknown",
+          "accuracy": "Unknown",
+          "description": "User-defined model",
+          "badge": "Custom"
+        }
+      },
+      "yolo26Info": {
+        "title": "4-Model Benchmark Results (222 videos)",
+        "description": "YOLO11 Small achieves the best performance with 97% detection rate and 26ms speed. YOLO26 is the latest architecture but shows -1% detection and +4ms compared to YOLO11s."
+      },
+      "classifierInfo": "Automatically used with YOLO model and cannot be switched",
+      "upload": {
+        "title": "Upload False Positive Images",
+        "description": "Please upload screenshots that the model incorrectly identified (detected fall but wasn't, or missed actual fall). They will be reflected in the next model training.",
+        "button": "Select Image",
+        "uploading": "Uploading..."
+      },
+      "toasts": {
+        "listError": "Failed to load model list.",
+        "connectionError": "Server connection failed",
+        "switchConfirm": "Are you sure you want to switch the model?",
+        "switchWarning": "Detection may be interrupted temporarily.",
+        "switchSuccess": "Model switched successfully.",
+        "switchError": "Model switch failed",
+        "serverError": "Server error occurred.",
+        "uploadSuccess": "Training data uploaded successfully",
+        "uploadError": "Upload failed",
+        "uploadingError": "Error occurred during upload"
+      }
+    },
+    "falseReport": {
+      "title": "False Detection Reports",
+      "description": "Report incorrect fall detection results. Used for model improvement.",
+      "newReport": "New Report",
+      "reportType": "Report Type",
+      "types": {
+        "falsePositive": "False Positive (detected but not a fall)",
+        "falseNegative": "False Negative (missed actual fall)"
+      },
+      "eventId": "Event ID",
+      "eventIdPlaceholder": "Related event number (optional)",
+      "notes": "Notes",
+      "notesPlaceholder": "Describe the situation",
+      "image": "Screenshot",
+      "selectImage": "Select Image",
+      "submit": "Submit Report",
+      "submitting": "Submitting...",
+      "reportList": "Report List",
+      "noReports": "No reports found",
+      "hasImage": "Image",
+      "filter": {
+        "all": "All",
+        "falsePositive": "False Positive",
+        "falseNegative": "False Negative"
+      },
+      "summary": {
+        "total": "Total Reports",
+        "falsePositive": "False Positive",
+        "falseNegative": "False Negative",
+        "thisWeek": "{{count}} reports this week",
+        "attentionBanner": "Multiple reports accumulated. Please review model improvement."
+      },
+      "toasts": {
+        "createSuccess": "Report submitted successfully",
+        "createError": "Failed to submit report",
+        "deleteConfirm": "Are you sure you want to delete this report?",
+        "deleteSuccess": "Report deleted successfully",
+        "deleteError": "Failed to delete report"
+      }
+    }
+  },
+  "roomManager": {
+    "title": "Room Management",
+    "addRoom": "Add Room",
+    "name": "Room Name",
+    "description": "Description",
+    "namePlaceholder": "e.g. Waiting Room A",
+    "descPlaceholder": "e.g. 1st floor waiting room",
+    "add": "Add",
+    "edit": "Edit",
+    "noRooms": "No rooms registered. Please add a room.",
+    "noDescription": "No description",
+    "assignCameras": "Assign Cameras",
+    "noCameras": "No cameras detected",
+    "noCameraAssigned": "Unassigned",
+    "assigned": "Assigned",
+    "loadError": "Could not load room list",
+    "connectionError": "Server connection failed"
+  },
+  "userManagement": {
+    "title": "User Management",
+    "addUser": "Add User",
+    "refresh": "Refresh",
+    "username": "Username",
+    "fullName": "Name",
+    "password": "Password",
+    "role": "Role",
+    "staff": "Staff",
+    "admin": "Admin",
+    "add": "Add",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "noUsers": "No users found",
+    "inactive": "Inactive",
+    "placeholders": {
+      "username": "Username (e.g. staff01)",
+      "fullName": "Full Name (e.g. John Doe)"
+    },
+    "toasts": {
+      "listError": "Could not load user list",
+      "connectionError": "Could not connect to server",
+      "passwordShort": "Password must be at least 8 characters",
+      "addError": "Failed to add user",
+      "addSuccess": "Account created"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+# SENTIO GPU Dependencies
+# Dockerfile.gpu에서 requirements.txt 이후 추가 설치됩니다.
+
+# ONNX Runtime GPU (CUDA 12.x)
+# CPU 버전을 덮어쓰며, CUDA 사용 가능 시 자동 GPU 가속
+onnxruntime-gpu>=1.17.0
+
+# YOLO11 (GPU 포함)
+ultralytics>=8.3.0
+
+# PyTorch GPU (CUDA 12.4)
+# ultralytics가 자동 설치하지만, CUDA 버전 맞추기 위해 명시
+--extra-index-url https://download.pytorch.org/whl/cu124
+torch>=2.1.0
+torchvision>=0.16.0

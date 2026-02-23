@@ -1,0 +1,114 @@
+{
+  "generated_at": "2026-02-06T07:13:01.954628",
+  "benchmark_type": "AIHub Validation Dataset",
+  "configs": {
+    "rule_4_only": {
+      "metrics": {
+        "total_videos": 120,
+        "tp": 40,
+        "fn": 50,
+        "fp": 5,
+        "tn": 25,
+        "accuracy": 54.17,
+        "recall": 44.44,
+        "precision": 88.89,
+        "f1_score": 59.26,
+        "fnr": 55.56,
+        "fpr": 16.67,
+        "category_recall": {
+          "BY": 43.333333333333336,
+          "FY": 53.333333333333336,
+          "SY": 36.666666666666664
+        },
+        "avg_processing_time_ms": 14397.29
+      },
+      "description": "규칙 4조건만 (C1-C4, ML 없음)",
+      "sample_errors": [
+        {
+          "video_name": "00053_H_A_SY_C5.mp4",
+          "category": "SY",
+          "camera": "C5",
+          "total_frames": 600,
+          "processed_frames": 120,
+          "fall_detected_frames": 0,
+          "max_confidence": 0.0,
+          "avg_confidence": 0.0,
+          "ground_truth_fall": true,
+          "predicted_fall": false,
+          "correct": false,
+          "processing_time_ms": 13894.57082748413,
+          "config_name": "rule_4_only"
+        },
+        {
+          "video_name": "00972_O_E_FY_C2.mp4",
+          "category": "FY",
+          "camera": "C2",
+          "total_frames": 600,
+          "processed_frames": 120,
+          "fall_detected_frames": 0,
+          "max_confidence": 0.4,
+          "avg_confidence": 0.010185185185185186,
+          "ground_truth_fall": true,
+          "predicted_fall": false,
+          "correct": false,
+          "processing_time_ms": 14114.106893539429,
+          "config_name": "rule_4_only"
+        }
+      ]
+    },
+    "rule_10_enhanced": {
+      "metrics": {
+        "total_videos": 120,
+        "tp": 40,
+        "fn": 50,
+        "fp": 5,
+        "tn": 25,
+        "accuracy": 54.17,
+        "recall": 44.44,
+        "precision": 88.89,
+        "f1_score": 59.26,
+        "fnr": 55.56,
+        "fpr": 16.67,
+        "category_recall": {
+          "BY": 43.333333333333336,
+          "FY": 53.333333333333336,
+          "SY": 36.666666666666664
+        },
+        "avg_processing_time_ms": 15608.18
+      },
+      "description": "규칙 10조건 확장 (C1-C4 + N1-N6, ML 없음)",
+      "sample_errors": [
+        {
+          "video_name": "00053_H_A_SY_C5.mp4",
+          "category": "SY",
+          "camera": "C5",
+          "total_frames": 600,
+          "processed_frames": 120,
+          "fall_detected_frames": 0,
+          "max_confidence": 0.0,
+          "avg_confidence": 0.0,
+          "ground_truth_fall": true,
+          "predicted_fall": false,
+          "correct": false,
+          "processing_time_ms": 13895.854234695435,
+          "config_name": "rule_10_enhanced"
+        },
+        {
+          "video_name": "00972_O_E_FY_C2.mp4",
+          "category": "FY",
+          "camera": "C2",
+          "total_frames": 600,
+          "processed_frames": 120,
+          "fall_detected_frames": 0,
+          "max_confidence": 0.4,
+          "avg_confidence": 0.010185185185185186,
+          "ground_truth_fall": true,
+          "predicted_fall": false,
+          "correct": false,
+          "processing_time_ms": 13725.567817687988,
+          "config_name": "rule_10_enhanced"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,11 @@
+# ByteTrack 추적 설정 (SENTIO)
+# ultralytics에서 사용하는 ByteTrack 파라미터
+
+tracker_type: bytetrack
+track_high_thresh: 0.5       # 고신뢰도 추적 임계값
+track_low_thresh: 0.1        # 저신뢰도 추적 임계값
+new_track_thresh: 0.6        # 새 트랙 생성 임계값
+track_buffer: 30             # 트랙 유지 프레임 수 (~1초 at 30fps)
+match_thresh: 0.8            # IoU 매칭 임계값
+fuse_score: true             # 신뢰도 융합 사용
+    

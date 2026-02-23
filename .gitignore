@@ -1,0 +1,114 @@
+# Large media files (GitHub 100MB limit)
+docs/01_presentation/Care_Guard_PromoVideo.mp4
+docs/01_presentation/*.mp4
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+venv/
+.venv/
+env/
+
+# Node.js
+node_modules/
+frontend/dist/
+.pnp
+.pnp.js
+
+# 환경 변수
+.env
+.env.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 데이터베이스
+*.db
+*.sqlite
+*.sqlite3
+
+# 로그
+*.log
+logs/
+
+# 테스트
+.coverage
+htmlcov/
+.pytest_cache/
+
+# 빌드
+*.egg
+*.whl
+
+# Firebase 인증 (절대 커밋하지 마세요!)
+firebase-credentials.json
+*-firebase-adminsdk-*.json
+
+# Docker
+docker-compose.override.yml
+.env.docker
+
+# YOLO models
+*.pt
+*.onnx
+
+# Playwright MCP
+.playwright-mcp/
+
+# Claude
+.claude/
+
+# Demo videos (대용량 영상 파일)
+demo_videos/
+
+# Debug frames (분석 출력 이미지)
+debug_frames/
+
+# Playwright test artifacts
+frontend/test-results/
+frontend/playwright-report/
+
+# Debug/test screenshots
+dashboard_dual_cameras.png
+camera_settings_modal.png
+multi-camera-dashboard.png
+multi-camera-working.png
+dashboard-test.png
+dashboard-final-test.png
+*.screenshot.png
+
+# Misc
+cookies.txt
+
+# Skeleton Blackbox 사건 덤프 (런타임 생성 데이터)
+backend/incidents/
+
+# 리포트 출력 (런타임 생성 데이터)
+backend/reports/
+
+# PyTorch 모델 파일
+*.pth
+
+# Debug/test output files
+backend/test_*.txt
+analyze_layout.py
+check_dim.py
+
+# Windows
+nul

@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENTIO WAITING AI v2.0 - 개선된 낙상 감지 시스템</title>
+    
+    <!-- ========================================
+         SENTIO WAITING AI 프로토타입 v2.0
+         
+         개선 사항:
+         - USB 웹캠(C922) 선택 기능 추가
+         - 민감도 미세 조정 슬라이더
+         - 카메라 해상도 설정
+         - 프레임 비교 히스토리 (더 정확한 낙상 감지)
+         - 개선된 알고리즘
+    ======================================== -->
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1675466862/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3.1675466124/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js" crossorigin="anonymous"></script>
+    
+    <style>
+        :root {
+            --color-safe: #10B981;
+            --color-warning: #F59E0B;
+            --color-danger: #EF4444;
+            --color-bg: #0F172A;
+            --color-card: #1E293B;
+            --color-border: #334155;
+            --color-text: #F8FAFC;
+            --color-text-muted: #94A3B8;
+            --color-accent: #3B82F6;
+            --font-main: 'Noto Sans KR', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-main);
+            background: var(--color-bg);
+            color: var(--color-text);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--color-card) 0%, #0F172A 100%);
+            border-bottom: 1px solid var(--color-border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--color-accent), #8B5CF6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .logo-text h1 { font-size: 1.25rem; font-weight: 700; }
+        .logo-text p { font-size: 0.75rem; color: var(--color-text-muted); }
+        
+        .version-badge {
+            background: var(--color-accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-dot.active {
+            background: var(--color-safe);
+            box-shadow: 0 0 10px var(--color-safe);
+        }
+        
+        .status-dot.inactive { background: var(--color-text-muted); }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            height: calc(100vh - 80px);
+        }
+        
+        .video-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .video-container {
+            position: relative;
+            background: var(--color-card);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid var(--color-border);
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+        
+        .video-container.danger {
+            border-color: var(--color-danger);
+            animation: border-flash 0.5s infinite;
+        }
+        
+        .video-container.warning { border-color: var(--color-warning); }
+        
+        @keyframes border-flash {
+            0%, 100% { border-color: var(--color-danger); box-shadow: 0 0 30px rgba(239, 68, 68, 0.5); }
+            50% { border-color: transparent; box-shadow: none; }
+        }
+        
+        #webcam, #canvas {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transform: scaleX(-1);
+        }
+        
+        .status-overlay {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+        
+        .status-overlay.safe {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--color-safe);
+            color: var(--color-safe);
+        }
+        
+        .status-overlay.warning {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid var(--color-warning);
+            color: var(--color-warning);
+        }
+        
+        .status-overlay.danger {
+            background: rgba(239, 68, 68, 0.3);
+            border: 1px solid var(--color-danger);
+            color: var(--color-danger);
+            animation: status-pulse 0.5s infinite;
+        }
+        
+        @keyframes status-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .loading-overlay {
+            position: absolute;
+            inset: 0;
+            background: var(--color-card);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            z-index: 20;
+        }
+        
+        .loading-overlay.hidden { display: none; }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--color-border);
+            border-top-color: var(--color-accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .info-overlay {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            right: 1rem;
+            display: flex;
+            justify-content: space-between;
+            z-index: 10;
+        }
+        
+        .info-badge {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            backdrop-filter: blur(10px);
+        }
+        
+        .control-panel {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-accent), #2563EB);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn-secondary {
+            background: var(--color-card);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+        }
+        
+        .btn-secondary:hover { background: var(--color-border); }
+        
+        .btn-danger { background: var(--color-danger); color: white; }
+        
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            overflow-y: auto;
+        }
+        
+        .card {
+            background: var(--color-card);
+            border-radius: 16px;
+            border: 1px solid var(--color-border);
+            overflow: hidden;
+        }
+        
+        .card-header {
+            padding: 0.875rem 1rem;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-title {
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .card-body { padding: 1rem; }
+        
+        /* 카메라 선택 */
+        .camera-select-container {
+            margin-bottom: 1rem;
+        }
+        
+        .camera-select-container label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            margin-bottom: 0.5rem;
+        }
+        
+        .camera-select {
+            width: 100%;
+            padding: 0.6rem;
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            color: var(--color-text);
+            font-size: 0.8rem;
+        }
+        
+        /* 민감도 슬라이더 */
+        .sensitivity-group {
+            margin-bottom: 1rem;
+        }
+        
+        .sensitivity-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .sensitivity-label span:first-child { color: var(--color-text-muted); }
+        .sensitivity-label span:last-child { 
+            font-family: var(--font-mono);
+            color: var(--color-accent);
+        }
+        
+        .slider {
+            width: 100%;
+            height: 6px;
+            background: var(--color-border);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--color-accent);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        /* 현재 상태 */
+        .current-status { text-align: center; padding: 1rem; }
+        
+        .status-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 0.75rem;
+            transition: all 0.3s;
+        }
+        
+        .status-icon.safe {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--color-safe);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .status-icon.warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--color-warning);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+            animation: warning-glow 1s infinite;
+        }
+        
+        .status-icon.danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--color-danger);
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
+            animation: danger-glow 0.5s infinite;
+        }
+        
+        @keyframes warning-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(245, 158, 11, 0.6); }
+        }
+        
+        @keyframes danger-glow {
+            0%, 100% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.5); }
+            50% { box-shadow: 0 0 50px rgba(239, 68, 68, 0.8); }
+        }
+        
+        .status-text { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .status-text.safe { color: var(--color-safe); }
+        .status-text.warning { color: var(--color-warning); }
+        .status-text.danger { color: var(--color-danger); }
+        
+        .status-desc { font-size: 0.8rem; color: var(--color-text-muted); }
+        
+        /* 측정값 */
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        
+        .metric-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.5rem;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .metric-label { font-size: 0.65rem; color: var(--color-text-muted); margin-bottom: 0.2rem; }
+        .metric-value { font-family: var(--font-mono); font-size: 0.9rem; font-weight: 600; }
+        
+        /* 이벤트 로그 */
+        .event-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .event-item {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--color-border);
+            animation: slide-in 0.3s ease;
+        }
+        
+        @keyframes slide-in {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .event-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.8rem;
+        }
+        
+        .event-icon.warning { background: rgba(245, 158, 11, 0.2); color: var(--color-warning); }
+        .event-icon.danger { background: rgba(239, 68, 68, 0.2); color: var(--color-danger); }
+        .event-icon.info { background: rgba(59, 130, 246, 0.2); color: var(--color-accent); }
+        
+        .event-content { flex: 1; min-width: 0; }
+        .event-title { font-size: 0.75rem; font-weight: 600; }
+        .event-time { font-size: 0.65rem; color: var(--color-text-muted); font-family: var(--font-mono); }
+        
+        .event-empty {
+            text-align: center;
+            padding: 1.5rem;
+            color: var(--color-text-muted);
+            font-size: 0.8rem;
+        }
+        
+        /* 토글 */
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .settings-item:last-child { border-bottom: none; }
+        .settings-label { font-size: 0.8rem; }
+        
+        .toggle {
+            position: relative;
+            width: 40px;
+            height: 22px;
+            background: var(--color-border);
+            border-radius: 11px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .toggle.active { background: var(--color-accent); }
+        
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+        }
+        
+        .toggle.active::after { transform: translateX(18px); }
+        
+        /* 알림 모달 */
+        .alert-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        .alert-modal.show { opacity: 1; pointer-events: auto; }
+        
+        .alert-content {
+            background: var(--color-card);
+            border: 3px solid var(--color-danger);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            max-width: 400px;
+            animation: alert-shake 0.5s ease-in-out;
+        }
+        
+        @keyframes alert-shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .alert-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--color-danger);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 1rem;
+            animation: alert-pulse 0.5s infinite;
+        }
+        
+        @keyframes alert-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .alert-title { font-size: 1.25rem; font-weight: 700; color: var(--color-danger); margin-bottom: 0.5rem; }
+        .alert-desc { color: var(--color-text-muted); margin-bottom: 1.5rem; font-size: 0.9rem; }
+        
+        /* 반응형 */
+        @media (max-width: 1024px) {
+            .main-container { grid-template-columns: 1fr; }
+            .sidebar { flex-direction: row; flex-wrap: wrap; }
+            .sidebar .card { flex: 1; min-width: 280px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">🛡️</div>
+            <div class="logo-text">
+                <h1>SENTIO WAITING AI <span class="version-badge">v2.0</span></h1>
+                <p>요양병원 대기실 낙상 감지 시스템</p>
+            </div>
+        </div>
+        <div class="system-status">
+            <div class="status-item">
+                <span class="status-dot" id="cameraStatus"></span>
+                <span>카메라</span>
+            </div>
+            <div class="status-item">
+                <span class="status-dot" id="aiStatus"></span>
+                <span>AI 분석</span>
+            </div>
+            <div class="status-item" id="timeDisplay" style="font-family: var(--font-mono);">--:--:--</div>
+        </div>
+    </header>
+    
+    <main class="main-container">
+        <section class="video-section">
+            <div class="video-container" id="videoContainer">
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text" id="loadingText">시스템 초기화 중...</div>
+                </div>
+                
+                <video id="webcam" autoplay playsinline></video>
+                <canvas id="canvas"></canvas>
+                
+                <div class="status-overlay safe" id="statusOverlay">
+                    <span>●</span>
+                    <span id="statusOverlayText">정상</span>
+                </div>
+                
+                <div class="info-overlay">
+                    <div class="info-badge" id="fpsDisplay">FPS: --</div>
+                    <div class="info-badge" id="resolutionDisplay">해상도: --</div>
+                    <div class="info-badge" id="personCount">감지: 0명</div>
+                </div>
+            </div>
+            
+            <div class="control-panel">
+                <button class="btn btn-primary" id="startBtn" onclick="startCamera()">▶ 시작</button>
+                <button class="btn btn-secondary" id="stopBtn" onclick="stopCamera()" disabled>⏹ 정지</button>
+                <button class="btn btn-secondary" onclick="refreshCameras()">🔄 카메라 새로고침</button>
+                <button class="btn btn-secondary" onclick="testFallAlert()">🧪 낙상 테스트</button>
+                <button class="btn btn-secondary" onclick="clearEventLog()">🗑️ 로그 초기화</button>
+            </div>
+        </section>
+        
+        <aside class="sidebar">
+            <!-- 카메라 설정 -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📹 카메라 설정</span>
+                </div>
+                <div class="card-body">
+                    <div class="camera-select-container">
+                        <label>카메라 선택</label>
+                        <select class="camera-select" id="cameraSelect">
+                            <option value="">카메라를 선택하세요</option>
+                        </select>
+                    </div>
+                    <div class="camera-select-container">
+                        <label>해상도</label>
+                        <select class="camera-select" id="resolutionSelect">
+                            <option value="1280x720">HD (1280×720) - 권장</option>
+                            <option value="1920x1080">Full HD (1920×1080)</option>
+                            <option value="640x480">SD (640×480) - 저사양</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 현재 상태 -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📊 현재 상태</span>
+                </div>
+                <div class="card-body current-status">
+                    <div class="status-icon safe" id="mainStatusIcon">✓</div>
+                    <div class="status-text safe" id="mainStatusText">안전</div>
+                    <div class="status-desc" id="mainStatusDesc">이상 징후 없음</div>
+                    <div class="metrics">
+                        <div class="metric-item">
+                            <div class="metric-label">머리 높이</div>
+                            <div class="metric-value" id="headHeight">--%</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">엉덩이 높이</div>
+                            <div class="metric-value" id="hipHeight">--%</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">기울기</div>
+                            <div class="metric-value" id="bodyAngle">--°</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">이상 지속</div>
+                            <div class="metric-value" id="abnormalDuration">0초</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 민감도 설정 -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">🎚️ 민감도 설정</span>
+                </div>
+                <div class="card-body">
+                    <div class="sensitivity-group">
+                        <div class="sensitivity-label">
+                            <span>머리-엉덩이 역전 임계값</span>
+                            <span id="headHipValue">0.02</span>
+                        </div>
+                        <input type="range" class="slider" id="headHipSlider" min="-0.1" max="0.2" step="0.01" value="0.02">
+                    </div>
+                    <div class="sensitivity-group">
+                        <div class="sensitivity-label">
+                            <span>급락 감지 임계값</span>
+                            <span id="rapidFallValue">0.10</span>
+                        </div>
+                        <input type="range" class="slider" id="rapidFallSlider" min="0.05" max="0.25" step="0.01" value="0.10">
+                    </div>
+                    <div class="sensitivity-group">
+                        <div class="sensitivity-label">
+                            <span>기울기 각도 임계값</span>
+                            <span id="angleValue">40°</span>
+                        </div>
+                        <input type="range" class="slider" id="angleSlider" min="20" max="60" step="5" value="40">
+                    </div>
+                    <div class="sensitivity-group">
+                        <div class="sensitivity-label">
+                            <span>주의 알림 시간</span>
+                            <span id="warningTimeValue">3초</span>
+                        </div>
+                        <input type="range" class="slider" id="warningTimeSlider" min="1" max="10" step="1" value="3">
+                    </div>
+                    <div class="sensitivity-group">
+                        <div class="sensitivity-label">
+                            <span>긴급 알림 시간</span>
+                            <span id="dangerTimeValue">10초</span>
+                        </div>
+                        <input type="range" class="slider" id="dangerTimeSlider" min="5" max="30" step="1" value="10">
+                    </div>
+                    <button class="btn btn-secondary" onclick="resetSensitivity()" style="width: 100%; margin-top: 0.5rem;">
+                        기본값 복원
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 이벤트 로그 -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📋 이벤트 로그</span>
+                    <span class="info-badge" id="eventCount">0건</span>
+                </div>
+                <div class="card-body">
+                    <div class="event-list" id="eventList">
+                        <div class="event-empty">이벤트 없음</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 기타 설정 -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">⚙️ 표시 설정</span>
+                </div>
+                <div class="card-body">
+                    <div class="settings-item">
+                        <span class="settings-label">알림음</span>
+                        <div class="toggle active" id="soundToggle" onclick="toggleSound()"></div>
+                    </div>
+                    <div class="settings-item">
+                        <span class="settings-label">스켈레톤 표시</span>
+                        <div class="toggle active" id="skeletonToggle" onclick="toggleSkeleton()"></div>
+                    </div>
+                    <div class="settings-item">
+                        <span class="settings-label">측정값 표시</span>
+                        <div class="toggle active" id="metricsToggle" onclick="toggleMetrics()"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+    
+    <!-- 긴급 알림 모달 -->
+    <div class="alert-modal" id="alertModal">
+        <div class="alert-content">
+            <div class="alert-icon">⚠️</div>
+            <h2 class="alert-title">🚨 낙상 감지!</h2>
+            <p class="alert-desc">대기실에서 낙상이 감지되었습니다.<br>즉시 확인이 필요합니다.</p>
+            <button class="btn btn-danger" onclick="dismissAlert()" style="width: 100%;">확인 완료</button>
+        </div>
+    </div>
+    
+    <script>
+        /* ==========================================
+           전역 변수
+           ========================================== */
+        let pose = null;
+        let camera = null;
+        const video = document.getElementById('webcam');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let isRunning = false;
+        let showSkeleton = true;
+        let showMetrics = true;
+        let soundEnabled = true;
+        
+        let abnormalStartTime = null;
+        let currentStatus = 'safe';
+        let lastFrameTime = 0;
+        let frameCount = 0;
+        
+        // 히스토리 기반 낙상 감지 (개선된 알고리즘)
+        const HISTORY_SIZE = 10;
+        let headYHistory = [];
+        let hipYHistory = [];
+        
+        let eventLog = [];
+        
+        // 카메라 목록
+        let availableCameras = [];
+        
+        /* ==========================================
+           초기화
+           ========================================== */
+        window.onload = async function() {
+            initializeSliders();
+            setInterval(updateTime, 1000);
+            updateTime();
+            await refreshCameras();
+            await initializePose();
+        };
+        
+        /* ==========================================
+           카메라 목록 가져오기
+           ========================================== */
+        async function refreshCameras() {
+            try {
+                // 권한 요청을 위해 임시로 미디어 스트림 가져오기
+                const tempStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                tempStream.getTracks().forEach(track => track.stop());
+                
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                availableCameras = devices.filter(device => device.kind === 'videoinput');
+                
+                const select = document.getElementById('cameraSelect');
+                select.innerHTML = '<option value="">카메라를 선택하세요</option>';
+                
+                availableCameras.forEach((camera, index) => {
+                    const option = document.createElement('option');
+                    option.value = camera.deviceId;
+                    // Logitech C922 등 이름 표시
+                    option.textContent = camera.label || `카메라 ${index + 1}`;
+                    select.appendChild(option);
+                });
+                
+                // 첫 번째 카메라 자동 선택
+                if (availableCameras.length > 0) {
+                    select.value = availableCameras[0].deviceId;
+                }
+                
+                addEventLog('info', '카메라 감지', `${availableCameras.length}개 카메라 발견`);
+                
+            } catch (error) {
+                console.error('카메라 목록 가져오기 실패:', error);
+                addEventLog('danger', '오류', '카메라 접근 권한을 확인하세요');
+            }
+        }
+        
+        /* ==========================================
+           슬라이더 초기화
+           ========================================== */
+        function initializeSliders() {
+            // 머리-엉덩이 임계값
+            document.getElementById('headHipSlider').addEventListener('input', function() {
+                document.getElementById('headHipValue').textContent = this.value;
+            });
+            
+            // 급락 감지 임계값
+            document.getElementById('rapidFallSlider').addEventListener('input', function() {
+                document.getElementById('rapidFallValue').textContent = this.value;
+            });
+            
+            // 기울기 각도
+            document.getElementById('angleSlider').addEventListener('input', function() {
+                document.getElementById('angleValue').textContent = this.value + '°';
+            });
+            
+            // 주의 알림 시간
+            document.getElementById('warningTimeSlider').addEventListener('input', function() {
+                document.getElementById('warningTimeValue').textContent = this.value + '초';
+            });
+            
+            // 긴급 알림 시간
+            document.getElementById('dangerTimeSlider').addEventListener('input', function() {
+                document.getElementById('dangerTimeValue').textContent = this.value + '초';
+            });
+        }
+        
+        function resetSensitivity() {
+            document.getElementById('headHipSlider').value = 0.02;
+            document.getElementById('headHipValue').textContent = '0.02';
+            
+            document.getElementById('rapidFallSlider').value = 0.10;
+            document.getElementById('rapidFallValue').textContent = '0.10';
+            
+            document.getElementById('angleSlider').value = 40;
+            document.getElementById('angleValue').textContent = '40°';
+            
+            document.getElementById('warningTimeSlider').value = 3;
+            document.getElementById('warningTimeValue').textContent = '3초';
+            
+            document.getElementById('dangerTimeSlider').value = 10;
+            document.getElementById('dangerTimeValue').textContent = '10초';
+            
+            addEventLog('info', '설정 초기화', '민감도 설정이 기본값으로 복원됨');
+        }
+        
+        /* ==========================================
+           MediaPipe Pose 초기화
+           ========================================== */
+        async function initializePose() {
+            const loadingText = document.getElementById('loadingText');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+
+            try {
+                loadingText.textContent = 'AI 모델 다운로드 중...';
+
+                pose = new Pose({
+                    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/${file}`
+                });
+
+                pose.setOptions({
+                    modelComplexity: 1,
+                    smoothLandmarks: true,
+                    enableSegmentation: false,
+                    minDetectionConfidence: 0.5,
+                    minTrackingConfidence: 0.5
+                });
+
+                pose.onResults(onPoseResults);
+
+                // 실제 모델 로딩 대기 (빈 캔버스 전송으로 초기화 트리거)
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = 1;
+                tempCanvas.height = 1;
+                await pose.send({ image: tempCanvas });
+
+                loadingText.textContent = 'AI 모델 로드 완료! 시작 버튼을 눌러주세요.';
+                loadingOverlay.classList.add('hidden');
+
+                addEventLog('info', 'AI 초기화', 'MediaPipe Pose 모델 로드 완료');
+
+            } catch (error) {
+                console.error('MediaPipe 초기화 실패:', error);
+                loadingText.textContent = 'AI 모델 로드 실패: ' + error.message + ' (새로고침 해주세요)';
+                addEventLog('danger', '오류', 'AI 모델 로드 실패: ' + error.message);
+            }
+        }
+        
+        /* ==========================================
+           카메라 시작
+           ========================================== */
+        async function startCamera() {
+            try {
+                document.getElementById('loadingText').textContent = '카메라 연결 중...';
+                document.getElementById('loadingOverlay').classList.remove('hidden');
+                
+                const selectedCameraId = document.getElementById('cameraSelect').value;
+                const resolution = document.getElementById('resolutionSelect').value.split('x');
+                const width = parseInt(resolution[0]);
+                const height = parseInt(resolution[1]);
+                
+                const constraints = {
+                    video: {
+                        width: { ideal: width },
+                        height: { ideal: height },
+                        deviceId: selectedCameraId ? { exact: selectedCameraId } : undefined
+                    }
+                };
+                
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                video.srcObject = stream;
+                
+                await new Promise(resolve => {
+                    video.onloadedmetadata = () => {
+                        video.play();
+                        resolve();
+                    };
+                });
+                
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                
+                document.getElementById('resolutionDisplay').textContent = 
+                    `해상도: ${video.videoWidth}×${video.videoHeight}`;
+                
+                isRunning = true;
+                processFrame();
+                
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = false;
+                document.getElementById('cameraStatus').classList.add('active');
+                document.getElementById('aiStatus').classList.add('active');
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                
+                const cameraName = document.getElementById('cameraSelect').selectedOptions[0]?.text || '기본 카메라';
+                addEventLog('info', '모니터링 시작', `${cameraName} 연결됨`);
+                
+            } catch (error) {
+                console.error('카메라 시작 오류:', error);
+                document.getElementById('loadingOverlay').classList.add('hidden');
+
+                let errorMsg = '카메라에 접근할 수 없습니다';
+                switch (error.name) {
+                    case 'NotAllowedError':
+                        errorMsg = '카메라 권한을 허용해주세요 (브라우저 주소창 옆 카메라 아이콘 클릭)';
+                        break;
+                    case 'NotReadableError':
+                        errorMsg = '카메라가 다른 앱에서 사용 중입니다. 다른 앱을 종료해주세요';
+                        break;
+                    case 'OverconstrainedError':
+                        errorMsg = '선택한 카메라/해상도를 사용할 수 없습니다. 다른 설정을 시도해주세요';
+                        break;
+                    case 'NotFoundError':
+                        errorMsg = '카메라를 찾을 수 없습니다. 연결 상태를 확인해주세요';
+                        break;
+                    default:
+                        errorMsg = error.message;
+                }
+
+                addEventLog('danger', '카메라 오류', errorMsg);
+                alert(errorMsg);
+            }
+        }
+        
+        async function processFrame() {
+            if (!isRunning) return;
+            
+            if (pose && video.readyState >= 2) {
+                await pose.send({ image: video });
+            }
+            
+            requestAnimationFrame(processFrame);
+        }
+        
+        /* ==========================================
+           카메라 정지
+           ========================================== */
+        function stopCamera() {
+            isRunning = false;
+            
+            if (video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }
+            
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            document.getElementById('cameraStatus').classList.remove('active');
+            document.getElementById('aiStatus').classList.remove('active');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            resetStatus();
+            headYHistory = [];
+            hipYHistory = [];
+            
+            addEventLog('info', '모니터링 중지', '시스템 비활성화');
+        }
+        
+        /* ==========================================
+           Pose 결과 처리
+           ========================================== */
+        function onPoseResults(results) {
+            if (!isRunning) return;
+            
+            calculateFPS();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (results.poseLandmarks) {
+                document.getElementById('personCount').textContent = '감지: 1명';
+                
+                if (showSkeleton) {
+                    drawSkeleton(results.poseLandmarks);
+                }
+                
+                analyzePoseForFall(results.poseLandmarks);
+                
+            } else {
+                document.getElementById('personCount').textContent = '감지: 0명';
+                resetMetricsDisplay();
+            }
+        }
+        
+        /* ==========================================
+           스켈레톤 그리기
+           ========================================== */
+        function drawSkeleton(landmarks) {
+            let color;
+            switch (currentStatus) {
+                case 'danger': color = '#EF4444'; break;
+                case 'warning': color = '#F59E0B'; break;
+                default: color = '#10B981';
+            }
+            
+            const connections = [
+                [0, 1], [1, 2], [2, 3], [3, 7],
+                [0, 4], [4, 5], [5, 6], [6, 8],
+                [9, 10],
+                [11, 12], [11, 23], [12, 24], [23, 24],
+                [11, 13], [13, 15], [15, 17], [15, 19], [15, 21], [17, 19],
+                [12, 14], [14, 16], [16, 18], [16, 20], [16, 22], [18, 20],
+                [23, 25], [25, 27], [27, 29], [27, 31], [29, 31],
+                [24, 26], [26, 28], [28, 30], [28, 32], [30, 32]
+            ];
+            
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            
+            connections.forEach(([start, end]) => {
+                const s = landmarks[start];
+                const e = landmarks[end];
+                if (s.visibility > 0.5 && e.visibility > 0.5) {
+                    ctx.beginPath();
+                    ctx.moveTo(s.x * canvas.width, s.y * canvas.height);
+                    ctx.lineTo(e.x * canvas.width, e.y * canvas.height);
+                    ctx.stroke();
+                }
+            });
+            
+            landmarks.forEach((lm, idx) => {
+                if (lm.visibility > 0.5) {
+                    ctx.beginPath();
+                    ctx.arc(lm.x * canvas.width, lm.y * canvas.height, 5, 0, 2 * Math.PI);
+                    ctx.fillStyle = color;
+                    ctx.fill();
+                    
+                    if ([0, 11, 12, 23, 24].includes(idx)) {
+                        ctx.beginPath();
+                        ctx.arc(lm.x * canvas.width, lm.y * canvas.height, 8, 0, 2 * Math.PI);
+                        ctx.strokeStyle = 'white';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    }
+                }
+            });
+        }
+        
+        /* ==========================================
+           낙상 감지 분석 (개선된 알고리즘)
+           ========================================== */
+        function analyzePoseForFall(landmarks) {
+            const nose = landmarks[0];
+            const leftShoulder = landmarks[11];
+            const rightShoulder = landmarks[12];
+            const leftHip = landmarks[23];
+            const rightHip = landmarks[24];
+            
+            const headY = nose.y;
+            const hipY = (leftHip.y + rightHip.y) / 2;
+            const shoulderY = (leftShoulder.y + rightShoulder.y) / 2;
+            
+            // 히스토리 업데이트
+            headYHistory.push(headY);
+            hipYHistory.push(hipY);
+            if (headYHistory.length > HISTORY_SIZE) headYHistory.shift();
+            if (hipYHistory.length > HISTORY_SIZE) hipYHistory.shift();
+            
+            // 측정값 표시
+            if (showMetrics) {
+                document.getElementById('headHeight').textContent = Math.round((1 - headY) * 100) + '%';
+                document.getElementById('hipHeight').textContent = Math.round((1 - hipY) * 100) + '%';
+            }
+            
+            // 기울기 각도
+            const bodyAngle = calculateBodyAngle(leftShoulder, rightShoulder, leftHip, rightHip);
+            if (showMetrics) {
+                document.getElementById('bodyAngle').textContent = Math.round(bodyAngle) + '°';
+            }
+            
+            // 슬라이더에서 임계값 가져오기
+            const headHipThreshold = parseFloat(document.getElementById('headHipSlider').value);
+            const rapidFallThreshold = parseFloat(document.getElementById('rapidFallSlider').value);
+            const angleThreshold = parseInt(document.getElementById('angleSlider').value);
+            const warningTime = parseInt(document.getElementById('warningTimeSlider').value);
+            const dangerTime = parseInt(document.getElementById('dangerTimeSlider').value);
+            
+            // 조건 1: 머리가 엉덩이 아래
+            const isHeadBelowHip = (headY - hipY) > headHipThreshold;
+            
+            // 조건 2: 급격한 하강 (히스토리 기반)
+            let isRapidFall = false;
+            if (headYHistory.length >= 3) {
+                const recentDrop = headY - headYHistory[headYHistory.length - 3];
+                isRapidFall = recentDrop > rapidFallThreshold;
+            }
+            
+            // 조건 3: 수평 기울어짐
+            const isHorizontal = bodyAngle > angleThreshold;
+            
+            // 조건 4: 바닥 근처
+            const isNearGround = headY > 0.7;
+            
+            // 상태 판단
+            let isAbnormal = false;
+            let reason = '';
+            
+            if (isHeadBelowHip && isNearGround) {
+                isAbnormal = true;
+                reason = '머리가 엉덩이 아래 + 바닥 근처';
+            } else if (isRapidFall) {
+                isAbnormal = true;
+                reason = '급격한 신체 하강';
+            } else if (isHorizontal && isNearGround) {
+                isAbnormal = true;
+                reason = '수평 자세 + 바닥 근처';
+            }
+            
+            // 알림 처리
+            if (isAbnormal) {
+                if (abnormalStartTime === null) {
+                    abnormalStartTime = Date.now();
+                }
+                
+                const duration = (Date.now() - abnormalStartTime) / 1000;
+                document.getElementById('abnormalDuration').textContent = duration.toFixed(1) + '초';
+                
+                if (duration >= warningTime && duration < dangerTime) {
+                    if (currentStatus !== 'warning') {
+                        setStatus('warning', '주의 필요', reason);
+                        addEventLog('warning', '주의 알림', reason);
+                        playWarningSound();
+                    }
+                } else if (duration >= dangerTime) {
+                    if (currentStatus !== 'danger') {
+                        setStatus('danger', '낙상 감지!', reason);
+                        addEventLog('danger', '🚨 긴급 알림', reason);
+                        playDangerSound();
+                        showAlertModal();
+                    }
+                }
+            } else {
+                if (abnormalStartTime !== null) {
+                    abnormalStartTime = null;
+                    document.getElementById('abnormalDuration').textContent = '0초';
+                    
+                    if (currentStatus !== 'safe') {
+                        setStatus('safe', '안전', '이상 징후 없음');
+                    }
+                }
+            }
+        }
+        
+        function calculateBodyAngle(ls, rs, lh, rh) {
+            const scx = (ls.x + rs.x) / 2;
+            const scy = (ls.y + rs.y) / 2;
+            const hcx = (lh.x + rh.x) / 2;
+            const hcy = (lh.y + rh.y) / 2;
+            
+            const dx = hcx - scx;
+            const dy = hcy - scy;
+            
+            return Math.abs(Math.atan2(dx, dy) * (180 / Math.PI));
+        }
+        
+        /* ==========================================
+           상태 업데이트
+           ========================================== */
+        function setStatus(status, text, desc) {
+            currentStatus = status;
+            
+            const icon = document.getElementById('mainStatusIcon');
+            const textEl = document.getElementById('mainStatusText');
+            const descEl = document.getElementById('mainStatusDesc');
+            const overlay = document.getElementById('statusOverlay');
+            const overlayText = document.getElementById('statusOverlayText');
+            const container = document.getElementById('videoContainer');
+            
+            icon.className = 'status-icon ' + status;
+            textEl.className = 'status-text ' + status;
+            overlay.className = 'status-overlay ' + status;
+            container.className = 'video-container ' + (status === 'safe' ? '' : status);
+            
+            icon.textContent = status === 'safe' ? '✓' : status === 'warning' ? '⚠' : '!';
+            textEl.textContent = text;
+            descEl.textContent = desc;
+            overlayText.textContent = text;
+        }
+        
+        /* ==========================================
+           알림음
+           ========================================== */
+        function playWarningSound() {
+            if (!soundEnabled) return;
+            const ctx = new AudioContext();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.frequency.value = 800;
+            gain.gain.value = 0.3;
+            osc.start();
+            setTimeout(() => { osc.stop(); ctx.close(); }, 200);
+        }
+        
+        function playDangerSound() {
+            if (!soundEnabled) return;
+            const ctx = new AudioContext();
+            
+            [0, 0.25, 0.5, 0.75, 1].forEach((time, i) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.frequency.value = i % 2 === 0 ? 1000 : 1200;
+                osc.type = 'square';
+                gain.gain.value = 0.4;
+                osc.start(ctx.currentTime + time);
+                osc.stop(ctx.currentTime + time + 0.15);
+            });
+            
+            setTimeout(() => ctx.close(), 1500);
+        }
+        
+        /* ==========================================
+           이벤트 로그
+           ========================================== */
+        function addEventLog(type, title, desc) {
+            const time = new Date().toLocaleTimeString('ko-KR', { 
+                hour: '2-digit', minute: '2-digit', second: '2-digit' 
+            });
+            
+            eventLog.unshift({ type, title, desc, time });
+            if (eventLog.length > 30) eventLog.pop();
+            
+            renderEventLog();
+        }
+        
+        function renderEventLog() {
+            const list = document.getElementById('eventList');
+            document.getElementById('eventCount').textContent = eventLog.length + '건';
+            
+            if (eventLog.length === 0) {
+                list.innerHTML = '<div class="event-empty">이벤트 없음</div>';
+                return;
+            }
+            
+            list.innerHTML = eventLog.map(e => `
+                <div class="event-item">
+                    <div class="event-icon ${e.type}">
+                        ${e.type === 'danger' ? '🚨' : e.type === 'warning' ? '⚠️' : 'ℹ️'}
+                    </div>
+                    <div class="event-content">
+                        <div class="event-title">${e.title}</div>
+                        <div class="event-time">${e.time} - ${e.desc}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function clearEventLog() {
+            eventLog = [];
+            renderEventLog();
+        }
+        
+        /* ==========================================
+           유틸리티
+           ========================================== */
+        function calculateFPS() {
+            frameCount++;
+            const now = performance.now();
+            if (now - lastFrameTime >= 1000) {
+                document.getElementById('fpsDisplay').textContent = 'FPS: ' + frameCount;
+                frameCount = 0;
+                lastFrameTime = now;
+            }
+        }
+        
+        function updateTime() {
+            document.getElementById('timeDisplay').textContent = 
+                new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+        
+        function resetStatus() {
+            setStatus('safe', '대기 중', '모니터링 중지됨');
+            abnormalStartTime = null;
+            document.getElementById('abnormalDuration').textContent = '0초';
+        }
+        
+        function resetMetricsDisplay() {
+            document.getElementById('headHeight').textContent = '--%';
+            document.getElementById('hipHeight').textContent = '--%';
+            document.getElementById('bodyAngle').textContent = '--°';
+        }
+        
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('soundToggle').classList.toggle('active', soundEnabled);
+        }
+        
+        function toggleSkeleton() {
+            showSkeleton = !showSkeleton;
+            document.getElementById('skeletonToggle').classList.toggle('active', showSkeleton);
+        }
+        
+        function toggleMetrics() {
+            showMetrics = !showMetrics;
+            document.getElementById('metricsToggle').classList.toggle('active', showMetrics);
+        }
+        
+        function showAlertModal() {
+            document.getElementById('alertModal').classList.add('show');
+        }
+        
+        function dismissAlert() {
+            document.getElementById('alertModal').classList.remove('show');
+        }
+        
+        function testFallAlert() {
+            setStatus('danger', '낙상 감지!', '테스트 알림');
+            addEventLog('danger', '🧪 테스트', '낙상 감지 테스트');
+            playDangerSound();
+            showAlertModal();
+            
+            setTimeout(() => {
+                if (!isRunning) {
+                    setStatus('safe', '대기 중', '모니터링을 시작하세요');
+                } else {
+                    setStatus('safe', '안전', '이상 징후 없음');
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

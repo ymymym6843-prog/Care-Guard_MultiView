@@ -1,0 +1,60 @@
+{
+  "generated_at": "2026-02-06T07:52:32.550246",
+  "benchmark_type": "AIHub Validation Dataset",
+  "configs": {
+    "rule_4_only": {
+      "metrics": {
+        "total_videos": 120,
+        "tp": 60,
+        "fn": 30,
+        "fp": 7,
+        "tn": 23,
+        "accuracy": 69.17,
+        "recall": 66.67,
+        "precision": 89.55,
+        "f1_score": 76.43,
+        "fnr": 33.33,
+        "fpr": 23.33,
+        "category_recall": {
+          "BY": 60.0,
+          "FY": 80.0,
+          "SY": 60.0
+        },
+        "avg_processing_time_ms": 16601.46
+      },
+      "description": "규칙 4조건만 (C1-C4, ML 없음)",
+      "sample_errors": [
+        {
+          "video_name": "00053_H_A_SY_C5.mp4",
+          "category": "SY",
+          "camera": "C5",
+          "total_frames": 600,
+          "processed_frames": 120,
+          "fall_detected_frames": 0,
+          "max_confidence": 0.0,
+          "avg_confidence": 0.0,
+          "ground_truth_fall": true,
+          "predicted_fall": false,
+          "correct": false,
+          "processing_time_ms": 14294.111728668213,
+          "config_name": "rule_4_only"
+        },
+        {
+          "video_name": "00972_O_E_FY_C2.mp4",
+          "category": "FY",
+          "camera": "C2",
+          "total_frames": 600,
+          "processed_frames": 120,
+          "fall_detected_frames": 0,
+          "max_confidence": 0.4,
+          "avg_confidence": 0.010185185185185186,
+          "ground_truth_fall": true,
+          "predicted_fall": false,
+          "correct": false,
+          "processing_time_ms": 14125.754833221436,
+          "config_name": "rule_4_only"
+        }
+      ]
+    }
+  }
+}

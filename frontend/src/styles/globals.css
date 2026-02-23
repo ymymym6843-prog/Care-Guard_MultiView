@@ -1,0 +1,360 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * SENTIO WAITING AI - Theme System
+ *
+ * 라이트/다크 듀얼 테마 지원
+ * 의료/재활 분야 UI/UX 가이드라인 준수
+ * - 상태별 색상: safe(녹) / warning(노) / danger(빨)
+ * - 고대비, 큰 글씨, 접근성 우선
+ * - oklch 색상 포맷 (Tailwind v4)
+ */
+
+@theme inline {
+  /* === shadcn/ui 기본 색상 매핑 === */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* === SENTIO 커스텀 상태 색상 === */
+  --color-safe: var(--safe);
+  --color-safe-foreground: var(--safe-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+
+  /* === 차트 색상 === */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* === 사이드바 === */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* === 반경 === */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* === 폰트 === */
+  --font-sans: "Pretendard Variable", Pretendard, "Noto Sans KR",
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Noto Color Emoji";
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono",
+    Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+/*
+ * === 라이트 테마 (기본) ===
+ * 밝은 환경에서의 가독성 최적화
+ */
+:root {
+  --radius: 0.625rem;
+
+  /* 배경 - 밝은 그레이 */
+  --background: oklch(0.985 0.002 248);
+  --foreground: oklch(0.141 0.031 263);
+
+  /* 카드 */
+  --card: oklch(1.0 0 0);
+  --card-foreground: oklch(0.141 0.031 263);
+
+  /* 팝오버 */
+  --popover: oklch(1.0 0 0);
+  --popover-foreground: oklch(0.141 0.031 263);
+
+  /* 프라이머리 - Teal Blue (Logo Color) */
+  --primary: oklch(0.60 0.20 250);
+  --primary-foreground: oklch(0.985 0.002 248);
+
+  /* 세컨더리 */
+  --secondary: oklch(0.930 0.010 255);
+  --secondary-foreground: oklch(0.250 0.030 264);
+
+  /* 뮤트 */
+  --muted: oklch(0.930 0.010 255);
+  --muted-foreground: oklch(0.460 0.030 264);
+
+  /* 액센트 */
+  --accent: oklch(0.930 0.010 255);
+  --accent-foreground: oklch(0.250 0.030 264);
+
+  /* 파괴적 액션 - 위험 빨강 */
+  --destructive: oklch(0.577 0.237 25);
+  --destructive-foreground: oklch(0.985 0.002 248);
+
+  /* 테두리/입력/링 */
+  --border: oklch(0.880 0.010 255);
+  --input: oklch(0.880 0.010 255);
+  --ring: oklch(0.607 0.165 255);
+
+  /* === SENTIO 상태 색상 (라이트) === */
+  --safe: oklch(0.656 0.190 164);
+  --safe-foreground: oklch(0.985 0.002 248);
+
+  --warning: oklch(0.750 0.180 80);
+  --warning-foreground: oklch(0.200 0.030 80);
+
+  --danger: oklch(0.577 0.237 25);
+  --danger-foreground: oklch(0.985 0.002 248);
+
+  /* 차트 색상 (라이트) */
+  --chart-1: oklch(0.607 0.165 255);
+  --chart-2: oklch(0.656 0.190 164);
+  --chart-3: oklch(0.700 0.165 76);
+  --chart-4: oklch(0.577 0.237 25);
+  --chart-5: oklch(0.590 0.200 310);
+
+  /* 사이드바 (라이트) */
+  --sidebar: oklch(0.965 0.005 255);
+  --sidebar-foreground: oklch(0.141 0.031 263);
+  --sidebar-primary: oklch(0.607 0.165 255);
+  --sidebar-primary-foreground: oklch(0.985 0.002 248);
+  --sidebar-accent: oklch(0.930 0.010 255);
+  --sidebar-accent-foreground: oklch(0.250 0.030 264);
+  --sidebar-border: oklch(0.880 0.010 255);
+  --sidebar-ring: oklch(0.607 0.165 255);
+}
+
+/*
+ * === 다크 테마 ===
+ * 24시간 모니터링 환경 최적화 (눈 피로 감소)
+ */
+.dark {
+  --background: oklch(0.141 0.031 263);
+  --foreground: oklch(0.985 0.002 248);
+  --card: oklch(0.216 0.032 264);
+  --card-foreground: oklch(0.985 0.002 248);
+  --popover: oklch(0.216 0.032 264);
+  --popover-foreground: oklch(0.985 0.002 248);
+  --primary: oklch(0.707 0.165 255);
+  --primary-foreground: oklch(0.141 0.031 263);
+  --secondary: oklch(0.318 0.030 264);
+  --secondary-foreground: oklch(0.985 0.002 248);
+  --muted: oklch(0.318 0.030 264);
+  --muted-foreground: oklch(0.704 0.026 257);
+  --accent: oklch(0.318 0.030 264);
+  --accent-foreground: oklch(0.985 0.002 248);
+  --destructive: oklch(0.637 0.237 25);
+  --destructive-foreground: oklch(0.985 0.002 248);
+  --border: oklch(0.318 0.030 264);
+  --input: oklch(0.318 0.030 264);
+  --ring: oklch(0.707 0.165 255);
+  --safe: oklch(0.776 0.190 164);
+  --safe-foreground: oklch(0.141 0.031 263);
+  --warning: oklch(0.85 0.18 80);
+  --warning-foreground: oklch(0.141 0.031 263);
+  --danger: oklch(0.637 0.237 25);
+  --danger-foreground: oklch(0.985 0.002 248);
+  --chart-1: oklch(0.707 0.165 255);
+  --chart-2: oklch(0.776 0.190 164);
+  --chart-3: oklch(0.85 0.18 80);
+  --chart-4: oklch(0.637 0.237 25);
+  --chart-5: oklch(0.650 0.200 310);
+  --sidebar: oklch(0.170 0.031 263);
+  --sidebar-foreground: oklch(0.985 0.002 248);
+  --sidebar-primary: oklch(0.707 0.165 255);
+  --sidebar-primary-foreground: oklch(0.141 0.031 263);
+  --sidebar-accent: oklch(0.250 0.032 264);
+  --sidebar-accent-foreground: oklch(0.985 0.002 248);
+  --sidebar-border: oklch(0.318 0.030 264);
+  --sidebar-ring: oklch(0.707 0.165 255);
+}
+
+/* === 글로벌 베이스 스타일 === */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* === 모던 디자인 유틸리티 === */
+@layer components {
+  .glass-panel {
+    @apply bg-background/80 backdrop-blur-xl border border-border/50 shadow-xl;
+  }
+
+  .glass-card {
+    @apply bg-card/60 backdrop-blur-md border border-border/50 shadow-sm hover:shadow-md transition-all duration-300;
+  }
+
+  .glass-sidebar {
+    @apply bg-sidebar/80 backdrop-blur-xl border-r border-sidebar-border/500;
+  }
+}
+
+/* === 애니메이션 === */
+@keyframes enter-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes enter-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-enter-up {
+  animation: enter-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-enter-scale {
+  animation: enter-scale 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* === SENTIO 긴급 알림 애니메이션 === */
+@keyframes danger-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes border-flash {
+
+  0%,
+  100% {
+    border-color: var(--danger);
+  }
+
+  50% {
+    border-color: transparent;
+  }
+}
+
+@keyframes alert-shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-4px);
+  }
+
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+.animate-danger-pulse {
+  animation: danger-pulse 0.5s ease-in-out infinite;
+}
+
+.animate-border-flash {
+  animation: border-flash 1s ease-in-out infinite;
+}
+
+.animate-alert-shake {
+  animation: alert-shake 0.6s ease-in-out;
+}
+
+/* === 접근성: 움직임 감소 설정 존중 === */
+@media (prefers-reduced-motion: reduce) {
+
+  .animate-danger-pulse,
+  .animate-border-flash,
+  .animate-alert-shake,
+  .animate-pulse,
+  .animate-spin {
+    animation: none !important;
+  }
+
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* === 접근성: 포커스 스타일 === */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* === 접근성: Windows 고대비 모드 (색각 이상자 지원) === */
+@media (forced-colors: active) {
+
+  .text-safe,
+  .text-warning,
+  .text-danger {
+    forced-color-adjust: none;
+  }
+
+  .bg-danger,
+  .bg-warning,
+  .bg-safe {
+    forced-color-adjust: none;
+  }
+
+  .animate-danger-pulse,
+  .animate-border-flash {
+    border: 2px solid LinkText;
+  }
+}

@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SENTIO V4 낙상 감지 로직 한눈에 보기</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+
+  :root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --card2: #334155;
+    --primary: #6366f1;
+    --accent: #8b5cf6;
+    --safe: #10b981;
+    --warn: #f59e0b;
+    --danger: #ef4444;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --border: #475569;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    text-align: center;
+    padding: 4rem 2rem 3rem;
+    background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 50%, #1a1040 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 50%, rgba(99,102,241,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 70% 50%, rgba(139,92,246,0.08) 0%, transparent 50%);
+    animation: float 20s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-2%, 2%); }
+  }
+  .hero h1 {
+    font-size: 2.6rem;
+    font-weight: 900;
+    position: relative;
+    background: linear-gradient(135deg, #818cf8, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+  }
+  .hero .subtitle {
+    font-size: 1.2rem;
+    color: var(--muted);
+    position: relative;
+  }
+  .hero .badge-v4 {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    padding: 0.3rem 1rem;
+    border-radius: 2rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    position: relative;
+  }
+
+  /* ── Container ── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* ── Section ── */
+  .section {
+    padding: 3rem 0;
+  }
+  .section-title {
+    font-size: 1.8rem;
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+  .section-title .icon {
+    font-size: 2rem;
+  }
+  .section-desc {
+    color: var(--muted);
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    max-width: 700px;
+  }
+
+  /* ── Big Picture Pipeline ── */
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+    padding-left: 2.5rem;
+  }
+  .pipeline::before {
+    content: '';
+    position: absolute;
+    left: 1.1rem;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--primary), var(--accent), var(--safe), var(--warn), var(--danger));
+    border-radius: 4px;
+  }
+  .pipe-step {
+    position: relative;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 0.5rem;
+    background: var(--card);
+    border-radius: 16px;
+    border-left: 4px solid transparent;
+    transition: transform 0.2s;
+  }
+  .pipe-step:hover { transform: translateX(6px); }
+  .pipe-step::before {
+    content: attr(data-step);
+    position: absolute;
+    left: -2.9rem;
+    top: 1.2rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 0.85rem;
+    color: white;
+    z-index: 1;
+  }
+  .pipe-step[data-color="blue"]::before { background: var(--primary); }
+  .pipe-step[data-color="blue"] { border-left-color: var(--primary); }
+  .pipe-step[data-color="purple"]::before { background: var(--accent); }
+  .pipe-step[data-color="purple"] { border-left-color: var(--accent); }
+  .pipe-step[data-color="green"]::before { background: var(--safe); }
+  .pipe-step[data-color="green"] { border-left-color: var(--safe); }
+  .pipe-step[data-color="yellow"]::before { background: var(--warn); }
+  .pipe-step[data-color="yellow"] { border-left-color: var(--warn); }
+  .pipe-step[data-color="red"]::before { background: var(--danger); }
+  .pipe-step[data-color="red"] { border-left-color: var(--danger); }
+
+  .pipe-step .step-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
+  }
+  .pipe-step .step-body {
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+  .pipe-step .analogy {
+    margin-top: 0.5rem;
+    padding: 0.6rem 1rem;
+    background: rgba(139,92,246,0.1);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.88rem;
+    color: #c4b5fd;
+  }
+  .pipe-step .analogy::before {
+    content: '💡 쉬운 비유: ';
+    font-weight: 700;
+  }
+
+  /* ── Cards Grid ── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  .card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+  .card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+  }
+  .card p {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .card .example {
+    margin-top: 0.7rem;
+    padding: 0.6rem 0.8rem;
+    background: rgba(16,185,129,0.1);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: #6ee7b7;
+  }
+  .card .example::before {
+    content: '예시: ';
+    font-weight: 700;
+  }
+
+  /* ── Rule Table ── */
+  .rule-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+  }
+  .rule-table th {
+    background: var(--card2);
+    padding: 0.8rem 1rem;
+    text-align: left;
+    font-weight: 700;
+    border-bottom: 2px solid var(--border);
+  }
+  .rule-table td {
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid rgba(71,85,105,0.5);
+    vertical-align: top;
+  }
+  .rule-table tr:hover { background: rgba(99,102,241,0.05); }
+  .rule-table .tag {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-right: 0.3rem;
+  }
+  .tag-standing { background: rgba(99,102,241,0.2); color: #a5b4fc; }
+  .tag-sitting { background: rgba(245,158,11,0.2); color: #fcd34d; }
+  .tag-enhanced { background: rgba(139,92,246,0.2); color: #c4b5fd; }
+
+  /* ── Flowchart ── */
+  .flowchart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    padding: 2rem 0;
+  }
+  .flow-node {
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 0.95rem;
+    min-width: 280px;
+    max-width: 500px;
+    position: relative;
+  }
+  .flow-node.input {
+    background: linear-gradient(135deg, #312e81, #6366f1);
+    border: 2px solid #818cf8;
+  }
+  .flow-node.process {
+    background: var(--card);
+    border: 2px solid var(--border);
+  }
+  .flow-node.decision {
+    background: var(--card);
+    border: 2px solid var(--warn);
+    transform: rotate(0deg);
+    border-radius: 12px;
+    padding: 0.8rem 1.5rem;
+  }
+  .flow-node.output-safe {
+    background: rgba(16,185,129,0.2);
+    border: 2px solid var(--safe);
+    color: #6ee7b7;
+  }
+  .flow-node.output-warn {
+    background: rgba(245,158,11,0.2);
+    border: 2px solid var(--warn);
+    color: #fcd34d;
+  }
+  .flow-node.output-danger {
+    background: rgba(239,68,68,0.2);
+    border: 2px solid var(--danger);
+    color: #fca5a5;
+  }
+  .flow-arrow {
+    width: 3px;
+    height: 35px;
+    background: var(--muted);
+    position: relative;
+  }
+  .flow-arrow::after {
+    content: '▼';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--muted);
+    font-size: 0.7rem;
+  }
+  .flow-arrow.yes::before {
+    content: 'YES';
+    position: absolute;
+    left: 12px;
+    top: 5px;
+    color: var(--safe);
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+  .flow-arrow.no::before {
+    content: 'NO';
+    position: absolute;
+    left: 12px;
+    top: 5px;
+    color: var(--danger);
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+
+  .flow-branch {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    margin: 0.5rem 0;
+  }
+  .flow-branch-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .flow-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    margin-bottom: 0.3rem;
+  }
+  .flow-label.yes { background: rgba(16,185,129,0.2); color: var(--safe); }
+  .flow-label.no { background: rgba(239,68,68,0.2); color: var(--danger); }
+
+  /* ── Score Meter ── */
+  .meter-container {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 1.5rem 0;
+    border: 1px solid var(--border);
+  }
+  .meter-bar {
+    height: 40px;
+    background: linear-gradient(90deg,
+      #10b981 0%, #10b981 24%,
+      #f59e0b 25%, #f59e0b 49%,
+      #ef4444 50%, #ef4444 100%
+    );
+    border-radius: 20px;
+    position: relative;
+    margin: 1rem 0;
+    overflow: visible;
+  }
+  .meter-marker {
+    position: absolute;
+    top: -28px;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+    text-align: center;
+  }
+  .meter-marker::after {
+    content: '▼';
+    display: block;
+    font-size: 0.8rem;
+  }
+  .meter-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  /* ── Comparison ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 1rem 0;
+  }
+  .compare-box {
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 2px solid;
+  }
+  .compare-box.good {
+    background: rgba(16,185,129,0.05);
+    border-color: var(--safe);
+  }
+  .compare-box.bad {
+    background: rgba(239,68,68,0.05);
+    border-color: var(--danger);
+  }
+  .compare-box h4 {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+  }
+  .compare-box ul {
+    list-style: none;
+    padding: 0;
+  }
+  .compare-box ul li {
+    padding: 0.2rem 0;
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+  .compare-box.good ul li::before { content: '✅ '; }
+  .compare-box.bad ul li::before { content: '❌ '; }
+
+  /* ── Stats Row ── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .stat {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    background: var(--card);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+  }
+  .stat .number {
+    font-size: 2.2rem;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .stat .label {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .stat .explain {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+    opacity: 0.7;
+  }
+
+  /* ── EMA Visualization ── */
+  .ema-visual {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: var(--card);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    margin: 1rem 0;
+    flex-wrap: wrap;
+  }
+  .ema-box {
+    flex: 1;
+    min-width: 200px;
+    text-align: center;
+    padding: 1rem;
+    border-radius: 12px;
+  }
+  .ema-box.attack {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+  }
+  .ema-box.decay {
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.3);
+  }
+  .ema-box .ema-icon { font-size: 2rem; margin-bottom: 0.3rem; }
+  .ema-box h4 { font-size: 0.95rem; margin-bottom: 0.3rem; }
+  .ema-box p { font-size: 0.82rem; color: var(--muted); }
+  .ema-box .formula {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: var(--text);
+    margin-top: 0.5rem;
+    font-weight: 700;
+  }
+  .ema-arrow {
+    font-size: 2rem;
+    color: var(--muted);
+  }
+
+  /* ── Filter Boxes ── */
+  .filter-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  .filter-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 1.2rem;
+    background: var(--card);
+    border-radius: 12px;
+    border-left: 4px solid var(--safe);
+  }
+  .filter-item .filter-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+  }
+  .filter-item h4 { font-size: 0.95rem; margin-bottom: 0.2rem; }
+  .filter-item p { font-size: 0.85rem; color: var(--muted); }
+  .filter-item .filter-example {
+    margin-top: 0.4rem;
+    font-size: 0.82rem;
+    color: #6ee7b7;
+    font-style: italic;
+  }
+
+  /* ── Version Evolution ── */
+  .evolution {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    padding: 1rem 0;
+  }
+  .evo-item {
+    flex: 1;
+    min-width: 200px;
+    text-align: center;
+    padding: 1.2rem 1rem;
+    position: relative;
+  }
+  .evo-item::after {
+    content: '→';
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    color: var(--muted);
+  }
+  .evo-item:last-child::after { display: none; }
+  .evo-version {
+    font-size: 1.5rem;
+    font-weight: 900;
+    margin-bottom: 0.3rem;
+  }
+  .evo-f1 {
+    font-size: 1.8rem;
+    font-weight: 900;
+    margin: 0.3rem 0;
+  }
+  .evo-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .evo-desc {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 0.4rem;
+    line-height: 1.4;
+  }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+    margin-top: 2rem;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 1.8rem; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .evolution { flex-direction: column; }
+    .evo-item::after { display: none; }
+  }
+
+  @media print {
+    body { background: white; color: #1e293b; }
+    .card, .pipe-step, .stat, .meter-container, .ema-visual, .filter-item {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════ HERO ══════════════════════════════════════════════ -->
+<header class="hero">
+  <h1>SENTIO V4 낙상 감지 로직</h1>
+  <p class="subtitle">어떻게 AI가 낙상을 감지하는지, 한눈에 이해하기</p>
+  <span class="badge-v4">V4 최종 확정 | F1 94.9 | 424개 영상 검증</span>
+</header>
+
+<!-- ══════════════════════════════════════════ SECTION 1: 한줄 요약 ══════════════════════════════════ -->
+<div class="container">
+<section class="section">
+  <h2 class="section-title"><span class="icon">🎯</span> 핵심 요약: 이렇게 동작합니다</h2>
+  <p class="section-desc">
+    카메라 영상에서 사람의 관절을 찾고, 관절의 움직임 패턴을 AI가 분석하여 낙상 여부를 판단합니다.
+    마치 <strong>경험 많은 간호사가 환자를 지켜보는 것</strong>과 비슷하지만, 24시간 쉬지 않고 봅니다.
+  </p>
+
+  <!-- 전체 파이프라인 -->
+  <div class="pipeline">
+    <div class="pipe-step" data-step="1" data-color="blue">
+      <div class="step-title">📷 영상 입력 &amp; 관절 추출</div>
+      <div class="step-body">
+        카메라 영상에서 YOLO11이 사람을 찾고, 각 사람의 <strong>17개 관절점</strong>(머리, 어깨, 팔꿈치, 손목, 엉덩이, 무릎, 발목)을 추출합니다.
+        이 17개 점을 <strong>33개 점</strong>으로 확장하여 더 정밀하게 분석합니다.
+      </div>
+      <div class="analogy">
+        사람의 몸에 17개의 LED를 붙여서 움직임을 추적하는 것과 같습니다. 어두운 방에서 LED만 보고도 그 사람이 서있는지, 넘어졌는지 알 수 있죠.
+      </div>
+    </div>
+
+    <div class="pipe-step" data-step="2" data-color="blue">
+      <div class="step-title">🧍 자세 분류: 서있나? 앉았나? 누웠나?</div>
+      <div class="step-body">
+        관절 위치를 바탕으로 현재 <strong>기립(Standing)</strong>, <strong>착석(Sitting)</strong>, <strong>누움(Lying)</strong> 중 어떤 자세인지 파악합니다.
+        자세에 따라 낙상 판정 기준이 달라집니다.
+      </div>
+      <div class="analogy">
+        서 있다가 갑자기 누운 건 위험하지만, 원래 침대에 누워있던 건 정상이죠.
+        자세를 먼저 파악해야 "비정상적인 변화"를 구별할 수 있습니다.
+      </div>
+    </div>
+
+    <div class="pipe-step" data-step="3" data-color="purple">
+      <div class="step-title">📐 규칙 기반 점수 (13개 조건 체크)</div>
+      <div class="step-body">
+        경험적으로 알려진 낙상 특징 13가지를 체크합니다.
+        예: "머리가 엉덩이보다 낮아졌는가?", "급격히 떨어졌는가?", "몸이 수평이 되었는가?" 등.
+        각 조건이 충족되면 점수가 올라갑니다.
+      </div>
+      <div class="analogy">
+        의사의 체크리스트와 같습니다. "열이 나나요?" "기침을 하나요?" "두통이 있나요?" — 여러 증상을 종합해서 진단하듯이,
+        13가지 낙상 징후를 종합합니다.
+      </div>
+    </div>
+
+    <div class="pipe-step" data-step="4" data-color="purple">
+      <div class="step-title">🧠 AI(GRU) 딥러닝 점수</div>
+      <div class="step-body">
+        최근 <strong>30프레임(약 1초)</strong>의 관절 움직임 패턴을 GRU 신경망이 분석합니다.
+        AIHub의 <strong>66만 개 학습 데이터</strong>로 훈련된 모델이 "이 움직임이 낙상과 얼마나 비슷한지" 0~1 사이의 확률로 판단합니다.
+      </div>
+      <div class="analogy">
+        66만 번의 낙상 영상을 본 전문가와 같습니다.
+        "이 움직임 패턴... 전에 봤던 낙상이랑 95% 비슷해!" 라고 판단하는 것이죠.
+      </div>
+    </div>
+
+    <div class="pipe-step" data-step="5" data-color="green">
+      <div class="step-title">⚖️ EMA 스무딩 &amp; 점수 결합</div>
+      <div class="step-body">
+        규칙 점수와 ML 점수를 결합하고, <strong>EMA(지수이동평균)</strong>로 부드럽게 만듭니다.
+        <strong>비대칭 스무딩</strong>: 위험 신호는 빠르게 반응(0.6), 안전 복귀는 천천히(0.3).
+        최종 결합 점수가 0.5 이상이면 낙상으로 1차 판정합니다.
+      </div>
+      <div class="analogy">
+        화재 경보기와 비슷합니다. 연기가 나면 <strong>즉시 울리지만</strong>(빠른 반응),
+        연기가 사라져도 <strong>잠시 더 경계</strong>합니다(느린 복귀).
+        한 번 깜빡한다고 바로 울리지 않아서 오경보를 줄입니다.
+      </div>
+    </div>
+
+    <div class="pipe-step" data-step="6" data-color="yellow">
+      <div class="step-title">🛡️ 오탐 방지 필터 (5단계)</div>
+      <div class="step-body">
+        "낙상처럼 보이지만 사실 아닌 것"들을 걸러냅니다.
+        물건 줍기, 천천히 눕기, 정상적으로 앉기 등 일상 동작을 낙상과 구별합니다.
+        <strong>추가로 "서서+상체 직립+규칙 점수 낮음"</strong>이면 ML이 높아도 취소합니다.
+      </div>
+      <div class="analogy">
+        CCTV 보안관이 경보가 울렸을 때 화면을 한 번 더 확인하는 것과 같습니다.
+        "어, 저건 그냥 물건 줍는 거잖아" 하고 오경보를 취소하는 과정입니다.
+      </div>
+    </div>
+
+    <div class="pipe-step" data-step="7" data-color="yellow">
+      <div class="step-title">🔢 연속 프레임 확인</div>
+      <div class="step-body">
+        한 프레임만 보고 판단하면 노이즈에 취약합니다.
+        보통 <strong>2프레임 연속</strong> 낙상으로 판정되어야 최종 감지합니다.
+        단, 점수가 매우 높으면(≥0.90 또는 ML≥0.60+점수≥0.70) <strong>1프레임으로 즉시</strong> 감지합니다.
+      </div>
+      <div class="analogy">
+        의사가 "한 번 이상하다고 바로 진단하지 않고, 검사를 두 번 해보자"는 것과 같습니다.
+        하지만 증상이 매우 명확하면 한 번에 진단합니다.
+      </div>
+    </div>
+
+    <div class="pipe-step" data-step="8" data-color="red">
+      <div class="step-title">🚨 최종 판정 &amp; 알림</div>
+      <div class="step-body">
+        모든 검증을 통과하면 <strong>낙상 확정</strong>!
+        확률 기반 상태 머신이 SAFE → WARNING(0.50+) → DANGER(0.70+, 0.5초 지연)로 전환되며, 즉시 알림이 발송됩니다.
+        WARNING 3초 최소 유지 + DANGER 5초간 정상 상태가 유지되어야 해제됩니다.
+      </div>
+      <div class="analogy">
+        119에 전화하기 전에 여러 번 확인하고, 확실하면 즉시 출동 요청하는 것과 같습니다.
+        출동 후에도 5초간 상황을 지켜보다가, 환자가 스스로 일어나면 해제합니다.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ SECTION 2: 13개 규칙 조건 ══════════════════════════════════ -->
+<section class="section">
+  <h2 class="section-title"><span class="icon">📋</span> 13개 규칙 조건: 낙상의 징후들</h2>
+  <p class="section-desc">
+    사람이 넘어질 때 나타나는 신체적 특징을 13가지로 정리했습니다. 마치 의사의 진단 체크리스트처럼, 여러 징후가 동시에 나타나면 낙상일 확률이 높습니다.
+  </p>
+
+  <table class="rule-table">
+    <thead>
+      <tr>
+        <th style="width:60px">코드</th>
+        <th>무엇을 보나?</th>
+        <th>쉬운 설명</th>
+        <th style="width:80px">비중</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="tag tag-standing">C1</span></td>
+        <td><strong>머리-엉덩이 역전</strong></td>
+        <td>머리가 엉덩이보다 낮아짐 → 몸이 뒤집힌 상태</td>
+        <td>35%</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-standing">C2</span></td>
+        <td><strong>급격한 하강</strong></td>
+        <td>머리 높이가 갑자기 뚝 떨어짐 (0.3초 이내)</td>
+        <td>25%</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-standing">C3</span></td>
+        <td><strong>수평 각도</strong></td>
+        <td>어깨-엉덩이 축이 거의 수평 → 몸이 누운 형태</td>
+        <td>25%</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-standing">C4</span></td>
+        <td><strong>발목 위치 역전</strong></td>
+        <td>발목이 엉덩이보다 높음 → 다리가 들린 상태</td>
+        <td>+10%</td>
+      </tr>
+      <tr style="background:rgba(245,158,11,0.05);">
+        <td><span class="tag tag-sitting">C5</span></td>
+        <td><strong>전방 고꾸라짐</strong> (착석)</td>
+        <td>앉은 상태에서 머리가 무릎 아래로 떨어짐</td>
+        <td>+25%</td>
+      </tr>
+      <tr style="background:rgba(245,158,11,0.05);">
+        <td><span class="tag tag-sitting">C6</span></td>
+        <td><strong>옆으로 기울어짐</strong> (착석)</td>
+        <td>앉은 상태에서 어깨가 한쪽으로 급격히 기울어짐</td>
+        <td>+25%</td>
+      </tr>
+      <tr style="background:rgba(245,158,11,0.05);">
+        <td><span class="tag tag-sitting">C7</span></td>
+        <td><strong>높이 급락</strong> (착석)</td>
+        <td>앉은 기준선 대비 머리 높이가 급격히 낮아짐</td>
+        <td>+20%</td>
+      </tr>
+      <tr style="background:rgba(139,92,246,0.05);">
+        <td><span class="tag tag-enhanced">N1</span></td>
+        <td><strong>수직 가속도</strong></td>
+        <td>머리가 가속하면서 떨어지는 속도 감지</td>
+        <td>+15%</td>
+      </tr>
+      <tr style="background:rgba(139,92,246,0.05);">
+        <td><span class="tag tag-enhanced">N2</span></td>
+        <td><strong>보호 반사</strong></td>
+        <td>넘어질 때 본능적으로 팔을 벌리는 동작 감지</td>
+        <td>+10%</td>
+      </tr>
+      <tr style="background:rgba(139,92,246,0.05);">
+        <td><span class="tag tag-enhanced">N3</span></td>
+        <td><strong>무게중심 이탈</strong></td>
+        <td>무게중심이 양 발 사이 밖으로 벗어남</td>
+        <td>+10%</td>
+      </tr>
+      <tr style="background:rgba(139,92,246,0.05);">
+        <td><span class="tag tag-enhanced">N4</span></td>
+        <td><strong>무릎 좌굴</strong></td>
+        <td>무릎이 급격히 꺾이는 현상 (다리가 접히며 주저앉음)</td>
+        <td>+15%</td>
+      </tr>
+      <tr style="background:rgba(139,92,246,0.05);">
+        <td><span class="tag tag-enhanced">N5</span></td>
+        <td><strong>체간 회전</strong></td>
+        <td>상체가 급격히 회전하면서 기울어짐</td>
+        <td>+5%</td>
+      </tr>
+      <tr style="background:rgba(139,92,246,0.05);">
+        <td><span class="tag tag-enhanced">N6</span></td>
+        <td><strong>높이 궤적 가속</strong></td>
+        <td>떨어지는 후반부 속도가 전반부보다 1.5배 빠름 (자유낙하 패턴)</td>
+        <td>+10%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="padding:1rem 1.5rem; background:var(--card); border-radius:12px; margin-top:1rem; border-left:4px solid var(--accent);">
+    <strong style="color:var(--accent);">왜 13개나 필요할까요?</strong>
+    <p style="color:var(--muted); font-size:0.9rem; margin-top:0.3rem;">
+      낙상은 한 가지 방식으로만 일어나지 않습니다. 앞으로 넘어지기, 뒤로 넘어지기, 옆으로 미끄러지기,
+      의자에서 떨어지기 등 다양한 상황이 있어요. 하나의 조건만으로는 "물건 줍기"와 "앞으로 넘어지기"를 구별할 수 없습니다.
+      <strong>여러 조건이 동시에 만족될수록</strong> 낙상 확률이 높아집니다.
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════ SECTION 3: EMA 비대칭 스무딩 ══════════════════════════════════ -->
+<section class="section">
+  <h2 class="section-title"><span class="icon">📊</span> EMA 비대칭 스무딩: 빠르게 반응, 천천히 복귀</h2>
+  <p class="section-desc">
+    AI의 점수를 그대로 사용하면 노이즈(잡음)에 의한 오경보가 많아집니다.
+    EMA(지수이동평균)로 점수를 부드럽게 만들되, <strong>위험할 때는 빨리, 안전할 때는 천천히</strong> 반응하도록 설계했습니다.
+  </p>
+
+  <div class="ema-visual">
+    <div class="ema-box attack">
+      <div class="ema-icon">🚨</div>
+      <h4>위험 감지 (Attack)</h4>
+      <p>ML 점수가 올라갈 때</p>
+      <div class="formula">α = 0.6 (빠른 반응)</div>
+      <p style="margin-top:0.5rem;">새 점수를 <strong>60%</strong> 반영</p>
+    </div>
+    <div class="ema-arrow">⇄</div>
+    <div class="ema-box decay">
+      <div class="ema-icon">✅</div>
+      <h4>안전 복귀 (Decay)</h4>
+      <p>ML 점수가 내려갈 때</p>
+      <div class="formula">α = 0.3 (느린 복귀)</div>
+      <p style="margin-top:0.5rem;">새 점수를 <strong>30%</strong>만 반영</p>
+    </div>
+  </div>
+
+  <div style="padding:1rem 1.5rem; background:var(--card); border-radius:12px; border-left:4px solid var(--warn);">
+    <strong style="color:var(--warn);">왜 비대칭일까요?</strong>
+    <p style="color:var(--muted); font-size:0.9rem; margin-top:0.3rem;">
+      <strong>화재 감지기</strong>를 생각해보세요. 연기가 감지되면 <strong>즉시 경보</strong>를 울려야 합니다 (빠른 반응).
+      하지만 연기가 조금 줄었다고 <strong>바로 경보를 끄면 안 됩니다</strong> (느린 복귀).
+      실제 화재는 연기가 잠깐 줄었다가 다시 늘어날 수 있기 때문이죠.
+      낙상도 마찬가지입니다 — 넘어지는 순간을 빠르게 잡되, 혹시 아직 넘어지는 중일 수 있으니 경계를 천천히 풀어야 합니다.
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════ SECTION 4: 점수 구간 의미 ══════════════════════════════════ -->
+<section class="section">
+  <h2 class="section-title"><span class="icon">🎚️</span> 점수별 판정: 이 점수는 무엇을 의미하나?</h2>
+  <p class="section-desc">규칙 점수와 ML 점수가 결합된 최종 점수에 따라 다른 판정이 내려집니다.</p>
+
+  <div class="meter-container">
+    <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+      <span style="font-size:0.85rem;">최종 결합 점수</span>
+      <span style="font-size:0.85rem; color:var(--muted);">0.0 ~ 1.0</span>
+    </div>
+    <div class="meter-bar">
+      <div class="meter-marker" style="left:25%; color:var(--warn);">0.25<br>주의</div>
+      <div class="meter-marker" style="left:50%; color:var(--danger);">0.50<br>낙상</div>
+      <div class="meter-marker" style="left:70%; color:#f87171;">0.70<br>ML즉시</div>
+      <div class="meter-marker" style="left:90%; color:#fca5a5;">0.90<br>1프레임</div>
+    </div>
+    <div class="meter-labels">
+      <span>0.0 (안전)</span>
+      <span>0.25 (전조 경고)</span>
+      <span>0.50 (낙상 판정)</span>
+      <span>1.0 (확실한 낙상)</span>
+    </div>
+  </div>
+
+  <div class="cards" style="margin-top:1.5rem;">
+    <div class="card" style="border-top:4px solid var(--safe);">
+      <div class="card-icon">🟢</div>
+      <h3>0.00 ~ 0.24: 안전</h3>
+      <p>정상 활동 범위. 서있기, 걷기, 앉기 등 일반적인 동작.</p>
+      <div class="example">환자가 복도를 천천히 걸어가고 있습니다.</div>
+    </div>
+    <div class="card" style="border-top:4px solid var(--warn);">
+      <div class="card-icon">🟡</div>
+      <h3>0.25 ~ 0.49: 전조 경고</h3>
+      <p>낙상 위험 징후가 보입니다. 주의 알림을 표시하고 모니터링을 강화합니다.</p>
+      <div class="example">환자가 비틀거리거나 무릎이 꺾이기 시작합니다.</div>
+    </div>
+    <div class="card" style="border-top:4px solid var(--danger);">
+      <div class="card-icon">🔴</div>
+      <h3>0.50 ~ 0.69: 낙상 감지</h3>
+      <p>낙상으로 1차 판정됩니다. 연속 2프레임 확인 후 최종 알림을 발송합니다.</p>
+      <div class="example">환자가 앞으로 넘어지기 시작했습니다.</div>
+    </div>
+    <div class="card" style="border-top:4px solid #dc2626;">
+      <div class="card-icon">🚨</div>
+      <h3>0.70 ~ 1.00: 확실한 낙상</h3>
+      <p>매우 높은 확신으로 1프레임만으로 즉시 감지합니다. 즉각 알림!</p>
+      <div class="example">환자가 바닥에 강하게 넘어졌습니다.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════ SECTION 5: 오탐 방지 필터 ══════════════════════════════════ -->
+<section class="section">
+  <h2 class="section-title"><span class="icon">🛡️</span> 오탐 방지: "이건 낙상이 아닌데?" 걸러내기</h2>
+  <p class="section-desc">
+    일상 동작 중에 낙상과 비슷해 보이는 것들이 많습니다. 이런 "가짜 낙상"을 걸러내는 5가지 필터를 적용합니다.
+    오경보가 너무 많으면 간호사가 알림을 무시하게 되므로(<strong>알림 피로</strong>), 오탐 방지가 매우 중요합니다.
+  </p>
+
+  <div class="filter-list">
+    <div class="filter-item">
+      <span class="filter-icon">🔍</span>
+      <div>
+        <h4>필터 1: 물건 줍기 감지</h4>
+        <p>머리가 낮아지고(C1) 급격히 내려갔지만(C2), 몸이 수평이 아닌(C3 X) 경우 → 물건 줍기</p>
+        <div class="filter-example">"바닥에 떨어진 약을 줍는 환자" → 낙상 아님!</div>
+      </div>
+    </div>
+    <div class="filter-item">
+      <span class="filter-icon">🛏️</span>
+      <div>
+        <h4>필터 2: 의도적 눕기 감지</h4>
+        <p>몸이 수평(C3)이 되었지만, 급격한 가속도(N1)나 낙하 패턴(N6)이 없는 경우 → 천천히 누운 것</p>
+        <div class="filter-example">"침대에 천천히 눕는 환자" → 낙상 아님!</div>
+      </div>
+    </div>
+    <div class="filter-item">
+      <span class="filter-icon">🪑</span>
+      <div>
+        <h4>필터 3: 정상 착석 감지</h4>
+        <p>서있다가 앉을 때 높이가 떨어지지만(C2), 가속도나 낙하 패턴이 없는 경우 → 정상 착석</p>
+        <div class="filter-example">"의자에 앉으려는 환자" → 낙상 아님!</div>
+      </div>
+    </div>
+    <div class="filter-item">
+      <span class="filter-icon">🤸</span>
+      <div>
+        <h4>필터 4: 서서 하는 동작 감지</h4>
+        <p>서있는 상태에서 급격한 가속도(N1) 없이 머리만 낮아지는 경우 → 스트레칭이나 운동</p>
+        <div class="filter-example">"스트레칭하는 환자" → 낙상 아님!</div>
+      </div>
+    </div>
+    <div class="filter-item" style="border-left-color: var(--primary);">
+      <span class="filter-icon">🧍‍♂️</span>
+      <div>
+        <h4>필터 5: Standing FP 필터 (V4 신규)</h4>
+        <p>서있고 + 상체가 직립(&gt;75°) + 규칙 점수가 낮고(&lt;0.20) + 최종 점수가 극히 높지 않은(&lt;0.90) 경우 → 감지 취소</p>
+        <div class="filter-example">"꼿꼿이 서서 팔만 흔드는 환자" → ML이 잠깐 높게 나와도 무시!</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-grid" style="margin-top:1.5rem;">
+    <div class="compare-box good">
+      <h4 style="color:var(--safe);">✅ 낙상으로 감지 (정탐)</h4>
+      <ul>
+        <li>앞으로 갑자기 넘어짐</li>
+        <li>뒤로 미끄러져 넘어짐</li>
+        <li>옆으로 쓰러짐</li>
+        <li>의자에서 미끄러져 떨어짐</li>
+        <li>비틀거리다 주저앉음</li>
+      </ul>
+    </div>
+    <div class="compare-box bad">
+      <h4 style="color:var(--danger);">❌ 낙상 아님으로 무시 (정상)</h4>
+      <ul>
+        <li>바닥의 물건 줍기</li>
+        <li>침대에 천천히 눕기</li>
+        <li>의자에 정상적으로 앉기</li>
+        <li>스트레칭/체조하기</li>
+        <li>서서 팔 흔들기</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════ SECTION 6: 전체 흐름도 ══════════════════════════════════ -->
+<section class="section">
+  <h2 class="section-title"><span class="icon">🔀</span> 판정 흐름도: 한 프레임의 여정</h2>
+  <p class="section-desc">카메라에서 한 장의 영상이 들어올 때, 어떤 과정을 거쳐 "낙상인가 아닌가"가 결정되는지 보여줍니다.</p>
+
+  <div class="flowchart">
+    <div class="flow-node input">📷 카메라 영상 1프레임 입력</div>
+    <div class="flow-arrow"></div>
+    <div class="flow-node process">🦴 YOLO11 → 사람 찾기 → 17개 관절 추출 → 33개로 확장</div>
+    <div class="flow-arrow"></div>
+    <div class="flow-node decision">👁️ 관절 보이는 비율 ≥ 15%?</div>
+
+    <div class="flow-branch">
+      <div class="flow-branch-col">
+        <div class="flow-label no">NO (안 보임)</div>
+        <div class="flow-arrow"></div>
+        <div class="flow-node output-safe" style="min-width:150px;">⏭️ 프레임 스킵</div>
+      </div>
+      <div class="flow-branch-col">
+        <div class="flow-label yes">YES (보임)</div>
+        <div class="flow-arrow"></div>
+        <div class="flow-node process">🧍 자세 분류 (기립/착석/누움)</div>
+        <div class="flow-arrow"></div>
+        <div class="flow-node process">📐 13개 규칙 조건 점수 계산</div>
+        <div class="flow-arrow"></div>
+        <div class="flow-node process">🧠 GRU ML 추론 → EMA 스무딩</div>
+        <div class="flow-arrow"></div>
+        <div class="flow-node process">⚖️ 규칙×가중치 + ML×가중치 = 결합점수</div>
+        <div class="flow-arrow"></div>
+        <div class="flow-node decision">🛡️ 오탐 필터 통과?</div>
+        <div class="flow-branch" style="margin-top:0.5rem;">
+          <div class="flow-branch-col">
+            <div class="flow-label no">필터에 걸림</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node output-safe" style="min-width:130px;">✅ 정상 판정</div>
+          </div>
+          <div class="flow-branch-col">
+            <div class="flow-label yes">통과</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node decision">🔢 연속 프레임 충족?</div>
+            <div class="flow-branch" style="margin-top:0.5rem;">
+              <div class="flow-branch-col">
+                <div class="flow-label no">미충족</div>
+                <div class="flow-arrow"></div>
+                <div class="flow-node output-warn" style="min-width:130px;">⏳ 대기 중</div>
+              </div>
+              <div class="flow-branch-col">
+                <div class="flow-label yes">충족!</div>
+                <div class="flow-arrow"></div>
+                <div class="flow-node output-danger" style="min-width:160px;">🚨 낙상 확정!<br>즉시 알림 발송</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════ SECTION 7: V1→V4 진화 ══════════════════════════════════ -->
+<section class="section">
+  <h2 class="section-title"><span class="icon">📈</span> V1에서 V4까지: 이렇게 진화했습니다</h2>
+  <p class="section-desc">버전을 거듭하며 성능을 개선해온 과정입니다. 각 버전에서 무엇을 배웠는지 함께 봅니다.</p>
+
+  <div class="evolution">
+    <div class="evo-item">
+      <div class="evo-version" style="color:var(--muted);">V1</div>
+      <div class="evo-f1" style="color:var(--muted);">F1 89.5</div>
+      <div class="evo-label">Recall 85.5% | Precision 94.0%</div>
+      <div class="evo-desc">초기 구현. GRU 모델 + 기본 규칙. 합리적이지만 개선 여지 있음.</div>
+    </div>
+    <div class="evo-item">
+      <div class="evo-version" style="color:var(--danger);">V2</div>
+      <div class="evo-f1" style="color:var(--danger);">F1 87.1</div>
+      <div class="evo-label">Recall 87.9% | Precision 86.3%</div>
+      <div class="evo-desc">
+        <strong style="color:var(--danger);">실패한 시도.</strong>
+        GRU 재학습으로 Recall은 올랐지만, FP가 9→23으로 폭증. 즉시 롤백.
+        <br><strong>교훈:</strong> 검증셋 성능 ≠ 실제 성능
+      </div>
+    </div>
+    <div class="evo-item">
+      <div class="evo-version" style="color:var(--warn);">V3</div>
+      <div class="evo-f1" style="color:var(--warn);">F1 90.7</div>
+      <div class="evo-label">Recall 85.5% | Precision 96.6%</div>
+      <div class="evo-desc">V1 모델 유지 + 코드 개선. 오탐 방지 필터 강화로 FP 9→5. 하지만 Recall은 그대로.</div>
+    </div>
+    <div class="evo-item">
+      <div class="evo-version" style="color:var(--safe);">V4</div>
+      <div class="evo-f1" style="color:var(--safe);">F1 94.9</div>
+      <div class="evo-label">Recall 95.2% | Precision 94.6%</div>
+      <div class="evo-desc">
+        <strong style="color:var(--safe);">최종 확정!</strong>
+        Standing FP 필터 + 연속프레임 완화 + 착석 임계값 조정.
+        <br>424개 영상 확장 벤치마크: Recall 95.2%, FP 17건
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:1.5rem; background:var(--card); border-radius:16px; margin-top:1.5rem; border:1px solid var(--border);">
+    <h4 style="margin-bottom:0.8rem;">V2 실패에서 배운 것</h4>
+    <div class="compare-grid" style="margin:0;">
+      <div style="padding:0;">
+        <p style="font-size:0.9rem; color:var(--muted);">
+          <strong style="color:var(--danger);">V2 시도:</strong> 측면 낙상(SY) 데이터를 6배 증폭하고, 외부 데이터(UP-Fall)를 추가하여 GRU를 재학습.
+          검증셋에서는 F1 93.2%로 우수했지만...
+        </p>
+      </div>
+      <div style="padding:0;">
+        <p style="font-size:0.9rem; color:var(--muted);">
+          <strong style="color:var(--safe);">V4 접근:</strong> 모델은 건드리지 않고 <strong>코드 로직만 개선</strong>.
+          "모델이 확신하면 빠르게 반응, 모호하면 더 신중하게" — 결과적으로 모델 재학습보다 효과적이었습니다.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════ SECTION 8: V4 성능 ══════════════════════════════════ -->
+<section class="section">
+  <h2 class="section-title"><span class="icon">🏆</span> V4 최종 성능: 숫자로 보는 결과</h2>
+  <p class="section-desc">424개 영상으로 확장 검증한 최종 결과입니다. 각 지표가 무엇을 의미하는지 함께 설명합니다.</p>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="number" style="color:var(--primary);">95.2%</div>
+      <div class="label">Recall (재현율)</div>
+      <div class="explain">실제 낙상 중 95.2% 감지</div>
+    </div>
+    <div class="stat">
+      <div class="number" style="color:var(--safe);">94.6%</div>
+      <div class="label">Precision (정밀도)</div>
+      <div class="explain">낙상 알림 중 94.6%가 진짜</div>
+    </div>
+    <div class="stat">
+      <div class="number" style="color:var(--accent);">94.9</div>
+      <div class="label">F1-Score</div>
+      <div class="explain">Recall과 Precision의 조화평균</div>
+    </div>
+    <div class="stat">
+      <div class="number" style="color:var(--warn);">17건</div>
+      <div class="label">FP (오탐)</div>
+      <div class="explain">정상인데 낙상으로 잘못 판정</div>
+    </div>
+    <div class="stat">
+      <div class="number" style="color:var(--danger);">15건</div>
+      <div class="label">FN (미탐)</div>
+      <div class="explain">실제 낙상인데 놓침</div>
+    </div>
+  </div>
+
+  <div class="cards" style="margin-top:1.5rem;">
+    <div class="card">
+      <h3>Recall이란?</h3>
+      <p>
+        <strong>"실제 낙상을 몇 %나 잡았나?"</strong>
+        <br><br>
+        100명이 넘어졌을 때, 그 중 95명을 감지했다면 Recall 95.2%.
+        요양병원에서 가장 중요한 지표입니다 — 낙상을 놓치면 환자가 위험하니까요.
+      </p>
+      <div class="example">20건 중 19건 감지! 놓치는 비율을 최소화하는 것이 핵심입니다.</div>
+    </div>
+    <div class="card">
+      <h3>Precision이란?</h3>
+      <p>
+        <strong>"알림이 울렸을 때, 진짜 낙상인 확률"</strong>
+        <br><br>
+        100번 알림이 울렸을 때, 95번이 실제 낙상이라면 Precision 94.6%.
+        오경보가 너무 많으면 간호사가 알림을 무시하게 되므로 중요합니다.
+      </p>
+      <div class="example">양치기 소년 효과 방지! 경보의 95%가 진짜여야 신뢰할 수 있습니다.</div>
+    </div>
+    <div class="card">
+      <h3>F1-Score란?</h3>
+      <p>
+        <strong>"Recall과 Precision의 균형 점수"</strong>
+        <br><br>
+        둘 다 높아야 높은 점수가 나옵니다. Recall만 높고 Precision이 낮으면 (혹은 그 반대면) F1은 낮아집니다.
+        <strong>두 마리 토끼를 다 잡았는지</strong>를 보여주는 종합 지표입니다.
+      </p>
+      <div class="example">학교 성적으로 비유하면, 국어 90 + 수학 95 → 종합 92.5점</div>
+    </div>
+    <div class="card">
+      <h3>왜 FP와 FN 모두 중요한가?</h3>
+      <p>
+        <strong>FP(오탐) = 알림 피로</strong>: 가짜 알림이 많으면 진짜 때도 무시하게 됨
+        <br><br>
+        <strong>FN(미탐) = 안전 위협</strong>: 실제 낙상을 놓치면 환자가 위험
+        <br><br>
+        의료 현장에서는 <strong>FN이 더 치명적</strong>이므로 Recall 우선!
+      </p>
+      <div class="example">FP는 "헛발질", FN은 "놓침". 놓치는 게 더 위험합니다.</div>
+    </div>
+  </div>
+
+  <!-- 카테고리별 -->
+  <h3 style="margin-top:2rem; font-size:1.2rem;">낙상 방향별 감지율</h3>
+  <div class="stats" style="margin-top:1rem;">
+    <div class="stat">
+      <div class="number" style="color:var(--safe);">99%</div>
+      <div class="label">후방 낙상 (BY)</div>
+      <div class="explain">100건 중 99건 감지</div>
+    </div>
+    <div class="stat">
+      <div class="number" style="color:var(--safe);">97%</div>
+      <div class="label">전방 낙상 (FY)</div>
+      <div class="explain">100건 중 97건 감지</div>
+    </div>
+    <div class="stat">
+      <div class="number" style="color:var(--primary);">91%</div>
+      <div class="label">측면 낙상 (SY)</div>
+      <div class="explain">100건 중 91건 감지</div>
+    </div>
+    <div class="stat">
+      <div class="number" style="color:var(--warn);">83%</div>
+      <div class="label">정상 (N)</div>
+      <div class="explain">100건 중 83건 정상 판정</div>
+    </div>
+  </div>
+  <div style="padding:1rem 1.5rem; background:var(--card); border-radius:12px; margin-top:1rem; border-left:4px solid var(--warn);">
+    <strong style="color:var(--warn);">측면 낙상(SY)이 왜 상대적으로 어려울까?</strong>
+    <p style="color:var(--muted); font-size:0.9rem; margin-top:0.3rem;">
+      전방/후방 낙상은 머리 높이가 급격히 변하지만, 측면 낙상은 옆으로 쓰러지기 때문에
+      카메라 각도에 따라 높이 변화가 적게 보일 수 있습니다. V4에서 착석 임계값 조정과 연속프레임 완화로 91%까지 개선했습니다.
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════ SECTION 9: 논문 비교 ══════════════════════════════════ -->
+<section class="section">
+  <h2 class="section-title"><span class="icon">📚</span> 다른 연구와 비교</h2>
+  <p class="section-desc">SENTIO V4의 성능을 학술 논문의 낙상 감지 시스템과 비교합니다.</p>
+
+  <table class="rule-table">
+    <thead>
+      <tr>
+        <th>항목</th>
+        <th style="color:var(--primary);">SENTIO V4</th>
+        <th>Ye 논문 (2024)</th>
+        <th>Pre-VFall (2023)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Recall</strong></td>
+        <td style="color:var(--primary);"><strong>95.2%</strong></td>
+        <td>92%*</td>
+        <td>89.3%</td>
+      </tr>
+      <tr>
+        <td><strong>Precision</strong></td>
+        <td style="color:var(--primary);"><strong>94.6%</strong></td>
+        <td>미공개</td>
+        <td>94.5%</td>
+      </tr>
+      <tr>
+        <td><strong>F1-Score</strong></td>
+        <td style="color:var(--primary);"><strong>94.9</strong></td>
+        <td>미공개</td>
+        <td>91.8</td>
+      </tr>
+      <tr>
+        <td><strong>검증 규모</strong></td>
+        <td style="color:var(--safe);"><strong>424개 영상</strong></td>
+        <td>YouTube 1개</td>
+        <td>108개 영상</td>
+      </tr>
+      <tr>
+        <td><strong>GPU 필요</strong></td>
+        <td style="color:var(--safe);"><strong>선택적 (GPU 가속 / CPU 가능)</strong></td>
+        <td>필요</td>
+        <td>필요</td>
+      </tr>
+      <tr>
+        <td><strong>학습 데이터</strong></td>
+        <td><strong>665,574 시퀀스</strong></td>
+        <td>374 이미지</td>
+        <td>~50,000</td>
+      </tr>
+      <tr>
+        <td><strong>처리 속도</strong></td>
+        <td>~15ms (CPU)</td>
+        <td>~2.7ms (GPU)</td>
+        <td>~35ms (GPU)</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:0.8rem; color:var(--muted); margin-top:0.5rem;">
+    *Ye 논문의 92%는 Accuracy(정확도)이며, Recall과 직접 비교 불가능합니다.
+  </p>
+
+  <div style="padding:1.5rem; background:var(--card); border-radius:16px; margin-top:1.5rem; border:1px solid var(--border);">
+    <h4 style="color:var(--primary); margin-bottom:0.8rem;">SENTIO V4만의 차별점</h4>
+    <div class="cards" style="margin:0;">
+      <div class="card" style="padding:1rem;">
+        <h3 style="font-size:0.95rem;">💻 GPU 가속 + CPU 폴백</h3>
+        <p style="font-size:0.82rem;">CUDA GPU 가속 지원 (26ms/프레임). CPU만으로도 실시간 처리 가능.</p>
+      </div>
+      <div class="card" style="padding:1rem;">
+        <h3 style="font-size:0.95rem;">🔬 대규모 검증</h3>
+        <p style="font-size:0.82rem;">424개 영상, 8개 카메라 각도로 검증. Ye 논문은 YouTube 영상 1개로만 테스트.</p>
+      </div>
+      <div class="card" style="padding:1rem;">
+        <h3 style="font-size:0.95rem;">🏥 한국 환경 특화</h3>
+        <p style="font-size:0.82rem;">AIHub 한국 요양시설 데이터로 학습. 국내 현장에 최적화.</p>
+      </div>
+      <div class="card" style="padding:1rem;">
+        <h3 style="font-size:0.95rem;">🔒 프라이버시 보호</h3>
+        <p style="font-size:0.82rem;">스켈레톤/블러 모드로 환자 얼굴/체형 노출 없이 감지. 개인정보보호법 준수.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════ SECTION 10: 향후 과제 ══════════════════════════════════ -->
+<section class="section">
+  <h2 class="section-title"><span class="icon">🚀</span> 향후 과제</h2>
+  <p class="section-desc">V4에서 확인된 개선 가능 영역입니다.</p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🎯</div>
+      <h3>GRU 모델 재학습</h3>
+      <p>측면 낙상(SY) 86% → 95%+ 목표. Negative Mining 전략으로 오탐 없이 Recall 개선.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">👁️</div>
+      <h3>YOLO 트래커 개선</h3>
+      <p>1프레임 추적 소실로 인한 FN 해결. ByteTrack 파라미터 최적화.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📊</div>
+      <h3>대규모 검증 확대</h3>
+      <p>424개 → 1000개+ 영상으로 확장. 다양한 환경과 피험자 추가.</p>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <p>SENTIO V4 낙상 감지 로직 시각화 자료</p>
+  <p>최종 확정일: 2026-02-11 | 424개 영상 확장 벤치마크 기반</p>
+  <p style="margin-top:0.5rem;">SENTIO AI Team</p>
+</footer>
+
+</body>
+</html>
