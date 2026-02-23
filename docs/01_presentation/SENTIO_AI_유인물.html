@@ -848,36 +848,36 @@
 
     <div class="two-col">
 
-      <!-- LEFT COLUMN: Tech -->
+      <!-- LEFT COLUMN: Credibility & Validation -->
       <div>
-        <div class="col-section-title">AI 감지 파이프라인</div>
+        <div class="col-section-title">학습 데이터 출처</div>
 
         <div class="pipeline-flow">
           <div class="pipeline-step">
-            <div class="pipeline-num blue">1</div>
+            <div class="pipeline-num blue" style="font-size:14px;">&#127909;</div>
             <div class="pipeline-info">
-              <div class="pipeline-title">YOLO11s-Pose &mdash; 관절 추적</div>
-              <div class="pipeline-desc">33개 관절 키포인트 실시간 추출 (26ms/frame)</div>
+              <div class="pipeline-title">AIHub 낙상사고 위험동작 영상</div>
+              <div class="pipeline-desc">한국지능정보사회진흥원 공인 데이터셋 &middot; 2,000개 영상</div>
             </div>
           </div>
           <div class="pipeline-step">
-            <div class="pipeline-num cyan">2</div>
+            <div class="pipeline-num cyan" style="font-size:14px;">&#129504;</div>
             <div class="pipeline-info">
-              <div class="pipeline-title">물리 규칙 13종 &mdash; 1차 판정</div>
-              <div class="pipeline-desc">머리-엉덩이 역전, 수직 하강 속도, 각도 변화 분석</div>
+              <div class="pipeline-title">665,574개 학습 시퀀스 추출</div>
+              <div class="pipeline-desc">전방/후방/측면 낙상 + 정상 행동 &middot; 균형 잡힌 데이터</div>
             </div>
           </div>
           <div class="pipeline-step">
-            <div class="pipeline-num amber">3</div>
+            <div class="pipeline-num amber" style="font-size:14px;">&#9989;</div>
             <div class="pipeline-info">
-              <div class="pipeline-title">GRU 앙상블 &mdash; 최종 판정</div>
-              <div class="pipeline-desc">66만 건 학습 데이터, 30프레임 시계열 분석</div>
+              <div class="pipeline-title">424개 영상으로 최종 독립 검증</div>
+              <div class="pipeline-desc">4개 카테고리 &times; 100개 이상 &middot; 학습에 사용하지 않은 별도 영상</div>
             </div>
           </div>
         </div>
 
         <!-- Performance -->
-        <div class="col-section-title">검증 성능 (AI Hub 424건)</div>
+        <div class="col-section-title">방향별 감지 성능</div>
 
         <div class="perf-bars">
           <div class="perf-bar-row">
@@ -902,8 +902,41 @@
           </div>
         </div>
 
+        <!-- Plain language metrics -->
+        <div class="col-section-title">성능 지표가 의미하는 것</div>
+        <table class="perf-table">
+          <thead>
+            <tr>
+              <th>지표</th>
+              <th>수치</th>
+              <th>쉬운 설명</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:600; color:var(--text);">감지율<br><span style="font-size:8px;color:var(--text-light);">Recall</span></td>
+              <td class="hl">95.2%</td>
+              <td>실제 넘어진 <strong style="color:var(--safe);">100명 중 95명</strong> 감지</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600; color:var(--text);">정밀도<br><span style="font-size:8px;color:var(--text-light);">Precision</span></td>
+              <td class="hl-cyan">94.6%</td>
+              <td>알림 100건 중 <strong style="color:var(--accent);">95건이 진짜</strong> 낙상</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600; color:var(--text);">F1 점수</td>
+              <td class="hl">94.9</td>
+              <td>감지율과 정밀도의 <strong style="color:var(--safe);">균형 종합 점수</strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="info-note" style="background:#f0fdfa; border-color:#99f6e4; margin-bottom:10px;">
+          <strong style="color:#065f46;">&#128161; 핵심:</strong> 놓치는 환자도 적고, 거짓 알림도 적습니다. 둘 다 잡는 균형 잡힌 시스템입니다.
+        </div>
+
         <!-- Compare Table -->
-        <div class="col-section-title">경쟁 솔루션 비교</div>
+        <div class="col-section-title">기존 방식과의 비교</div>
         <table class="compare-table">
           <thead>
             <tr>
@@ -933,34 +966,24 @@
               <td class="sentio">좌표만 처리</td>
             </tr>
             <tr>
-              <td style="text-align:left; font-weight:600; color:var(--text);">다인 추적</td>
-              <td class="dim">불가</td>
-              <td class="dim">불가</td>
-              <td class="sentio">N명 동시</td>
-            </tr>
-            <tr>
               <td style="text-align:left; font-weight:600; color:var(--text);">전용 GPU</td>
               <td class="dim">-</td>
               <td class="dim">불필요</td>
-              <td class="sentio">선택적</td>
+              <td class="sentio">불필요 (CPU OK)</td>
             </tr>
           </tbody>
         </table>
 
-        <!-- Tech Stack -->
+        <!-- Tech Stack - condensed -->
         <div class="col-section-title">기술 스택</div>
         <div class="tech-tags">
           <span class="tech-tag primary">YOLO11s-Pose</span>
           <span class="tech-tag primary">GRU Ensemble</span>
-          <span class="tech-tag primary">ByteTrack</span>
           <span class="tech-tag cyan">FastAPI</span>
-          <span class="tech-tag cyan">WebSocket</span>
           <span class="tech-tag cyan">WebRTC</span>
-          <span class="tech-tag green">React + Vite</span>
-          <span class="tech-tag green">Tailwind CSS</span>
+          <span class="tech-tag green">React</span>
           <span class="tech-tag">Docker</span>
           <span class="tech-tag">PostgreSQL</span>
-          <span class="tech-tag">MediaPipe</span>
           <span class="tech-tag">ONNX Runtime</span>
         </div>
       </div>
@@ -1042,27 +1065,27 @@
             <tr>
               <td style="font-weight:600; color:var(--text);">감지율</td>
               <td class="hl">95.2%</td>
-              <td>20건 중 19건 자동 포착</td>
+              <td>넘어진 100명 중 95명 감지</td>
             </tr>
             <tr>
               <td style="font-weight:600; color:var(--text);">정밀도</td>
               <td class="hl-cyan">94.6%</td>
-              <td>오알림 5% 미만</td>
+              <td>알림 100건 중 95건이 진짜</td>
             </tr>
             <tr>
-              <td style="font-weight:600; color:var(--text);">F1 Score</td>
+              <td style="font-weight:600; color:var(--text);">F1 점수</td>
               <td class="hl">94.9</td>
-              <td>감지율+정밀도 종합 점수</td>
+              <td>놓침과 오알림의 균형 점수</td>
             </tr>
             <tr>
-              <td style="font-weight:600; color:var(--text);">검증 규모</td>
+              <td style="font-weight:600; color:var(--text);">검증 데이터</td>
               <td class="hl-cyan">424건</td>
-              <td>AI Hub 공인 데이터셋 독립 검증</td>
+              <td>AIHub 공인 데이터로 독립 검증</td>
             </tr>
             <tr>
-              <td style="font-weight:600; color:var(--text);">처리 속도</td>
-              <td class="hl">26ms</td>
-              <td>실시간 30fps 처리 가능</td>
+              <td style="font-weight:600; color:var(--text);">GPU 필요</td>
+              <td class="hl">불필요</td>
+              <td>일반 PC CPU만으로 실시간 동작</td>
             </tr>
           </tbody>
         </table>

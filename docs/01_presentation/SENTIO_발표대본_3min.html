@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SENTIO 3분 발표 대본 & 시각자료</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #0a0a1a; color: #e2e8f0;
+    overflow-x: hidden;
+  }
+
+  /* ===== MODE TOGGLE ===== */
+  .mode-toggle {
+    position: fixed; top: 20px; right: 20px; z-index: 9999;
+    display: flex; gap: 8px;
+  }
+  .mode-btn {
+    padding: 8px 18px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.6); color: #aaa; font-size: 13px; cursor: pointer;
+    backdrop-filter: blur(10px); transition: all 0.3s;
+  }
+  .mode-btn.active { border-color: #00d4ff; color: #00d4ff; background: rgba(0,212,255,0.1); }
+
+  /* ===== SCRIPT MODE ===== */
+  #script-mode {
+    max-width: 800px; margin: 0 auto; padding: 40px 24px 100px;
+  }
+  #script-mode h1 {
+    font-size: 32px; font-weight: 900; text-align: center; margin-bottom: 8px;
+    background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  #script-mode .subtitle {
+    text-align: center; color: #64748b; font-size: 14px; margin-bottom: 48px;
+  }
+
+  .part {
+    margin-bottom: 40px; padding: 28px; border-radius: 16px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+  }
+  .part-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+  }
+  .part-num {
+    width: 36px; height: 36px; border-radius: 10px; display: flex;
+    align-items: center; justify-content: center; font-weight: 800; font-size: 15px;
+    flex-shrink: 0;
+  }
+  .part-num.p1 { background: rgba(239,68,68,0.15); color: #ef4444; }
+  .part-num.p2 { background: rgba(59,130,246,0.15); color: #3b82f6; }
+  .part-num.p3 { background: rgba(168,85,247,0.15); color: #a855f7; }
+  .part-num.p4 { background: rgba(34,197,94,0.15); color: #22c55e; }
+  .part-num.p5 { background: rgba(245,158,11,0.15); color: #f59e0b; }
+
+  .part-title { font-size: 20px; font-weight: 700; }
+  .part-time {
+    margin-left: auto; font-size: 13px; color: #64748b;
+    background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 20px;
+    flex-shrink: 0;
+  }
+  .part-action {
+    display: inline-block; padding: 4px 10px; border-radius: 6px;
+    font-size: 12px; font-weight: 600; margin-bottom: 12px;
+  }
+  .action-speak { background: rgba(34,197,94,0.1); color: #22c55e; }
+  .action-do { background: rgba(245,158,11,0.1); color: #f59e0b; }
+  .action-wait { background: rgba(59,130,246,0.1); color: #3b82f6; }
+  .action-visual { background: rgba(168,85,247,0.1); color: #a855f7; }
+
+  .script-line {
+    font-size: 16px; line-height: 1.8; color: #cbd5e1; margin-bottom: 12px;
+    padding-left: 16px; border-left: 2px solid rgba(255,255,255,0.06);
+  }
+  .script-line strong { color: #fff; }
+  .script-line em { color: #00d4ff; font-style: normal; font-weight: 500; }
+  .stage-direction {
+    font-size: 13px; color: #f59e0b; margin: 8px 0; padding: 8px 14px;
+    background: rgba(245,158,11,0.06); border-radius: 8px;
+    border-left: 3px solid rgba(245,158,11,0.3);
+  }
+  .tip {
+    font-size: 13px; color: #a855f7; margin-top: 12px; padding: 8px 14px;
+    background: rgba(168,85,247,0.06); border-radius: 8px;
+    border-left: 3px solid rgba(168,85,247,0.3);
+  }
+
+  .timeline-bar {
+    margin-top: 48px; padding: 24px; border-radius: 16px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+  }
+  .timeline-bar h3 { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: #94a3b8; }
+  .tl-row {
+    display: flex; align-items: center; gap: 12px; padding: 6px 0;
+    font-size: 13px;
+  }
+  .tl-time { width: 100px; color: #64748b; font-family: monospace; flex-shrink: 0; }
+  .tl-bar { height: 8px; border-radius: 4px; }
+  .tl-label { color: #94a3b8; flex-shrink: 0; }
+
+  /* ===== VISUAL MODE (Full screen slides) ===== */
+  #visual-mode { display: none; }
+  #visual-mode.active { display: block; }
+  #script-mode.hidden { display: none; }
+
+  .slide {
+    width: 100vw; height: 100vh; display: none;
+    align-items: center; justify-content: center; flex-direction: column;
+    position: relative; overflow: hidden;
+  }
+  .slide.active { display: flex; }
+
+  /* Slide navigation */
+  .slide-nav {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+    z-index: 9999; display: flex; gap: 8px;
+  }
+  .slide-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: rgba(255,255,255,0.2); cursor: pointer; transition: all 0.3s;
+  }
+  .slide-dot.active { background: #00d4ff; transform: scale(1.3); }
+  .slide-counter {
+    position: fixed; bottom: 30px; right: 30px; z-index: 9999;
+    font-size: 14px; color: rgba(255,255,255,0.3); font-variant-numeric: tabular-nums;
+  }
+
+  /* ===== SLIDE 1: TRUST INTRO ===== */
+  .s-trust-intro {
+    background: radial-gradient(ellipse at center, #0f1729 0%, #0a0a1a 70%);
+  }
+  .trust-question {
+    font-size: 64px; font-weight: 900; text-align: center;
+    opacity: 0; transform: translateY(30px);
+    animation: fadeUp 0.8s ease forwards;
+  }
+  .trust-sub {
+    font-size: 28px; font-weight: 300; color: #64748b; margin-top: 20px;
+    opacity: 0; animation: fadeUp 0.8s ease 0.4s forwards;
+  }
+
+  /* ===== SLIDE 2: DATASET ===== */
+  .s-dataset {
+    background: radial-gradient(ellipse at 30% 50%, #0f1729 0%, #0a0a1a 70%);
+    padding: 60px;
+  }
+  .dataset-header {
+    font-size: 40px; font-weight: 800; margin-bottom: 50px; text-align: center;
+    opacity: 0; animation: fadeUp 0.6s ease forwards;
+  }
+  .dataset-header span { color: #00d4ff; }
+  .dataset-flow {
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: center;
+  }
+  .ds-card {
+    width: 280px; padding: 32px 24px; border-radius: 20px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    text-align: center; opacity: 0; transform: translateY(30px);
+  }
+  .ds-card:nth-child(1) { animation: fadeUp 0.6s ease 0.2s forwards; }
+  .ds-card:nth-child(3) { animation: fadeUp 0.6s ease 0.5s forwards; }
+  .ds-card:nth-child(5) { animation: fadeUp 0.6s ease 0.8s forwards; }
+  .ds-icon {
+    width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 16px;
+    display: flex; align-items: center; justify-content: center; font-size: 28px;
+  }
+  .ds-icon.data { background: rgba(59,130,246,0.15); }
+  .ds-icon.train { background: rgba(168,85,247,0.15); }
+  .ds-icon.test { background: rgba(34,197,94,0.15); }
+  .ds-num { font-size: 36px; font-weight: 900; margin-bottom: 4px; }
+  .ds-num.blue { color: #3b82f6; }
+  .ds-num.purple { color: #a855f7; }
+  .ds-num.green { color: #22c55e; }
+  .ds-label { font-size: 15px; color: #94a3b8; }
+  .ds-sub { font-size: 12px; color: #4b5563; margin-top: 6px; }
+  .ds-arrow {
+    font-size: 32px; color: #334155; opacity: 0;
+    animation: fadeUp 0.4s ease 0.4s forwards;
+  }
+  .ds-arrow:nth-of-type(2) { animation-delay: 0.7s; }
+  .ds-source {
+    margin-top: 30px; text-align: center; font-size: 15px; color: #64748b;
+    opacity: 0; animation: fadeUp 0.6s ease 1s forwards;
+  }
+  .ds-source strong { color: #94a3b8; }
+
+  /* ===== SLIDE 3: METRICS ===== */
+  .s-metrics {
+    background: radial-gradient(ellipse at center, #0a1a2a 0%, #0a0a1a 70%);
+    gap: 50px;
+  }
+  .metrics-title {
+    font-size: 36px; font-weight: 300; color: #88ccff;
+    opacity: 0; animation: fadeUp 0.6s ease forwards;
+  }
+  .metrics-row { display: flex; gap: 80px; }
+  .metric-item {
+    text-align: center; opacity: 0; transform: scale(0.5);
+  }
+  .metric-item:nth-child(1) { animation: popIn 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.3s forwards; }
+  .metric-item:nth-child(2) { animation: popIn 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.6s forwards; }
+  .metric-item:nth-child(3) { animation: popIn 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.9s forwards; }
+
+  .metric-circle {
+    width: 220px; height: 220px; border-radius: 50%; position: relative;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .metric-ring {
+    position: absolute; width: 100%; height: 100%; transform: rotate(-90deg);
+  }
+  .metric-ring circle {
+    fill: none; stroke-width: 6; stroke-linecap: round;
+    stroke-dasharray: 660; stroke-dashoffset: 660;
+    transition: stroke-dashoffset 1.5s ease 0.5s;
+  }
+  .metric-ring circle.bg { stroke-dashoffset: 0; stroke-width: 2; }
+  .metric-value { font-size: 48px; font-weight: 900; z-index: 1; }
+  .metric-name { font-size: 16px; color: #94a3b8; z-index: 1; margin-top: 2px; }
+  .metric-explain {
+    margin-top: 16px; font-size: 15px; color: #64748b; max-width: 200px;
+    line-height: 1.5; text-align: center;
+  }
+  .metric-explain strong { color: #cbd5e1; }
+
+  /* ===== SLIDE 4: PLAIN LANGUAGE ===== */
+  .s-plain {
+    background: radial-gradient(ellipse at center, #0f1729 0%, #0a0a1a 70%);
+    gap: 40px; padding: 60px;
+  }
+  .plain-title {
+    font-size: 36px; font-weight: 700; text-align: center;
+    opacity: 0; animation: fadeUp 0.6s ease forwards;
+  }
+  .plain-cards { display: flex; gap: 32px; }
+  .plain-card {
+    width: 380px; padding: 36px 28px; border-radius: 20px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    opacity: 0; transform: translateY(30px);
+  }
+  .plain-card:nth-child(1) { animation: fadeUp 0.6s ease 0.3s forwards; }
+  .plain-card:nth-child(2) { animation: fadeUp 0.6s ease 0.5s forwards; }
+  .plain-card:nth-child(3) { animation: fadeUp 0.6s ease 0.7s forwards; }
+
+  .plain-icon-row {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+  }
+  .plain-icon {
+    width: 48px; height: 48px; border-radius: 12px; display: flex;
+    align-items: center; justify-content: center; font-size: 22px;
+  }
+  .plain-metric-name { font-size: 14px; font-weight: 600; color: #94a3b8; }
+  .plain-metric-val { font-size: 28px; font-weight: 900; }
+
+  .plain-visual {
+    margin: 16px 0; display: flex; gap: 4px; flex-wrap: wrap;
+  }
+  .dot {
+    width: 18px; height: 18px; border-radius: 4px; transition: all 0.3s;
+  }
+  .dot.hit { background: #22c55e; }
+  .dot.miss { background: #ef4444; }
+  .dot.fp { background: #f59e0b; }
+  .dot.tn { background: #22c55e; }
+
+  .plain-desc {
+    font-size: 15px; color: #94a3b8; line-height: 1.6; margin-top: 12px;
+  }
+  .plain-desc strong { color: #fff; }
+
+  /* ===== SLIDE 5: CPU advantage ===== */
+  .s-cpu {
+    background: radial-gradient(ellipse at center, #0a1a2a 0%, #0a0a1a 70%);
+    gap: 40px;
+  }
+  .cpu-title {
+    font-size: 40px; font-weight: 800; text-align: center;
+    opacity: 0; animation: fadeUp 0.6s ease forwards;
+  }
+  .cpu-title span { color: #22c55e; }
+  .compare-row { display: flex; gap: 60px; align-items: center; }
+  .compare-card {
+    width: 380px; padding: 40px 32px; border-radius: 24px; text-align: center;
+    opacity: 0; transform: translateY(30px);
+  }
+  .compare-card:nth-child(1) { animation: fadeUp 0.6s ease 0.3s forwards; }
+  .compare-card.vs {
+    width: auto; padding: 0; background: none; border: none;
+    font-size: 32px; font-weight: 900; color: #334155;
+    opacity: 0; animation: fadeUp 0.4s ease 0.5s forwards;
+  }
+  .compare-card:nth-child(3) { animation: fadeUp 0.6s ease 0.7s forwards; }
+  .compare-card.old {
+    background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.15);
+  }
+  .compare-card.new {
+    background: rgba(34,197,94,0.05); border: 2px solid rgba(34,197,94,0.3);
+    box-shadow: 0 0 40px rgba(34,197,94,0.08);
+  }
+  .compare-icon { font-size: 48px; margin-bottom: 16px; }
+  .compare-label { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+  .compare-card.old .compare-label { color: #ef4444; }
+  .compare-card.new .compare-label { color: #22c55e; }
+  .compare-detail { font-size: 15px; color: #64748b; line-height: 1.6; }
+  .compare-price { font-size: 20px; font-weight: 700; margin-top: 16px; }
+  .compare-card.old .compare-price { color: #ef4444; }
+  .compare-card.new .compare-price { color: #22c55e; }
+  .cpu-bottom {
+    font-size: 18px; color: #64748b; text-align: center;
+    opacity: 0; animation: fadeUp 0.6s ease 1s forwards;
+  }
+  .cpu-bottom strong { color: #22c55e; }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes popIn {
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* Print-friendly */
+  @media print {
+    body { background: #fff; color: #111; }
+    .mode-toggle, .slide-nav, .slide-counter { display: none; }
+    .part { border: 1px solid #ddd; break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Mode Toggle -->
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="setMode('script')">대본 모드</button>
+  <button class="mode-btn" onclick="setMode('visual')">시각자료 모드</button>
+</div>
+
+<!-- =============================== -->
+<!-- SCRIPT MODE (대본)              -->
+<!-- =============================== -->
+<div id="script-mode">
+  <h1>SENTIO 3분 발표 시나리오</h1>
+  <p class="subtitle">AI 낙상 감지 시스템 | 프로모 영상 + 라이브 데모 + 신뢰도 설명</p>
+
+  <!-- PART 1 -->
+  <div class="part">
+    <div class="part-header">
+      <div class="part-num p1">1</div>
+      <div class="part-title">인트로 - 문제 제기</div>
+      <div class="part-time">0:00 ~ 0:20 (20초)</div>
+    </div>
+    <div class="stage-direction">발표자 마이크 앞에 서서 시작. 프로모 영상 HTML 탭 미리 준비.</div>
+    <span class="part-action action-speak">발화</span>
+    <div class="script-line">
+      안녕하세요, AI 낙상 감지 시스템 <em>SENTIO</em>를 소개하겠습니다.
+    </div>
+    <div class="script-line">
+      65세 이상 노인 <strong>3명 중 1명</strong>이 매년 낙상을 경험하고,<br>
+      병원 낙상의 <strong>47%</strong>는 간호사의 눈이 닿지 않는 복도와 대기실에서 발생합니다.
+    </div>
+    <div class="script-line">
+      저희는 이 문제를 AI로 해결하고자 했습니다.<br>
+      먼저 짧은 영상으로 SENTIO를 소개드리겠습니다.
+    </div>
+    <div class="stage-direction">프로모 영상 재생 버튼 클릭</div>
+  </div>
+
+  <!-- PART 2 -->
+  <div class="part">
+    <div class="part-header">
+      <div class="part-num p2">2</div>
+      <div class="part-title">프로모 영상 재생</div>
+      <div class="part-time">0:20 ~ 1:20 (60초)</div>
+    </div>
+    <span class="part-action action-wait">대기</span>
+    <div class="script-line" style="color:#64748b; font-style:italic;">
+      영상이 자동 재생됩니다. 발표자는 조용히 대기하며 화면을 함께 봅니다.<br>
+      (낙상 통계 &rarr; 문제점 &rarr; SENTIO 솔루션 &rarr; YOLO 감지 데모 &rarr; 다각도 감지 &rarr; 95.2% 성능 &rarr; 대시보드 &rarr; 기능 &rarr; 클로징)
+    </div>
+    <div class="tip">TIP: 영상이 끝나기 3초 전쯤 마이크 가까이 이동해 자연스럽게 전환</div>
+  </div>
+
+  <!-- PART 3 -->
+  <div class="part">
+    <div class="part-header">
+      <div class="part-num p3">3</div>
+      <div class="part-title">전환 &rarr; 라이브 데모</div>
+      <div class="part-time">1:20 ~ 1:30 (10초)</div>
+    </div>
+    <span class="part-action action-speak">발화</span>
+    <div class="script-line">
+      영상에서 보신 것처럼 SENTIO는 실시간 영상 기반 AI 낙상 감지 시스템입니다.<br>
+      지금부터 <strong>실제 배포된 앱</strong>을 직접 보여드리겠습니다.
+    </div>
+    <div class="stage-direction">브라우저 탭 전환 &rarr; 배포된 SENTIO 대시보드 (미리 로그인/로딩 완료)</div>
+  </div>
+
+  <!-- PART 4 -->
+  <div class="part">
+    <div class="part-header">
+      <div class="part-num p4">4</div>
+      <div class="part-title">라이브 데모</div>
+      <div class="part-time">1:30 ~ 2:15 (45초)</div>
+    </div>
+
+    <span class="part-action action-do">동작</span>
+    <div class="script-line"><strong>[대시보드 그리드 뷰 - 15초]</strong></div>
+    <div class="script-line">
+      이것이 실제 운영 화면입니다.<br>
+      다중 카메라로 모든 구역을 한눈에 모니터링하고,<br>
+      우측에서 각 인원의 <em>자세와 위험도</em>가 실시간으로 표시됩니다.
+    </div>
+
+    <span class="part-action action-do">동작</span>
+    <div class="script-line"><strong>[낙상 감지 시연 - 15초]</strong></div>
+    <div class="script-line">
+      낙상이 발생하면 상태가 <strong>"안전"에서 "위험"으로</strong> 즉시 전환되고 알림이 자동 생성됩니다.<br>
+      프라이버시를 위한 <em>블러 모드</em>에서도 얼굴 없이 감지가 가능합니다.
+    </div>
+
+    <span class="part-action action-do">동작</span>
+    <div class="script-line"><strong>[이벤트/통계 페이지 - 15초]</strong></div>
+    <div class="script-line">
+      이벤트 탭에서 <strong>언제, 어디서, 어떤 유형</strong>인지 기록되고,<br>
+      통계 페이지에서 시간대별, 구역별 패턴을 분석할 수 있습니다.
+    </div>
+
+    <div class="tip">TIP: 데모 중 예상치 못한 오류 시, "실시간 시스템이라 가끔 이런 상황도 있습니다" 정도로 넘기기</div>
+  </div>
+
+  <!-- PART 5 -->
+  <div class="part">
+    <div class="part-header">
+      <div class="part-num p5">5</div>
+      <div class="part-title">신뢰도 설명 & 마무리</div>
+      <div class="part-time">2:15 ~ 2:50 (35초)</div>
+    </div>
+    <div class="stage-direction">시각자료 슬라이드로 전환 (이 파일의 "시각자료 모드" 활용)<br>키보드 &larr; &rarr; 로 슬라이드 넘김</div>
+
+    <span class="part-action action-visual">시각자료 + 발화</span>
+    <div class="script-line"><strong>[슬라이드 1: 질문]</strong></div>
+    <div class="script-line">
+      그러면 이 시스템, <strong>실제로 믿을 만한가?</strong>
+    </div>
+
+    <div class="script-line"><strong>[슬라이드 2: 데이터셋]</strong></div>
+    <div class="script-line">
+      저희는 <em>AIHub</em>의 낙상사고 위험동작 영상 데이터셋으로 모델을 학습했습니다.<br>
+      총 <strong>2,000개 영상</strong>에서 <strong>66만 개의 학습 데이터</strong>를 추출했고,<br>
+      전방, 후방, 측면 낙상과 정상 행동 <strong>424개 영상</strong>으로 최종 검증했습니다.
+    </div>
+
+    <div class="script-line"><strong>[슬라이드 3: 원형 지표]</strong></div>
+    <div class="script-line">
+      결과입니다. 감지율 <strong>95.2%</strong>, 정밀도 <strong>94.6%</strong>, F1 종합 점수 <strong>94.9</strong>.
+    </div>
+
+    <div class="script-line"><strong>[슬라이드 4: 쉬운 설명]</strong></div>
+    <div class="script-line">
+      이게 뭘 의미하는지 쉽게 설명드리면,<br>
+      <strong>실제 넘어진 100명 중 95명을 잡아내고,</strong><br>
+      <strong>알림이 울렸을 때 100건 중 95건은 진짜 낙상입니다.</strong><br>
+      거짓 알림은 5건뿐이고, 놓치는 경우도 5건뿐입니다.
+    </div>
+
+    <div class="script-line"><strong>[슬라이드 5: CPU 장점]</strong></div>
+    <div class="script-line">
+      그리고 특히, <strong>GPU 없이 일반 PC의 CPU만으로</strong> 이 성능이 나옵니다.<br>
+      별도의 고가 장비 없이 병원에 바로 도입할 수 있다는 뜻입니다.
+    </div>
+
+    <div class="script-line" style="margin-top: 20px; border-left-color: #00d4ff;">
+      SENTIO는 <strong>"감지하고, 보호하고, 돌봅니다."</strong> 감사합니다.
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="timeline-bar">
+    <h3>TIMELINE (총 약 2분 50초)</h3>
+    <div class="tl-row">
+      <span class="tl-time">0:00-0:20</span>
+      <div class="tl-bar" style="width:80px; background:linear-gradient(90deg,#ef4444,#f97316);"></div>
+      <span class="tl-label">인트로</span>
+    </div>
+    <div class="tl-row">
+      <span class="tl-time">0:20-1:20</span>
+      <div class="tl-bar" style="width:240px; background:linear-gradient(90deg,#3b82f6,#6366f1);"></div>
+      <span class="tl-label">프로모 영상 (60s)</span>
+    </div>
+    <div class="tl-row">
+      <span class="tl-time">1:20-1:30</span>
+      <div class="tl-bar" style="width:40px; background:linear-gradient(90deg,#a855f7,#c084fc);"></div>
+      <span class="tl-label">전환</span>
+    </div>
+    <div class="tl-row">
+      <span class="tl-time">1:30-2:15</span>
+      <div class="tl-bar" style="width:180px; background:linear-gradient(90deg,#22c55e,#4ade80);"></div>
+      <span class="tl-label">라이브 데모</span>
+    </div>
+    <div class="tl-row">
+      <span class="tl-time">2:15-2:50</span>
+      <div class="tl-bar" style="width:140px; background:linear-gradient(90deg,#f59e0b,#fbbf24);"></div>
+      <span class="tl-label">신뢰도 + 마무리</span>
+    </div>
+  </div>
+
+  <div style="text-align:center; margin-top:40px; color:#334155; font-size:13px;">
+    시각자료 모드에서 키보드 &larr; &rarr; 또는 클릭으로 슬라이드를 넘길 수 있습니다.
+  </div>
+</div>
+
+<!-- =============================== -->
+<!-- VISUAL MODE (발표용 슬라이드)    -->
+<!-- =============================== -->
+<div id="visual-mode">
+
+  <!-- SLIDE 1: Trust question -->
+  <div class="slide s-trust-intro active" data-slide="0">
+    <div class="trust-question">이 시스템, 믿을 만한가?</div>
+    <div class="trust-sub">SENTIO의 검증 과정과 성능을 알려드립니다</div>
+  </div>
+
+  <!-- SLIDE 2: Dataset -->
+  <div class="slide s-dataset" data-slide="1">
+    <div class="dataset-header">
+      <span>AIHub</span> 낙상사고 위험동작 영상으로 학습
+    </div>
+    <div class="dataset-flow">
+      <div class="ds-card">
+        <div class="ds-icon data">&#128253;</div>
+        <div class="ds-num blue">2,000</div>
+        <div class="ds-label">원본 영상</div>
+        <div class="ds-sub">전방 / 후방 / 측면 낙상 + 정상 행동</div>
+      </div>
+      <div class="ds-arrow">&rarr;</div>
+      <div class="ds-card">
+        <div class="ds-icon train">&#129504;</div>
+        <div class="ds-num purple">665,574</div>
+        <div class="ds-label">학습 시퀀스</div>
+        <div class="ds-sub">30프레임 단위 슬라이딩 윈도우 추출</div>
+      </div>
+      <div class="ds-arrow">&rarr;</div>
+      <div class="ds-card">
+        <div class="ds-icon test">&#9989;</div>
+        <div class="ds-num green">424</div>
+        <div class="ds-label">검증 영상</div>
+        <div class="ds-sub">4개 카테고리 x 100개 이상</div>
+      </div>
+    </div>
+    <div class="ds-source">출처: <strong>AIHub 한국지능정보사회진흥원</strong> | 낙상사고 위험동작 영상 데이터셋</div>
+  </div>
+
+  <!-- SLIDE 3: Metric circles -->
+  <div class="slide s-metrics" data-slide="2">
+    <div class="metrics-title">424개 영상으로 검증된 최종 성능</div>
+    <div class="metrics-row">
+      <div class="metric-item">
+        <div class="metric-circle">
+          <svg class="metric-ring" viewBox="0 0 220 220">
+            <circle class="bg" cx="110" cy="110" r="100" stroke="rgba(0,212,255,0.1)"/>
+            <circle cx="110" cy="110" r="100" stroke="#00d4ff" id="mring1"/>
+          </svg>
+          <div class="metric-value" style="color:#00d4ff">95.2%</div>
+          <div class="metric-name">감지율 (Recall)</div>
+        </div>
+        <div class="metric-explain">넘어진 사람을<br><strong>얼마나 잘 찾는가</strong></div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-circle">
+          <svg class="metric-ring" viewBox="0 0 220 220">
+            <circle class="bg" cx="110" cy="110" r="100" stroke="rgba(123,47,247,0.1)"/>
+            <circle cx="110" cy="110" r="100" stroke="#7b2ff7" id="mring2"/>
+          </svg>
+          <div class="metric-value" style="color:#7b2ff7">94.6%</div>
+          <div class="metric-name">정밀도 (Precision)</div>
+        </div>
+        <div class="metric-explain">알림이 울렸을 때<br><strong>진짜 낙상인 비율</strong></div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-circle">
+          <svg class="metric-ring" viewBox="0 0 220 220">
+            <circle class="bg" cx="110" cy="110" r="100" stroke="rgba(0,255,136,0.1)"/>
+            <circle cx="110" cy="110" r="100" stroke="#00ff88" id="mring3"/>
+          </svg>
+          <div class="metric-value" style="color:#00ff88">94.9</div>
+          <div class="metric-name">F1 종합 점수</div>
+        </div>
+        <div class="metric-explain">감지율과 정밀도의<br><strong>균형 점수</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: Plain language with dot visualization -->
+  <div class="slide s-plain" data-slide="3">
+    <div class="plain-title">쉽게 말하면?</div>
+    <div class="plain-cards">
+      <!-- Recall -->
+      <div class="plain-card">
+        <div class="plain-icon-row">
+          <div class="plain-icon" style="background:rgba(0,212,255,0.15);">&#128065;</div>
+          <div>
+            <div class="plain-metric-name">감지율 (Recall)</div>
+            <div class="plain-metric-val" style="color:#00d4ff;">95.2%</div>
+          </div>
+        </div>
+        <div class="plain-visual" id="recall-dots"></div>
+        <div class="plain-desc">
+          실제 넘어진 <strong>100명 중 95명</strong>을 감지<br>
+          <span style="color:#22c55e;">&#9632;</span> 감지 성공 &nbsp;
+          <span style="color:#ef4444;">&#9632;</span> 미감지 (5명)
+        </div>
+      </div>
+      <!-- Precision -->
+      <div class="plain-card">
+        <div class="plain-icon-row">
+          <div class="plain-icon" style="background:rgba(123,47,247,0.15);">&#128276;</div>
+          <div>
+            <div class="plain-metric-name">정밀도 (Precision)</div>
+            <div class="plain-metric-val" style="color:#7b2ff7;">94.6%</div>
+          </div>
+        </div>
+        <div class="plain-visual" id="precision-dots"></div>
+        <div class="plain-desc">
+          알림 <strong>100건 중 95건</strong>이 진짜 낙상<br>
+          <span style="color:#22c55e;">&#9632;</span> 정확한 알림 &nbsp;
+          <span style="color:#f59e0b;">&#9632;</span> 거짓 알림 (5건)
+        </div>
+      </div>
+      <!-- F1 -->
+      <div class="plain-card">
+        <div class="plain-icon-row">
+          <div class="plain-icon" style="background:rgba(0,255,136,0.15);">&#9878;</div>
+          <div>
+            <div class="plain-metric-name">F1 종합 점수</div>
+            <div class="plain-metric-val" style="color:#00ff88;">94.9</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin:20px 0;">
+          <div style="flex:1;height:12px;border-radius:6px;background:rgba(255,255,255,0.06);overflow:hidden;">
+            <div style="width:94.9%;height:100%;border-radius:6px;background:linear-gradient(90deg,#00d4ff,#00ff88);"></div>
+          </div>
+          <span style="font-size:20px;font-weight:800;color:#00ff88;">94.9</span>
+        </div>
+        <div class="plain-desc">
+          감지율과 정밀도의 <strong>조화 평균</strong><br>
+          둘 다 높아야 높은 점수 &mdash; <strong>균형 잡힌 시스템</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: CPU advantage -->
+  <div class="slide s-cpu" data-slide="4">
+    <div class="cpu-title">고가 GPU 없이, <span>일반 CPU</span>로 작동</div>
+    <div class="compare-row">
+      <div class="compare-card old">
+        <div class="compare-icon">&#128187;&#43;&#129302;</div>
+        <div class="compare-label">일반적인 AI 시스템</div>
+        <div class="compare-detail">
+          고성능 GPU 서버 필요<br>
+          전용 장비 설치 필수<br>
+          유지보수 비용 높음
+        </div>
+        <div class="compare-price">수백~수천만 원</div>
+      </div>
+      <div class="compare-card vs">VS</div>
+      <div class="compare-card new">
+        <div class="compare-icon">&#128187;</div>
+        <div class="compare-label">SENTIO</div>
+        <div class="compare-detail">
+          일반 PC CPU로 실시간 분석<br>
+          기존 CCTV 인프라 활용<br>
+          추가 장비 불필요
+        </div>
+        <div class="compare-price">기존 인프라만으로 OK</div>
+      </div>
+    </div>
+    <div class="cpu-bottom">
+      병원 어디서든, <strong>기존 장비 그대로</strong> 바로 도입할 수 있습니다
+    </div>
+  </div>
+
+  <!-- Slide navigation dots -->
+  <div class="slide-nav" id="slide-nav"></div>
+  <div class="slide-counter" id="slide-counter"></div>
+</div>
+
+<script>
+  // ===== MODE SWITCHING =====
+  function setMode(mode) {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    if (mode === 'script') {
+      document.getElementById('script-mode').classList.remove('hidden');
+      document.getElementById('visual-mode').classList.remove('active');
+      document.querySelectorAll('.mode-btn')[0].classList.add('active');
+    } else {
+      document.getElementById('script-mode').classList.add('hidden');
+      document.getElementById('visual-mode').classList.add('active');
+      document.querySelectorAll('.mode-btn')[1].classList.add('active');
+      initSlides();
+    }
+  }
+
+  // ===== SLIDE SYSTEM =====
+  let currentSlide = 0;
+  const slides = () => document.querySelectorAll('.slide');
+
+  function initSlides() {
+    const nav = document.getElementById('slide-nav');
+    nav.innerHTML = '';
+    slides().forEach((_, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'slide-dot' + (i === 0 ? ' active' : '');
+      dot.onclick = () => goToSlide(i);
+      nav.appendChild(dot);
+    });
+    goToSlide(0);
+  }
+
+  function goToSlide(n) {
+    const s = slides();
+    if (n < 0 || n >= s.length) return;
+    s.forEach((sl, i) => {
+      sl.classList.remove('active');
+      sl.style.display = 'none';
+    });
+    s[n].classList.remove('active');
+    // Force re-trigger animations
+    void s[n].offsetWidth;
+    s[n].style.display = 'flex';
+    s[n].classList.add('active');
+    currentSlide = n;
+
+    document.querySelectorAll('.slide-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === n);
+    });
+    document.getElementById('slide-counter').textContent = (n + 1) + ' / ' + s.length;
+
+    // Trigger metric ring animations on slide 3
+    if (n === 2) animateRings();
+  }
+
+  function animateRings() {
+    const circumference = 2 * Math.PI * 100;
+    setTimeout(() => {
+      const r1 = document.getElementById('mring1');
+      const r2 = document.getElementById('mring2');
+      const r3 = document.getElementById('mring3');
+      if (r1) { r1.style.strokeDasharray = circumference; r1.style.strokeDashoffset = circumference * (1 - 0.952); }
+      if (r2) { r2.style.strokeDasharray = circumference; r2.style.strokeDashoffset = circumference * (1 - 0.946); }
+      if (r3) { r3.style.strokeDasharray = circumference; r3.style.strokeDashoffset = circumference * (1 - 0.949); }
+    }, 100);
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (!document.getElementById('visual-mode').classList.contains('active')) return;
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goToSlide(currentSlide + 1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); goToSlide(currentSlide - 1); }
+    if (e.key === 'Escape') setMode('script');
+  });
+
+  // Click navigation (left/right halves)
+  document.getElementById('visual-mode').addEventListener('click', (e) => {
+    if (e.target.closest('.slide-nav') || e.target.closest('.mode-toggle')) return;
+    const x = e.clientX / window.innerWidth;
+    if (x > 0.5) goToSlide(currentSlide + 1);
+    else goToSlide(currentSlide - 1);
+  });
+
+  // ===== DOT VISUALIZATIONS =====
+  function createDots() {
+    // Recall: 95 green, 5 red out of 100
+    const recallContainer = document.getElementById('recall-dots');
+    if (!recallContainer) return;
+    for (let i = 0; i < 100; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dot ' + (i < 95 ? 'hit' : 'miss');
+      recallContainer.appendChild(dot);
+    }
+    // Precision: 95 green, 5 yellow
+    const precContainer = document.getElementById('precision-dots');
+    for (let i = 0; i < 100; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dot ' + (i < 95 ? 'tn' : 'fp');
+      precContainer.appendChild(dot);
+    }
+  }
+  createDots();
+</script>
+</body>
+</html>
