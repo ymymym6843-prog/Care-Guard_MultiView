@@ -26,11 +26,13 @@
     /* ===== PAGE ===== */
     .page {
       width: 210mm;
-      min-height: 297mm;
+      height: 297mm;
       background: white;
       margin: 0 auto 8mm;
       position: relative;
-      overflow: hidden;
+      overflow: visible;
+      word-break: keep-all;
+      overflow-wrap: break-word;
       box-shadow: 0 0 12px rgba(0,0,0,0.08);
       page-break-after: always;
     }
@@ -626,35 +628,51 @@
     /* Page 2 Footer */
     .page2-footer {
       border-top: 2px solid var(--primary);
-      padding: 8mm 16mm 10mm;
+      padding: 3mm 16mm 3mm;
       background: var(--bg-subtle);
     }
 
     .footer-content {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
     }
 
     .footer-left {}
+
+    .footer-center {
+      text-align: center;
+    }
+
+    .footer-center img {
+      width: 45px;
+      height: 45px;
+      border-radius: 4px;
+    }
+
+    .footer-center .qr-label {
+      font-size: 7px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
 
     .footer-name {
       font-size: 13px;
       font-weight: 800;
       color: var(--text);
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
 
     .footer-role {
       font-size: 9px;
       color: var(--text-muted);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .footer-contact {
       font-size: 9.5px;
       color: var(--text-muted);
-      line-height: 1.8;
+      line-height: 1.6;
     }
 
     .footer-contact strong { color: var(--text); }
@@ -1099,20 +1117,22 @@
   <div class="page2-footer">
     <div class="footer-content">
       <div class="footer-left">
-        <div class="footer-name">석유민</div>
-        <div class="footer-role">물리치료사 출신 AI 개발자 &middot; Team Uminy</div>
-        <div class="footer-contact">
-          <strong>Tel.</strong> 010.5535.6843<br>
-          <strong>Email.</strong> ymymym6843@gmail.com
-        </div>
-      </div>
-      <div class="footer-right">
         <div class="footer-logo">SENTIO <span>AI</span></div>
         <div class="footer-slogan">"현장의 문제를 아는 사람이 가장 좋은 솔루션을 만듭니다"</div>
         <div class="footer-course">
-          디지털 재활 헬스케어 AI 개발자 양성 과정 1기<br>
-          2026.02
+          디지털 재활 헬스케어 AI 개발자 양성 과정 1기 &middot; 2026.02
         </div>
+      </div>
+      <div style="text-align:center;">
+        <div class="footer-name">석유민</div>
+        <div class="footer-role">물리치료사 출신 AI 개발자 &middot; Team Uminy</div>
+        <div class="footer-contact">
+          <strong>Tel.</strong> 010.5535.6843 &nbsp; <strong>Email.</strong> ymymym6843@gmail.com
+        </div>
+      </div>
+      <div class="footer-center">
+        <img src="data:image/png;base64,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" alt="QR코드">
+        <div class="qr-label">랜딩페이지 바로가기</div>
       </div>
     </div>
   </div>
