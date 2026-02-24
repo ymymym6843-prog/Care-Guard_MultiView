@@ -222,7 +222,29 @@
     "eventLog": {
       "title": "Event Log",
       "clear": "Clear",
-      "noEvents": "No events."
+      "noEvents": "No events.",
+      "acknowledged": "Alert acknowledged.",
+      "ackCategory": "Acknowledged",
+      "staffAcknowledged": "Staff acknowledged the fall alert.",
+      "fallDetected": "{{person}} {{fallType}} fall detected!",
+      "abnormalPosture": "{{person}} abnormal posture detected.",
+      "warningCategory": "Warning",
+      "alertCategory": "Alert",
+      "dangerCategory": "Fall Detected",
+      "walkingAidCategory": "Walking Aid",
+      "walkingAidMissing": "Warning: {{person}} walking aid not detected",
+      "patient": "Patient",
+      "fallTypeLabels": {
+        "front_fall": "[Front]",
+        "back_fall": "[Back]",
+        "side_fall": "[Side]",
+        "pre_impact": "[Pre-Impact]",
+        "unknown": ""
+      },
+      "demoAbnormal": "Abnormal behavior detected (Demo)",
+      "demoDangerPersist": "Danger state persisting (Demo)",
+      "demoFallOccurred": "Fall occurred (Demo)",
+      "demoRecovered": "Status recovered (Demo)"
     },
     "video": {
       "title": "Live Monitoring",

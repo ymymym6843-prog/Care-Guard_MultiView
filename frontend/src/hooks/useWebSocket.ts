@@ -7,6 +7,7 @@
 
 import { useEffect, useRef, useCallback } from "react";
 import { useMonitoringStore, type AlertLevel, type PersonMetrics, type BBoxData, type PoseData } from "@/store/monitoring";
+import i18n from "@/i18n";
 
 export type WSMessageType =
   | "pose_data"
@@ -25,11 +26,12 @@ const MAX_RECONNECT_DELAY = 30000;
 const INITIAL_RECONNECT_DELAY = 1000;
 
 function _fallTypeLabel(fallType: string): string {
+  const t = i18n.t;
   switch (fallType) {
-    case "front_fall": return "[전방]";
-    case "back_fall": return "[후방]";
-    case "side_fall": return "[측면]";
-    case "pre_impact": return "[충격전]";
+    case "front_fall": return t("dashboard.eventLog.fallTypeLabels.front_fall", "[전방]");
+    case "back_fall": return t("dashboard.eventLog.fallTypeLabels.back_fall", "[후방]");
+    case "side_fall": return t("dashboard.eventLog.fallTypeLabels.side_fall", "[측면]");
+    case "pre_impact": return t("dashboard.eventLog.fallTypeLabels.pre_impact", "[충격전]");
     default: return "";
   }
 }
@@ -154,8 +156,8 @@ export function useWebSocket() {
             const pid = (d.person_id as string) ?? undefined;
             store.addEventLog(
               "warning",
-              "보행도구",
-              `주의: ${pid ?? "환자"} 보행도구 미감지`,
+              i18n.t("dashboard.eventLog.walkingAidCategory", "보행도구"),
+              i18n.t("dashboard.eventLog.walkingAidMissing", { person: pid ?? i18n.t("dashboard.eventLog.patient", "환자"), defaultValue: `주의: ${pid ?? "환자"} 보행도구 미감지` }),
               pid,
               undefined,
               alertCameraId,
@@ -181,8 +183,8 @@ export function useWebSocket() {
               store.setCurrentFallType("unknown");
               store.addEventLog(
                 "safe",
-                "확인",
-                "알림이 확인되었습니다.",
+                i18n.t("dashboard.eventLog.ackCategory", "확인"),
+                i18n.t("dashboard.eventLog.acknowledged", "알림이 확인되었습니다."),
                 personId,
                 undefined,
                 alertCameraId,
@@ -198,8 +200,8 @@ export function useWebSocket() {
               const fallLabel = _fallTypeLabel(fallType);
               store.addEventLog(
                 "danger",
-                "낙상 감지",
-                `${personId ?? "환자"} ${fallLabel} 낙상이 감지되었습니다!`,
+                i18n.t("dashboard.eventLog.dangerCategory", "낙상 감지"),
+                i18n.t("dashboard.eventLog.fallDetected", { person: personId ?? i18n.t("dashboard.eventLog.patient", "환자"), fallType: fallLabel, defaultValue: `${personId ?? "환자"} ${fallLabel} 낙상이 감지되었습니다!` }),
                 personId,
                 fallType,
                 alertCameraId,
@@ -214,10 +216,10 @@ export function useWebSocket() {
               }
               store.addEventLog(
                 "warning",
-                isActualFall ? "경고" : "주의",
+                isActualFall ? i18n.t("dashboard.eventLog.alertCategory", "경고") : i18n.t("dashboard.eventLog.warningCategory", "주의"),
                 isActualFall
-                  ? `${personId ?? "환자"} ${_fallTypeLabel(fallType)} 낙상이 감지되었습니다!`
-                  : `${personId ?? "환자"} 이상 자세가 감지되었습니다.`,
+                  ? i18n.t("dashboard.eventLog.fallDetected", { person: personId ?? i18n.t("dashboard.eventLog.patient", "환자"), fallType: _fallTypeLabel(fallType), defaultValue: `${personId ?? "환자"} ${_fallTypeLabel(fallType)} 낙상이 감지되었습니다!` })
+                  : i18n.t("dashboard.eventLog.abnormalPosture", { person: personId ?? i18n.t("dashboard.eventLog.patient", "환자"), defaultValue: `${personId ?? "환자"} 이상 자세가 감지되었습니다.` }),
                 personId,
                 fallType,
                 alertCameraId,

@@ -222,7 +222,29 @@
     "eventLog": {
       "title": "이벤트 로그",
       "clear": "지우기",
-      "noEvents": "이벤트가 없습니다."
+      "noEvents": "이벤트가 없습니다.",
+      "acknowledged": "알림이 확인되었습니다.",
+      "ackCategory": "확인",
+      "staffAcknowledged": "의료진이 낙상 알림을 확인했습니다.",
+      "fallDetected": "{{person}} {{fallType}} 낙상이 감지되었습니다!",
+      "abnormalPosture": "{{person}} 이상 자세가 감지되었습니다.",
+      "warningCategory": "주의",
+      "alertCategory": "경고",
+      "dangerCategory": "낙상 감지",
+      "walkingAidCategory": "보행도구",
+      "walkingAidMissing": "주의: {{person}} 보행도구 미감지",
+      "patient": "환자",
+      "fallTypeLabels": {
+        "front_fall": "[전방]",
+        "back_fall": "[후방]",
+        "side_fall": "[측면]",
+        "pre_impact": "[충격전]",
+        "unknown": ""
+      },
+      "demoAbnormal": "이상 행동 감지 (Demo)",
+      "demoDangerPersist": "위험 상태 지속 (Demo)",
+      "demoFallOccurred": "낙상 사고 발생 (Demo)",
+      "demoRecovered": "상태 복구됨 (Demo)"
     },
     "video": {
       "title": "실시간 모니터링",

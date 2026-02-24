@@ -18,6 +18,7 @@ import { FalseReportManager } from "@/components/Dashboard/FalseReportManager";
 import { RoomManager } from "@/components/RoomManager";
 import { AdminRoute } from "@/components/AdminRoute";
 import { useTranslation } from "react-i18next";
+import i18n from "@/i18n";
 import { toast } from "sonner";
 import { useMonitoringStore } from "@/store/monitoring";
 import LogoShowcase from "@/pages/LogoShowcase";
@@ -154,7 +155,7 @@ function App() {
         setCurrentAlert("warning");
         setCurrentFallType("pre_impact");
         toast.warning("⚠️ 주의: 거동이 불안정한 환자가 감지되었습니다.");
-        addEventLog("warning", "pre_impact", "이상 행동 감지 (Demo)", "person_demo");
+        addEventLog("warning", "pre_impact", i18n.t("dashboard.eventLog.demoAbnormal", "이상 행동 감지 (Demo)"), "person_demo");
       }
       // F2: 경고 (Warning - 지속)
       else if (e.key === "F2") {
@@ -162,7 +163,7 @@ function App() {
         setCurrentAlert("warning");
         setCurrentFallType("long_lie");
         toast.warning("🔔 경고: 위험 상태가 지속되고 있습니다.");
-        addEventLog("warning", "long_lie", "위험 상태 지속 (Demo)", "person_demo");
+        addEventLog("warning", "long_lie", i18n.t("dashboard.eventLog.demoDangerPersist", "위험 상태 지속 (Demo)"), "person_demo");
       }
       // F3: 위험 (Danger - 낙상)
       else if (e.key === "F3") {
@@ -170,7 +171,7 @@ function App() {
         setCurrentAlert("danger");
         setCurrentFallType("front_fall");
         toast.error("🚨 위험: 낙상이 감지되었습니다! 응급 조치 요망");
-        addEventLog("danger", "front_fall", "낙상 사고 발생 (Demo)", "person_demo");
+        addEventLog("danger", "front_fall", i18n.t("dashboard.eventLog.demoFallOccurred", "낙상 사고 발생 (Demo)"), "person_demo");
 
         // TTS
         if (settings.ttsEnabled) {
@@ -184,7 +185,7 @@ function App() {
         e.preventDefault();
         clearAlerts();
         toast.success("✅ 상태가 정상으로 복구되었습니다.");
-        addEventLog("safe", "recovery", "상태 복구됨 (Demo)", "person_demo");
+        addEventLog("safe", "recovery", i18n.t("dashboard.eventLog.demoRecovered", "상태 복구됨 (Demo)"), "person_demo");
       }
     };
 
