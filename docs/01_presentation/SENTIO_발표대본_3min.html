@@ -256,10 +256,10 @@
   .plain-metric-val { font-size: 28px; font-weight: 900; }
 
   .plain-visual {
-    margin: 16px 0; display: flex; gap: 4px; flex-wrap: wrap;
+    margin: 16px 0; display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px;
   }
   .dot {
-    width: 18px; height: 18px; border-radius: 4px; transition: all 0.3s;
+    width: 100%; aspect-ratio: 1; border-radius: 4px; transition: all 0.3s;
   }
   .dot.hit { background: #22c55e; }
   .dot.miss { background: #ef4444; }
