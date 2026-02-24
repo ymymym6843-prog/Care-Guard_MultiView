@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="50%" stop-color="#00d4ff"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7b2ff7"/>
+      <stop offset="100%" stop-color="#00d4ff"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00d4ff" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#00d4ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 배경 글로우 -->
+  <circle cx="100" cy="100" r="95" fill="url(#glow)"/>
+
+  <!-- 동심원 펄스 웨이브 (바깥 → 안쪽) -->
+  <circle cx="100" cy="100" r="88" fill="none" stroke="url(#g1)" stroke-width="1.5" opacity="0.15"/>
+  <circle cx="100" cy="100" r="74" fill="none" stroke="url(#g1)" stroke-width="2" opacity="0.25"/>
+  <circle cx="100" cy="100" r="60" fill="none" stroke="url(#g1)" stroke-width="2.5" opacity="0.40"/>
+  <circle cx="100" cy="100" r="46" fill="none" stroke="url(#g1)" stroke-width="3" opacity="0.60"/>
+  <circle cx="100" cy="100" r="32" fill="none" stroke="url(#g1)" stroke-width="3.5" opacity="0.80"/>
+
+  <!-- 중앙 코어 -->
+  <circle cx="100" cy="100" r="16" fill="url(#g2)"/>
+  <circle cx="100" cy="100" r="8" fill="#ffffff" opacity="0.9"/>
+</svg>

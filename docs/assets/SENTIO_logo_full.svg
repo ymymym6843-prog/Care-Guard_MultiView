@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 160" width="520" height="160">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="50%" stop-color="#00d4ff"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7b2ff7"/>
+      <stop offset="100%" stop-color="#00d4ff"/>
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00d4ff"/>
+      <stop offset="50%" stop-color="#7b2ff7"/>
+      <stop offset="100%" stop-color="#00d4ff"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00d4ff" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#00d4ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- === 아이콘 (왼쪽) === -->
+  <g transform="translate(80, 80)">
+    <!-- 배경 글로우 -->
+    <circle cx="0" cy="0" r="65" fill="url(#glow)"/>
+    <!-- 동심원 -->
+    <circle cx="0" cy="0" r="58" fill="none" stroke="url(#g1)" stroke-width="1.2" opacity="0.15"/>
+    <circle cx="0" cy="0" r="48" fill="none" stroke="url(#g1)" stroke-width="1.5" opacity="0.25"/>
+    <circle cx="0" cy="0" r="38" fill="none" stroke="url(#g1)" stroke-width="2" opacity="0.40"/>
+    <circle cx="0" cy="0" r="28" fill="none" stroke="url(#g1)" stroke-width="2.5" opacity="0.60"/>
+    <circle cx="0" cy="0" r="18" fill="none" stroke="url(#g1)" stroke-width="3" opacity="0.80"/>
+    <!-- 코어 -->
+    <circle cx="0" cy="0" r="10" fill="url(#g2)"/>
+    <circle cx="0" cy="0" r="5" fill="#ffffff" opacity="0.9"/>
+  </g>
+
+  <!-- === 텍스트 (오른쪽) === -->
+  <!-- SENTIO -->
+  <text x="175" y="92" font-family="'Helvetica Neue', Arial, sans-serif" font-size="64" font-weight="900" letter-spacing="8" fill="url(#textGrad)">
+    SENTIO
+  </text>
+
+  <!-- 서브텍스트 -->
+  <text x="177" y="118" font-family="'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" letter-spacing="4" fill="#64748b">
+    AI FALL DETECTION
+  </text>
+</svg>
