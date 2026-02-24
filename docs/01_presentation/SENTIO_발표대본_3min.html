@@ -343,19 +343,42 @@
 <!-- =============================== -->
 <div id="script-mode">
   <h1>SENTIO 3분 발표 시나리오</h1>
-  <p class="subtitle">AI 낙상 감지 시스템 | 프로모 영상 + 라이브 데모 + 신뢰도 설명</p>
+  <p class="subtitle">AI 낙상 감지 시스템 | 랜딩페이지 → 프로모 영상 → 라이브 데모 → 시각자료 슬라이드</p>
+
+  <!-- 사전 준비 -->
+  <div class="part" style="border-color: rgba(0,212,255,0.2); background: rgba(0,212,255,0.03);">
+    <div class="part-header">
+      <div class="part-num" style="background:rgba(0,212,255,0.15);color:#00d4ff;">&#9881;</div>
+      <div class="part-title">발표 전 준비사항</div>
+      <div class="part-time">발표 시작 전</div>
+    </div>
+    <div class="stage-direction">
+      <strong>브라우저 탭 3개를 미리 준비해 둡니다:</strong><br>
+      탭 1: <em>sentio-pulse.vercel.app/landing/</em> (랜딩페이지 &mdash; 발표 시작 화면)<br>
+      탭 2: SENTIO 대시보드 (미리 로그인/로딩 완료 &mdash; 라이브 데모용)<br>
+      탭 3: (예비) 시각자료 페이지 직접 접속 &mdash; 네비바 클릭 실패 시 백업
+    </div>
+    <div class="tip">TIP: 브라우저를 전체화면(F11)으로 설정하면 더 깔끔합니다.</div>
+  </div>
 
   <!-- PART 1 -->
   <div class="part">
     <div class="part-header">
       <div class="part-num p1">1</div>
-      <div class="part-title">인트로 - 문제 제기</div>
-      <div class="part-time">0:00 ~ 0:20 (20초)</div>
+      <div class="part-title">인트로 &mdash; 랜딩페이지로 문제 제기</div>
+      <div class="part-time">0:00 ~ 0:25 (25초)</div>
     </div>
-    <div class="stage-direction">발표자 마이크 앞에 서서 시작. 프로모 영상 HTML 탭 미리 준비.</div>
+    <div class="stage-direction">
+      화면: 랜딩페이지 히어로 섹션이 보이는 상태로 시작<br>
+      (sentio-pulse.vercel.app/landing/ &mdash; "AI가 지키는 요양병원 안전" 큰 제목이 보임)
+    </div>
     <span class="part-action action-speak">발화</span>
     <div class="script-line">
       안녕하세요, AI 낙상 감지 시스템 <em>SENTIO</em>를 소개하겠습니다.
+    </div>
+    <div class="script-line">
+      화면에 보이시는 것처럼, 저희 SENTIO는 <strong>기존 CCTV에 소프트웨어만 추가</strong>하면<br>
+      <strong>95.2%</strong> 감지율로 낙상을 실시간 감지하는 시스템입니다.
     </div>
     <div class="script-line">
       65세 이상 노인 <strong>3명 중 1명</strong>이 매년 낙상을 경험하고,<br>
@@ -365,7 +388,10 @@
       저희는 이 문제를 AI로 해결하고자 했습니다.<br>
       먼저 짧은 영상으로 SENTIO를 소개드리겠습니다.
     </div>
-    <div class="stage-direction">프로모 영상 재생 버튼 클릭</div>
+    <div class="stage-direction">
+      &#128073; 랜딩페이지 히어로의 <strong>"&#127909; 발표 영상 보기"</strong> 버튼을 클릭<br>
+      (새 탭에서 MP4 영상이 열림)
+    </div>
   </div>
 
   <!-- PART 2 -->
@@ -373,14 +399,14 @@
     <div class="part-header">
       <div class="part-num p2">2</div>
       <div class="part-title">프로모 영상 재생</div>
-      <div class="part-time">0:20 ~ 1:20 (60초)</div>
+      <div class="part-time">0:25 ~ 1:25 (60초)</div>
     </div>
     <span class="part-action action-wait">대기</span>
     <div class="script-line" style="color:#64748b; font-style:italic;">
-      영상이 자동 재생됩니다. 발표자는 조용히 대기하며 화면을 함께 봅니다.<br>
+      영상이 재생됩니다. 발표자는 조용히 대기하며 화면을 함께 봅니다.<br>
       (낙상 통계 &rarr; 문제점 &rarr; SENTIO 솔루션 &rarr; YOLO 감지 데모 &rarr; 다각도 감지 &rarr; 95.2% 성능 &rarr; 대시보드 &rarr; 기능 &rarr; 클로징)
     </div>
-    <div class="tip">TIP: 영상이 끝나기 3초 전쯤 마이크 가까이 이동해 자연스럽게 전환</div>
+    <div class="tip">TIP: 영상이 끝나기 3초 전쯤 마이크 가까이 이동해 자연스럽게 전환 준비</div>
   </div>
 
   <!-- PART 3 -->
@@ -388,14 +414,16 @@
     <div class="part-header">
       <div class="part-num p3">3</div>
       <div class="part-title">전환 &rarr; 라이브 데모</div>
-      <div class="part-time">1:20 ~ 1:30 (10초)</div>
+      <div class="part-time">1:25 ~ 1:35 (10초)</div>
     </div>
     <span class="part-action action-speak">발화</span>
     <div class="script-line">
       영상에서 보신 것처럼 SENTIO는 실시간 영상 기반 AI 낙상 감지 시스템입니다.<br>
       지금부터 <strong>실제 배포된 앱</strong>을 직접 보여드리겠습니다.
     </div>
-    <div class="stage-direction">브라우저 탭 전환 &rarr; 배포된 SENTIO 대시보드 (미리 로그인/로딩 완료)</div>
+    <div class="stage-direction">
+      &#128073; 브라우저 탭 전환 &rarr; 미리 준비해 둔 <strong>SENTIO 대시보드</strong> 탭으로 이동
+    </div>
   </div>
 
   <!-- PART 4 -->
@@ -403,11 +431,11 @@
     <div class="part-header">
       <div class="part-num p4">4</div>
       <div class="part-title">라이브 데모</div>
-      <div class="part-time">1:30 ~ 2:15 (45초)</div>
+      <div class="part-time">1:35 ~ 2:15 (40초)</div>
     </div>
 
     <span class="part-action action-do">동작</span>
-    <div class="script-line"><strong>[대시보드 그리드 뷰 - 15초]</strong></div>
+    <div class="script-line"><strong>[대시보드 그리드 뷰 &mdash; 15초]</strong></div>
     <div class="script-line">
       이것이 실제 운영 화면입니다.<br>
       다중 카메라로 모든 구역을 한눈에 모니터링하고,<br>
@@ -415,14 +443,14 @@
     </div>
 
     <span class="part-action action-do">동작</span>
-    <div class="script-line"><strong>[낙상 감지 시연 - 15초]</strong></div>
+    <div class="script-line"><strong>[낙상 감지 시연 &mdash; 15초]</strong></div>
     <div class="script-line">
       낙상이 발생하면 상태가 <strong>"안전"에서 "위험"으로</strong> 즉시 전환되고 알림이 자동 생성됩니다.<br>
       프라이버시를 위한 <em>블러 모드</em>에서도 얼굴 없이 감지가 가능합니다.
     </div>
 
     <span class="part-action action-do">동작</span>
-    <div class="script-line"><strong>[이벤트/통계 페이지 - 15초]</strong></div>
+    <div class="script-line"><strong>[이벤트/통계 페이지 &mdash; 10초]</strong></div>
     <div class="script-line">
       이벤트 탭에서 <strong>언제, 어디서, 어떤 유형</strong>인지 기록되고,<br>
       통계 페이지에서 시간대별, 구역별 패턴을 분석할 수 있습니다.
@@ -435,75 +463,110 @@
   <div class="part">
     <div class="part-header">
       <div class="part-num p5">5</div>
-      <div class="part-title">신뢰도 설명 & 마무리</div>
-      <div class="part-time">2:15 ~ 2:50 (35초)</div>
+      <div class="part-title">신뢰도 설명 &amp; 마무리 &mdash; 시각자료 슬라이드</div>
+      <div class="part-time">2:15 ~ 2:55 (40초)</div>
     </div>
-    <div class="stage-direction">시각자료 슬라이드로 전환 (이 파일의 "시각자료 모드" 활용)<br>키보드 &larr; &rarr; 로 슬라이드 넘김</div>
+    <div class="stage-direction">
+      &#128073; 브라우저에서 <strong>랜딩페이지 탭</strong>으로 돌아간 후,<br>
+      네비바 우측의 <strong>"시각자료 ↗"</strong> 링크를 클릭<br>
+      (새 탭에서 시각자료 슬라이드 5장이 열림 &mdash; 키보드 &larr; &rarr; 또는 화면 좌/우 클릭으로 넘김)
+    </div>
 
     <span class="part-action action-visual">시각자료 + 발화</span>
-    <div class="script-line"><strong>[슬라이드 1: 질문]</strong></div>
+    <div class="script-line"><strong>[슬라이드 1: 질문]</strong> &mdash; 화면에 "이 시스템, 믿을 만한가?" 표시됨</div>
     <div class="script-line">
-      그러면 이 시스템, <strong>실제로 믿을 만한가?</strong>
+      자, 여기서 한 가지 질문입니다.<br>
+      이 시스템, <strong>실제로 믿을 만한가?</strong><br>
+      검증 과정과 성능을 보여드리겠습니다.
     </div>
 
-    <div class="script-line"><strong>[슬라이드 2: 데이터셋]</strong></div>
+    <div class="stage-direction">&#128073; &rarr; 키 또는 우측 클릭으로 다음 슬라이드</div>
+
+    <div class="script-line"><strong>[슬라이드 2: 데이터셋]</strong> &mdash; 2,000 &rarr; 665,574 &rarr; 424 흐름 카드</div>
     <div class="script-line">
       저희는 <em>AIHub</em>의 낙상사고 위험동작 영상 데이터셋으로 모델을 학습했습니다.<br>
-      총 <strong>2,000개 영상</strong>에서 <strong>66만 개의 학습 데이터</strong>를 추출했고,<br>
+      총 <strong>2,000개 영상</strong>에서 <strong>66만 개의 학습 시퀀스</strong>를 추출했고,<br>
       전방, 후방, 측면 낙상과 정상 행동 <strong>424개 영상</strong>으로 최종 검증했습니다.
     </div>
 
-    <div class="script-line"><strong>[슬라이드 3: 원형 지표]</strong></div>
+    <div class="stage-direction">&#128073; &rarr; 다음 슬라이드</div>
+
+    <div class="script-line"><strong>[슬라이드 3: 원형 지표]</strong> &mdash; 3개 원형 차트가 애니메이션으로 채워짐</div>
     <div class="script-line">
-      결과입니다. 감지율 <strong>95.2%</strong>, 정밀도 <strong>94.6%</strong>, F1 종합 점수 <strong>94.9</strong>.
+      결과입니다.<br>
+      감지율 <strong>95.2%</strong>, 정밀도 <strong>94.6%</strong>, F1 종합 점수 <strong>94.9</strong>.
     </div>
 
-    <div class="script-line"><strong>[슬라이드 4: 쉬운 설명]</strong></div>
+    <div class="stage-direction">&#128073; &rarr; 다음 슬라이드</div>
+
+    <div class="script-line"><strong>[슬라이드 4: 쉬운 설명]</strong> &mdash; 10x10 도트 시각화 3장</div>
     <div class="script-line">
       이게 뭘 의미하는지 쉽게 설명드리면,<br>
       <strong>실제 넘어진 100명 중 95명을 잡아내고,</strong><br>
       <strong>알림이 울렸을 때 100건 중 95건은 진짜 낙상입니다.</strong><br>
+      초록색 점이 정확한 감지, 빨간색이 놓친 경우, 노란색이 거짓 알림입니다.<br>
       거짓 알림은 5건뿐이고, 놓치는 경우도 5건뿐입니다.
     </div>
 
-    <div class="script-line"><strong>[슬라이드 5: CPU 장점]</strong></div>
+    <div class="stage-direction">&#128073; &rarr; 마지막 슬라이드</div>
+
+    <div class="script-line"><strong>[슬라이드 5: CPU 장점]</strong> &mdash; GPU vs CPU 비교 카드</div>
     <div class="script-line">
       그리고 특히, <strong>GPU 없이 일반 PC의 CPU만으로</strong> 이 성능이 나옵니다.<br>
-      별도의 고가 장비 없이 병원에 바로 도입할 수 있다는 뜻입니다.
+      수백만 원짜리 GPU 서버 대신, 기존 병원 PC만으로 바로 도입할 수 있다는 뜻입니다.
     </div>
 
     <div class="script-line" style="margin-top: 20px; border-left-color: #00d4ff;">
-      SENTIO는 <strong>"감지하고, 보호하고, 돌봅니다."</strong> 감사합니다.
+      SENTIO는 <strong>"감지하고, 보호하고, 돌봅니다."</strong><br>
+      감사합니다.
+    </div>
+  </div>
+
+  <!-- 발표 흐름 요약 -->
+  <div class="part" style="border-color: rgba(0,212,255,0.2); background: rgba(0,212,255,0.03);">
+    <div class="part-header">
+      <div class="part-num" style="background:rgba(0,212,255,0.15);color:#00d4ff;">&#128736;</div>
+      <div class="part-title">화면 전환 흐름 요약</div>
+    </div>
+    <div class="script-line" style="font-size: 14px; line-height: 2;">
+      <strong>① 랜딩페이지</strong> (인트로 멘트) <br>
+      &nbsp;&nbsp;&darr; "발표 영상 보기" 버튼 클릭<br>
+      <strong>② 프로모 영상</strong> (60초, 발표자 대기)<br>
+      &nbsp;&nbsp;&darr; 영상 끝나면 대시보드 탭으로 전환<br>
+      <strong>③ 라이브 데모</strong> (대시보드 시연 40초)<br>
+      &nbsp;&nbsp;&darr; 랜딩페이지 탭으로 돌아가서 네비바 "시각자료 ↗" 클릭<br>
+      <strong>④ 시각자료 슬라이드</strong> (5장, 키보드 &larr;&rarr; 로 넘김, 40초)<br>
+      &nbsp;&nbsp;&darr; 마무리 멘트 후 종료
     </div>
   </div>
 
   <!-- Timeline -->
   <div class="timeline-bar">
-    <h3>TIMELINE (총 약 2분 50초)</h3>
+    <h3>TIMELINE (총 약 2분 55초)</h3>
     <div class="tl-row">
-      <span class="tl-time">0:00-0:20</span>
-      <div class="tl-bar" style="width:80px; background:linear-gradient(90deg,#ef4444,#f97316);"></div>
-      <span class="tl-label">인트로</span>
+      <span class="tl-time">0:00-0:25</span>
+      <div class="tl-bar" style="width:100px; background:linear-gradient(90deg,#ef4444,#f97316);"></div>
+      <span class="tl-label">인트로 (랜딩페이지)</span>
     </div>
     <div class="tl-row">
-      <span class="tl-time">0:20-1:20</span>
+      <span class="tl-time">0:25-1:25</span>
       <div class="tl-bar" style="width:240px; background:linear-gradient(90deg,#3b82f6,#6366f1);"></div>
       <span class="tl-label">프로모 영상 (60s)</span>
     </div>
     <div class="tl-row">
-      <span class="tl-time">1:20-1:30</span>
+      <span class="tl-time">1:25-1:35</span>
       <div class="tl-bar" style="width:40px; background:linear-gradient(90deg,#a855f7,#c084fc);"></div>
-      <span class="tl-label">전환</span>
+      <span class="tl-label">전환 멘트</span>
     </div>
     <div class="tl-row">
-      <span class="tl-time">1:30-2:15</span>
-      <div class="tl-bar" style="width:180px; background:linear-gradient(90deg,#22c55e,#4ade80);"></div>
-      <span class="tl-label">라이브 데모</span>
+      <span class="tl-time">1:35-2:15</span>
+      <div class="tl-bar" style="width:160px; background:linear-gradient(90deg,#22c55e,#4ade80);"></div>
+      <span class="tl-label">라이브 데모 (40s)</span>
     </div>
     <div class="tl-row">
-      <span class="tl-time">2:15-2:50</span>
-      <div class="tl-bar" style="width:140px; background:linear-gradient(90deg,#f59e0b,#fbbf24);"></div>
-      <span class="tl-label">신뢰도 + 마무리</span>
+      <span class="tl-time">2:15-2:55</span>
+      <div class="tl-bar" style="width:160px; background:linear-gradient(90deg,#f59e0b,#fbbf24);"></div>
+      <span class="tl-label">시각자료 + 마무리 (40s)</span>
     </div>
   </div>
 
