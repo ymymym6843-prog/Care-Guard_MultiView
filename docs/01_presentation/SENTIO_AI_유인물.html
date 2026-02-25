@@ -30,7 +30,7 @@
       background: white;
       margin: 0 auto 8mm;
       position: relative;
-      overflow: visible;
+      overflow: hidden;
       word-break: keep-all;
       overflow-wrap: break-word;
       box-shadow: 0 0 12px rgba(0,0,0,0.08);
@@ -58,7 +58,7 @@
 
     .page1-header {
       background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #1e3a5f 100%);
-      padding: 20mm 16mm 14mm;
+      padding: 18mm 16mm 14mm;
       position: relative;
       overflow: hidden;
     }
@@ -85,7 +85,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       position: relative;
       z-index: 1;
     }
@@ -107,13 +107,13 @@
       letter-spacing: 0.3em;
       font-weight: 600;
       text-transform: uppercase;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
       position: relative;
       z-index: 1;
     }
 
     .hero-title {
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 700;
       color: #fff;
       line-height: 1.4;
@@ -145,7 +145,7 @@
     }
 
     .hero-stat-num {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 900;
       font-family: 'JetBrains Mono', monospace;
       color: var(--accent2);
@@ -156,23 +156,23 @@
     .hero-stat-num.white { color: #fff; }
 
     .hero-stat-label {
-      font-size: 9px;
-      color: rgba(255,255,255,0.45);
+      font-size: 10.5px;
+      color: rgba(255,255,255,0.5);
       font-weight: 500;
       margin-top: 2px;
-      line-height: 1.3;
+      line-height: 1.4;
     }
 
     /* ===== FRONT BODY ===== */
     .page1-body {
-      padding: 12mm 16mm 14mm;
+      padding: 10mm 16mm 12mm;
     }
 
     .section-title {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 800;
       color: var(--text);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -190,15 +190,15 @@
     .prob-sol-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 14px;
+      gap: 10px;
+      margin-bottom: 12px;
     }
 
     .prob-box, .sol-box {
       border-radius: 8px;
-      padding: 10px 12px;
-      font-size: 10.5px;
-      line-height: 1.6;
+      padding: 8px 10px;
+      font-size: 11px;
+      line-height: 1.55;
     }
 
     .prob-box {
@@ -209,8 +209,8 @@
     .prob-box .box-title {
       font-weight: 700;
       color: var(--danger);
-      font-size: 11px;
-      margin-bottom: 4px;
+      font-size: 12px;
+      margin-bottom: 3px;
     }
 
     .prob-box ul { padding-left: 14px; color: #991b1b; }
@@ -225,8 +225,8 @@
     .sol-box .box-title {
       font-weight: 700;
       color: var(--safe);
-      font-size: 11px;
-      margin-bottom: 4px;
+      font-size: 12px;
+      margin-bottom: 3px;
     }
 
     .sol-box ul { padding-left: 14px; color: #065f46; }
@@ -239,32 +239,32 @@
       align-items: center;
       justify-content: center;
       gap: 0;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       background: var(--bg-subtle);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 10px 12px;
+      padding: 8px 12px;
     }
 
     .flow-step {
       text-align: center;
       flex: 1;
-      padding: 6px 4px;
+      padding: 4px 4px;
     }
 
     .flow-icon {
       font-size: 18px;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
     }
 
     .flow-label {
-      font-size: 9.5px;
+      font-size: 11px;
       font-weight: 700;
       color: var(--text);
     }
 
     .flow-desc {
-      font-size: 8px;
+      font-size: 9.5px;
       color: var(--text-muted);
       margin-top: 1px;
     }
@@ -282,7 +282,14 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 8px;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
+    }
+
+    .diff-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 10px;
     }
 
     .diff-card {
@@ -293,9 +300,9 @@
       background: white;
     }
 
-    .diff-card .diff-icon { font-size: 20px; margin-bottom: 3px; }
-    .diff-card .diff-title { font-size: 10px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
-    .diff-card .diff-desc { font-size: 8.5px; color: var(--text-muted); line-height: 1.4; }
+    .diff-card .diff-icon { font-size: 20px; margin-bottom: 2px; }
+    .diff-card .diff-title { font-size: 11px; font-weight: 700; color: var(--text); margin-bottom: 1px; }
+    .diff-card .diff-desc { font-size: 10px; color: var(--text-muted); line-height: 1.4; }
 
     /* Contact Footer */
     .page1-footer {
@@ -304,7 +311,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 9px;
+      font-size: 10.5px;
       color: var(--text-muted);
       position: absolute;
       bottom: 0;
@@ -321,7 +328,7 @@
 
     .page2-header {
       background: linear-gradient(135deg, #0f172a, #1e293b);
-      padding: 10mm 16mm 8mm;
+      padding: 8mm 14mm 6mm;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -342,13 +349,13 @@
     .page2-logo span { color: var(--accent); }
 
     .page2-subtitle {
-      font-size: 10px;
+      font-size: 11px;
       color: rgba(255,255,255,0.4);
       font-weight: 500;
     }
 
     .page2-badge {
-      font-size: 9px;
+      font-size: 10.5px;
       color: var(--accent);
       background: rgba(6,182,212,0.1);
       border: 1px solid rgba(6,182,212,0.2);
@@ -358,7 +365,7 @@
     }
 
     .page2-body {
-      padding: 10mm 16mm 8mm;
+      padding: 8mm 14mm 6mm;
     }
 
     /* Two Column Layout */
@@ -370,11 +377,11 @@
     }
 
     .col-section-title {
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 800;
       color: var(--text);
-      margin-bottom: 8px;
-      padding-bottom: 4px;
+      margin-bottom: 5px;
+      padding-bottom: 3px;
       border-bottom: 2px solid var(--primary);
       display: inline-block;
     }
@@ -394,7 +401,7 @@
       background: var(--bg-subtle);
       border: 1px solid var(--border);
       border-radius: 6px;
-      padding: 7px 10px;
+      padding: 5px 8px;
     }
 
     .pipeline-num {
@@ -415,14 +422,14 @@
     .pipeline-num.amber { background: linear-gradient(135deg, var(--warning), var(--danger)); }
 
     .pipeline-info { flex: 1; }
-    .pipeline-title { font-size: 10px; font-weight: 700; color: var(--text); }
-    .pipeline-desc { font-size: 8.5px; color: var(--text-muted); }
+    .pipeline-title { font-size: 11.5px; font-weight: 700; color: var(--text); }
+    .pipeline-desc { font-size: 10px; color: var(--text-muted); }
 
     /* Performance Table */
     .perf-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 9.5px;
+      font-size: 11px;
       margin-bottom: 8px;
     }
 
@@ -436,7 +443,7 @@
     }
 
     .perf-table td {
-      padding: 5px 8px;
+      padding: 6px 8px;
       border-bottom: 1px solid #f1f5f9;
       color: var(--text-muted);
     }
@@ -456,7 +463,7 @@
     }
 
     .perf-bar-label {
-      font-size: 9px;
+      font-size: 10.5px;
       color: var(--text-muted);
       width: 70px;
       text-align: right;
@@ -465,9 +472,9 @@
 
     .perf-bar-bg {
       flex: 1;
-      height: 8px;
+      height: 10px;
       background: #f1f5f9;
-      border-radius: 4px;
+      border-radius: 5px;
       overflow: hidden;
     }
 
@@ -478,11 +485,11 @@
     }
 
     .perf-bar-val {
-      font-size: 9px;
+      font-size: 11px;
       font-weight: 700;
       font-family: 'JetBrains Mono', monospace;
       color: var(--safe);
-      width: 32px;
+      width: 36px;
       flex-shrink: 0;
     }
 
@@ -490,7 +497,7 @@
     .compare-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 9px;
+      font-size: 10.5px;
       margin-bottom: 10px;
     }
 
@@ -543,11 +550,11 @@
       background: #f0fdfa;
     }
 
-    .biz-plan { font-size: 9px; color: var(--text-muted); font-weight: 500; }
-    .biz-badge { font-size: 8px; color: var(--accent); font-weight: 700; }
-    .biz-price { font-size: 18px; font-weight: 900; color: var(--text); margin: 2px 0; }
-    .biz-unit { font-size: 8px; color: var(--text-light); }
-    .biz-features { font-size: 8px; color: var(--text-muted); line-height: 1.6; text-align: left; padding-left: 4px; margin-top: 4px; }
+    .biz-plan { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+    .biz-badge { font-size: 9.5px; color: var(--accent); font-weight: 700; }
+    .biz-price { font-size: 20px; font-weight: 900; color: var(--text); margin: 2px 0; }
+    .biz-unit { font-size: 9.5px; color: var(--text-light); }
+    .biz-features { font-size: 10px; color: var(--text-muted); line-height: 1.6; text-align: left; padding-left: 4px; margin-top: 4px; }
 
     /* Market */
     .market-row {
@@ -566,21 +573,21 @@
     }
 
     .market-num {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 900;
       font-family: 'JetBrains Mono', monospace;
       color: var(--primary);
     }
 
     .market-label {
-      font-size: 8px;
+      font-size: 10px;
       color: var(--text-muted);
       margin-top: 1px;
     }
 
     /* Target List */
     .target-list {
-      font-size: 9px;
+      font-size: 10.5px;
       color: var(--text-muted);
       line-height: 1.7;
       padding-left: 14px;
@@ -598,9 +605,9 @@
     }
 
     .tech-tag {
-      font-size: 8px;
+      font-size: 9.5px;
       font-weight: 600;
-      padding: 2px 8px;
+      padding: 3px 10px;
       border-radius: 10px;
       border: 1px solid var(--border);
       color: var(--text-muted);
@@ -613,12 +620,12 @@
 
     /* Info Box */
     .info-note {
-      font-size: 8.5px;
+      font-size: 10.5px;
       color: var(--text-muted);
       background: #fffbeb;
       border: 1px solid #fde68a;
       border-radius: 6px;
-      padding: 6px 10px;
+      padding: 8px 12px;
       line-height: 1.5;
       margin-bottom: 10px;
     }
@@ -651,26 +658,26 @@
     }
 
     .footer-center .qr-label {
-      font-size: 7px;
+      font-size: 9px;
       color: var(--text-muted);
       margin-top: 2px;
     }
 
     .footer-name {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 800;
       color: var(--text);
       margin-bottom: 2px;
     }
 
     .footer-role {
-      font-size: 9px;
+      font-size: 10.5px;
       color: var(--text-muted);
       margin-bottom: 4px;
     }
 
     .footer-contact {
-      font-size: 9.5px;
+      font-size: 11px;
       color: var(--text-muted);
       line-height: 1.6;
     }
@@ -691,17 +698,111 @@
     .footer-logo span { color: var(--accent); }
 
     .footer-slogan {
-      font-size: 9px;
+      font-size: 10.5px;
       color: var(--text-light);
       font-style: italic;
       margin-bottom: 6px;
     }
 
     .footer-course {
-      font-size: 8px;
+      font-size: 9.5px;
       color: var(--text-light);
       line-height: 1.5;
     }
+
+    /* ============================================
+       PAGE 3: Screenshots
+       ============================================ */
+
+    .page3-header {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      padding: 8mm 14mm 6mm;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .page3-body {
+      padding: 8mm 12mm;
+      display: flex;
+      flex-direction: column;
+      gap: 8mm;
+      height: calc(297mm - 26mm - 14mm);  /* page - header - footer */
+    }
+
+    .screenshot-block {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screenshot-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .screenshot-badge {
+      font-size: 11px;
+      font-weight: 700;
+      color: white;
+      padding: 3px 12px;
+      border-radius: 4px;
+    }
+
+    .screenshot-badge.safe { background: var(--safe); }
+    .screenshot-badge.danger { background: var(--danger); }
+
+    .screenshot-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .screenshot-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    .screenshot-wrap {
+      flex: 1;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 2px solid var(--border);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    .screenshot-wrap.danger-border {
+      border-color: var(--danger);
+      box-shadow: 0 2px 12px rgba(239,68,68,0.15);
+    }
+
+    .screenshot-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      background: #0f172a;
+    }
+
+    .page3-footer {
+      padding: 4mm 14mm;
+      background: var(--bg-subtle);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      color: var(--text-muted);
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+
+    .page3-footer strong { color: var(--text); }
 
     @media print {
       body { background: white; }
@@ -732,8 +833,8 @@
     </div>
     <div class="tagline">Sense &middot; Protect &middot; Care</div>
     <div class="hero-title">
-      기존 CCTV에 AI를 연결하면,<br>
-      환자가 넘어지는 순간 <em>즉시</em> 알려줍니다
+      기존 CCTV에 AI만 연결하면,<br>
+      환자가 넘어지는 순간 <em>바로</em> 알려드립니다
     </div>
     <div class="hero-stats">
       <div class="hero-stat">
@@ -755,30 +856,30 @@
   <div class="page1-body">
 
     <!-- Problem vs Solution -->
-    <div class="section-title">왜 필요한가?</div>
+    <div class="section-title">왜 필요한가요?</div>
     <div class="prob-sol-row">
       <div class="prob-box">
-        <div class="box-title">현재 문제</div>
+        <div class="box-title">지금 이런 문제가 있어요</div>
         <ul>
-          <li>65세 이상 <strong>3명 중 1명</strong> 매년 낙상</li>
-          <li>낙상 발생 장소 <strong>47%</strong>가 사각지대</li>
-          <li>간호사:환자 = <strong>1:30</strong>, 24시간 감시 불가</li>
-          <li>의료사고 원인 <strong>2위</strong> (치명적)</li>
+          <li>65세 이상 어르신 <strong>3명 중 1명</strong>이 매년 넘어져요</li>
+          <li>낙상의 <strong>47%</strong>가 간호사 눈이 안 닿는 곳에서 발생</li>
+          <li>간호사:환자 = <strong>1:30</strong>, 24시간 감시는 불가능</li>
+          <li>의료사고 원인 <strong>2위</strong>가 낙상이에요</li>
         </ul>
       </div>
       <div class="sol-box">
-        <div class="box-title">SENTIO AI 솔루션</div>
+        <div class="box-title">SENTIO가 이렇게 해결해요</div>
         <ul>
-          <li><strong>기존 CCTV 그대로</strong> 활용, 추가 장비 0원</li>
-          <li>AI가 <strong>24시간</strong> 자동 모니터링</li>
-          <li>넘어지는 순간 <strong>3초 내</strong> 자동 알림</li>
-          <li>관절 좌표만 분석, <strong>프라이버시 보호</strong></li>
+          <li><strong>기존 CCTV 그대로</strong> 쓰니까 추가 장비 0원</li>
+          <li>AI가 <strong>24시간</strong> 알아서 모니터링</li>
+          <li>넘어지면 <strong>3초 내</strong> 자동으로 알림</li>
+          <li>관절 좌표만 보니까 <strong>프라이버시도 안전</strong></li>
         </ul>
       </div>
     </div>
 
     <!-- How it works -->
-    <div class="section-title">이렇게 작동합니다</div>
+    <div class="section-title">이렇게 작동해요</div>
     <div class="flow-diagram">
       <div class="flow-step">
         <div class="flow-icon">📹</div>
@@ -811,22 +912,22 @@
       <div class="diff-card">
         <div class="diff-icon">🏥</div>
         <div class="diff-title">추가 장비 0원</div>
-        <div class="diff-desc">기존 CCTV 인프라 그대로 활용</div>
+        <div class="diff-desc">있는 CCTV에 바로 연결하면 끝</div>
       </div>
       <div class="diff-card">
         <div class="diff-icon">🔒</div>
-        <div class="diff-title">프라이버시 내장</div>
-        <div class="diff-desc">스켈레톤 좌표만 처리, 영상 미저장</div>
+        <div class="diff-title">프라이버시 안전</div>
+        <div class="diff-desc">관절 좌표만 보고, 영상은 안 남겨요</div>
       </div>
       <div class="diff-card">
         <div class="diff-icon">👥</div>
-        <div class="diff-title">다인 동시 추적</div>
-        <div class="diff-desc">대기실 내 모든 환자 개별 추적</div>
+        <div class="diff-title">여러 명 동시 추적</div>
+        <div class="diff-desc">대기실 환자 전원 개별 추적 가능</div>
       </div>
       <div class="diff-card">
         <div class="diff-icon">📊</div>
-        <div class="diff-title">통계 리포트</div>
-        <div class="diff-desc">안전 관리 증빙 자료 자동 생성</div>
+        <div class="diff-title">자동 통계 리포트</div>
+        <div class="diff-desc">안전 관리 증빙 자료가 자동 생성돼요</div>
       </div>
     </div>
 
@@ -835,7 +936,7 @@
   <!-- FOOTER -->
   <div class="page1-footer">
     <div><strong>SENTIO AI</strong> &mdash; AI 기반 실시간 낙상 감지 시스템</div>
-    <div>Team Uminy &middot; 석유민 &middot; 뒷면에 상세 기술 정보 &rarr;</div>
+    <div>Team Uminy &middot; 석유민 &middot; 2p 기술 상세 &middot; 3p 실제 화면 &rarr;</div>
   </div>
 
 </div>
@@ -921,20 +1022,20 @@
         </div>
 
         <!-- Plain language metrics -->
-        <div class="col-section-title">성능 지표가 의미하는 것</div>
+        <div class="col-section-title">이 숫자가 뭘 의미하냐면</div>
         <table class="perf-table">
           <thead>
             <tr>
               <th>지표</th>
               <th>수치</th>
-              <th>쉬운 설명</th>
+              <th>쉽게 말하면</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td style="font-weight:600; color:var(--text);">감지율<br><span style="font-size:8px;color:var(--text-light);">Recall</span></td>
               <td class="hl">95.2%</td>
-              <td>실제 넘어진 <strong style="color:var(--safe);">100명 중 95명</strong> 감지</td>
+              <td>넘어진 <strong style="color:var(--safe);">100명 중 95명</strong>을 잡아내요</td>
             </tr>
             <tr>
               <td style="font-weight:600; color:var(--text);">정밀도<br><span style="font-size:8px;color:var(--text-light);">Precision</span></td>
@@ -944,13 +1045,13 @@
             <tr>
               <td style="font-weight:600; color:var(--text);">F1 점수</td>
               <td class="hl">94.9</td>
-              <td>감지율과 정밀도의 <strong style="color:var(--safe);">균형 종합 점수</strong></td>
+              <td>감지율과 정밀도 <strong style="color:var(--safe);">둘 다 높은</strong> 균형 점수</td>
             </tr>
           </tbody>
         </table>
 
         <div class="info-note" style="background:#f0fdfa; border-color:#99f6e4; margin-bottom:10px;">
-          <strong style="color:#065f46;">&#128161; 핵심:</strong> 놓치는 환자도 적고, 거짓 알림도 적습니다. 둘 다 잡는 균형 잡힌 시스템입니다.
+          <strong style="color:#065f46;">&#128161; 핵심:</strong> 놓치는 환자도 적고, 거짓 알림도 적어요. 둘 다 잡는 균형 잡힌 시스템입니다.
         </div>
 
         <!-- Compare Table -->
@@ -1042,7 +1143,7 @@
         </div>
 
         <div class="info-note">
-          <strong>도입 전략:</strong> 2~4주 무료 PoC(실증 운영) &rarr; 결과 리포트 제공 &rarr; 구독 전환
+          <strong>도입 방법:</strong> 먼저 2~4주 무료로 써보시고 &rarr; 결과 리포트 확인 &rarr; 구독 전환
         </div>
 
         <!-- Target Market -->
@@ -1070,20 +1171,20 @@
         </ol>
 
         <!-- Key Metrics Summary -->
-        <div class="col-section-title">핵심 요약</div>
+        <div class="col-section-title">한눈에 보는 핵심</div>
         <table class="perf-table">
           <thead>
             <tr>
               <th>지표</th>
               <th>수치</th>
-              <th>의미</th>
+              <th>쉽게 말하면</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td style="font-weight:600; color:var(--text);">감지율</td>
               <td class="hl">95.2%</td>
-              <td>넘어진 100명 중 95명 감지</td>
+              <td>넘어진 100명 중 95명 잡아냄</td>
             </tr>
             <tr>
               <td style="font-weight:600; color:var(--text);">정밀도</td>
@@ -1093,17 +1194,17 @@
             <tr>
               <td style="font-weight:600; color:var(--text);">F1 점수</td>
               <td class="hl">94.9</td>
-              <td>놓침과 오알림의 균형 점수</td>
+              <td>놓침도 적고 오알림도 적은 균형 점수</td>
             </tr>
             <tr>
               <td style="font-weight:600; color:var(--text);">검증 데이터</td>
               <td class="hl-cyan">424건</td>
-              <td>AIHub 공인 데이터로 독립 검증</td>
+              <td>AIHub 공인 데이터로 따로 검증</td>
             </tr>
             <tr>
               <td style="font-weight:600; color:var(--text);">GPU 필요</td>
               <td class="hl">불필요</td>
-              <td>일반 PC CPU만으로 실시간 동작</td>
+              <td>병원 PC CPU만으로 바로 돌아감</td>
             </tr>
           </tbody>
         </table>
@@ -1118,7 +1219,7 @@
     <div class="footer-content">
       <div class="footer-left">
         <div class="footer-logo">SENTIO <span>AI</span></div>
-        <div class="footer-slogan">"현장의 문제를 아는 사람이 가장 좋은 솔루션을 만듭니다"</div>
+        <div class="footer-slogan">"현장을 아는 사람이 가장 좋은 솔루션을 만듭니다"</div>
         <div class="footer-course">
           디지털 재활 헬스케어 AI 개발자 양성 과정 1기 &middot; 2026.02
         </div>
@@ -1135,6 +1236,64 @@
         <div class="qr-label">랜딩페이지 바로가기</div>
       </div>
     </div>
+  </div>
+
+</div>
+
+<!-- ============================================
+     PAGE 3: Screenshots - 실제 운영 화면
+     ============================================ -->
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="page3-header">
+    <div class="page2-header-left">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:28px; height:28px;">
+        <circle cx="50" cy="50" r="25" fill="url(#sg)" opacity="0.5"/>
+        <circle cx="50" cy="50" r="14" fill="url(#sg)"/>
+        <circle cx="50" cy="50" r="6" fill="white" opacity="0.9"/>
+      </svg>
+      <div>
+        <div class="page2-logo">SENTIO <span>AI</span></div>
+        <div class="page2-subtitle">실제 운영 화면</div>
+      </div>
+    </div>
+    <div class="page2-badge">실시간 배포 중인 서비스</div>
+  </div>
+
+  <!-- BODY: Two stacked screenshots -->
+  <div class="page3-body">
+
+    <!-- Screenshot 1: Normal monitoring -->
+    <div class="screenshot-block">
+      <div class="screenshot-label">
+        <span class="screenshot-badge safe">안전</span>
+        <span class="screenshot-title">다중 카메라 실시간 모니터링</span>
+        <span class="screenshot-desc">3개 구역 동시 감시 &middot; 스켈레톤 추적 &middot; 실시간 위험도 표시</span>
+      </div>
+      <div class="screenshot-wrap">
+        <img src="dashboard_normal.png" alt="SENTIO 대시보드 - 정상 모니터링 화면">
+      </div>
+    </div>
+
+    <!-- Screenshot 2: Fall detected -->
+    <div class="screenshot-block">
+      <div class="screenshot-label">
+        <span class="screenshot-badge danger">위험</span>
+        <span class="screenshot-title">낙상 감지 즉시 알림</span>
+        <span class="screenshot-desc">자동 알림 &middot; 인원/위치/시간 표시 &middot; 확인 버튼</span>
+      </div>
+      <div class="screenshot-wrap danger-border">
+        <img src="dashboard_alert.png" alt="SENTIO 대시보드 - 낙상 감지 알림 화면">
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="page3-footer">
+    <div><strong>SENTIO AI</strong> &mdash; 실제 배포 환경 스크린샷 (Docker + Nginx + FastAPI + React)</div>
+    <div>sentio-pulse.vercel.app &middot; Team Uminy</div>
   </div>
 
 </div>
