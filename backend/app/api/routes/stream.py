@@ -106,7 +106,7 @@ async def mjpeg_stream(
         )
 
     payload = decode_token(effective_token)
-    if not payload:
+    if not payload or payload.get("type") != "access":
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="유효하지 않은 토큰입니다",
@@ -133,7 +133,7 @@ async def mjpeg_stream_by_camera(
     if not effective_token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="인증이 필요합니다")
     payload = decode_token(effective_token)
-    if not payload:
+    if not payload or payload.get("type") != "access":
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="유효하지 않은 토큰입니다")
 
     cam = camera_service.get(camera_id)

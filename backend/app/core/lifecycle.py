@@ -33,7 +33,7 @@ async def _ensure_demo_admin():
         )
         session.add(admin)
         await session.commit()
-        logger.info("  데모용 admin 계정 자동 생성 (admin / admin1234)")
+        logger.info("  데모용 admin 계정 자동 생성 (admin)")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

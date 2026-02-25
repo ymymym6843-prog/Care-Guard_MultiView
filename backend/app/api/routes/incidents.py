@@ -7,7 +7,7 @@ Skeleton Blackbox에서 저장된 낙상 사건 데이터를 조회합니다.
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.api.routes.auth import get_current_user
+from app.core.auth import require_auth
 from app.services.privacy_audit import privacy_audit
 from app.services.skeleton_blackbox import skeleton_blackbox
 
@@ -15,7 +15,7 @@ router = APIRouter()
 
 
 @router.get("/")
-async def list_incidents(user=Depends(get_current_user)):
+async def list_incidents(user=Depends(require_auth)):
     """사건 목록 조회 (날짜, trigger_person, trigger_type)"""
     await privacy_audit.log_audit(user.username, "incident_list", "all_incidents")
     incidents = skeleton_blackbox.list_incidents()
@@ -23,7 +23,7 @@ async def list_incidents(user=Depends(get_current_user)):
 
 
 @router.get("/{incident_id}")
-async def get_incident(incident_id: str, user=Depends(get_current_user)):
+async def get_incident(incident_id: str, user=Depends(require_auth)):
     """사건 상세 JSON (좌표 데이터)"""
     await privacy_audit.log_audit(user.username, "incident_access", incident_id)
 
@@ -37,7 +37,7 @@ async def get_incident(incident_id: str, user=Depends(get_current_user)):
 
 
 @router.get("/{incident_id}/replay")
-async def get_incident_replay(incident_id: str, user=Depends(get_current_user)):
+async def get_incident_replay(incident_id: str, user=Depends(require_auth)):
     """리플레이 데이터 (프론트엔드 SkeletonReplay용)
 
     프레임별 좌표 + 메타데이터를 프론트엔드 재생에 최적화된 형태로 반환합니다.
@@ -65,14 +65,14 @@ async def get_incident_replay(incident_id: str, user=Depends(get_current_user)):
 
 
 @router.get("/stats/blackbox")
-async def get_blackbox_stats(user=Depends(get_current_user)):
+async def get_blackbox_stats(user=Depends(require_auth)):
     """블랙박스 버퍼 현재 상태"""
     await privacy_audit.log_audit(user.username, "blackbox_stats", "buffer_status")
     return skeleton_blackbox.get_buffer_stats()
 
 
 @router.get("/stats/privacy")
-async def get_privacy_report(user=Depends(get_current_user)):
+async def get_privacy_report(user=Depends(require_auth)):
     """프라이버시 준수 보고서"""
     await privacy_audit.log_audit(user.username, "privacy_report", "compliance")
     report = await privacy_audit.generate_privacy_report()

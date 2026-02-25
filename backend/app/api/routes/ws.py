@@ -37,7 +37,7 @@ async def monitoring_websocket(websocket: WebSocket):
         token = websocket.query_params.get("token", "")
 
     payload = decode_token(token) if token else None
-    if not token or not payload:
+    if not token or not payload or payload.get("type") != "access":
         await websocket.accept()
         await websocket.close(code=4001, reason="인증이 필요합니다")
         logger.warning("WebSocket 인증 실패: 유효하지 않은 토큰")
