@@ -653,11 +653,20 @@
       <div class="step-title">📷 영상 입력 &amp; 관절 추출</div>
       <div class="step-body">
         카메라 영상에서 <strong>YOLO11s-pose</strong> 모델이 사람을 찾고, <strong>ByteTrack</strong> 트래커로 개인별 추적을 유지합니다.
-        COCO 기준 <strong>17개 관절점</strong>(머리, 어깨, 팔꿈치, 손목, 엉덩이, 무릎, 발목)을 추출하고,
-        KeypointAdapter를 통해 <strong>33개 점</strong>으로 확장하여 더 정밀하게 분석합니다.
+        COCO 기준 <strong>17개 관절점</strong>(코, 눈, 귀, 어깨, 팔꿈치, 손목, 엉덩이, 무릎, 발목)을 추출합니다.
+        <br><br>
+        <strong>왜 33개로 확장하는가?</strong>
+        GRU 낙상 감지 모델은 <strong>MediaPipe 33점</strong> 형식 <code>(1, 30, 99)</code> 텐서로 학습되었기 때문에, 입력 호환성을 위해 17점을 33점으로 변환해야 합니다.
+        <strong>KeypointAdapter</strong>가 이 변환을 3단계로 수행합니다:
+        <br>
+        <strong>① 직접 매핑</strong> — COCO 17개 점을 MediaPipe 33점 배열의 해당 위치에 1:1 복사<br>
+        <strong>② 결측 보간</strong> — COCO에 없는 나머지 16개 점(손가락, 발, 입 등)을 인접 관절에서 추정 (예: 손가락 → 손목 좌표 기준, 발 → 발목 좌표 기준)<br>
+        <strong>③ 신뢰도 표시</strong> — 보간된 점의 visibility를 50% 이하로 낮춰, 낙상 감지 로직이 "추정값"임을 인식할 수 있도록 구분
       </div>
       <div class="analogy">
-        사람의 몸에 17개의 LED를 붙여서 움직임을 추적하는 것과 같습니다. 어두운 방에서 LED만 보고도 그 사람이 서있는지, 넘어졌는지 알 수 있죠.
+        사람의 몸에 17개의 LED를 붙여서 움직임을 추적하는 것과 같습니다.
+        AI 모델이 33개 LED 입력을 기대하므로, 나머지 16개는 근처 LED 위치로부터 "대략 이쯤에 있을 것"이라고 추정하여 채워넣습니다.
+        단, 추정된 LED는 "밝기를 낮춰" 실제 측정값과 구별합니다.
       </div>
     </div>
 
@@ -1190,7 +1199,7 @@
   <div class="flowchart">
     <div class="flow-node input">📷 카메라 영상 1프레임 입력</div>
     <div class="flow-arrow"></div>
-    <div class="flow-node process">🦴 YOLO11s-pose → ByteTrack → 17개 관절 추출 → 33개로 확장 (KeypointAdapter)</div>
+    <div class="flow-node process">🦴 YOLO11s-pose → ByteTrack → COCO 17개 관절 추출 → KeypointAdapter로 33개 변환 (직접 매핑 17점 + 보간 16점)</div>
     <div class="flow-arrow"></div>
     <div class="flow-node decision">👁️ 가시성 avg ≥ 0.30 &amp; Grace Period 경과?</div>
 
@@ -1500,9 +1509,44 @@
       </tr>
     </tbody>
   </table>
-  <p style="font-size:0.8rem; color:var(--muted); margin-top:0.5rem;">
-    *Ye 논문의 92%는 Accuracy(정확도)이며, Recall과 직접 비교 불가능합니다.
-  </p>
+  <div style="padding:1.2rem 1.5rem; background:var(--card); border-radius:12px; margin-top:1rem; border-left:4px solid var(--warn);">
+    <strong style="color:var(--warn);">*Accuracy와 Recall은 왜 직접 비교할 수 없을까?</strong>
+    <p style="color:var(--muted); font-size:0.9rem; margin-top:0.5rem;">
+      <strong>Accuracy(정확도)</strong>는 전체 데이터 중 맞힌 비율입니다.
+      예를 들어 영상 100개 중 정상 90개 + 낙상 10개라면, 모든 걸 "정상"이라고만 해도 Accuracy는 90%입니다.
+      <strong>데이터 불균형에 취약</strong>하여 낙상을 하나도 못 잡아도 높은 수치가 나올 수 있습니다.
+    </p>
+    <p style="color:var(--muted); font-size:0.9rem; margin-top:0.5rem;">
+      <strong>Recall(재현율)</strong>은 <strong>"실제 낙상 중 몇 %를 감지했는가"</strong>만 측정합니다.
+      낙상 10건 중 9건을 잡았으면 Recall 90% — 정상 데이터가 아무리 많아도 영향을 받지 않습니다.
+      의료 현장에서는 <strong>"낙상을 놓치지 않는 것"</strong>이 핵심이므로 Recall이 더 의미 있는 지표입니다.
+    </p>
+    <table style="width:100%; margin-top:0.8rem; font-size:0.85rem; border-collapse:collapse;">
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:0.4rem 0;"></td>
+        <td style="padding:0.4rem 0.5rem; font-weight:700;">Accuracy</td>
+        <td style="padding:0.4rem 0.5rem; font-weight:700;">Recall</td>
+      </tr>
+      <tr style="border-bottom:1px solid rgba(71,85,105,0.3);">
+        <td style="padding:0.4rem 0; color:var(--muted);">측정 대상</td>
+        <td style="padding:0.4rem 0.5rem; color:var(--muted);">전체 (정상+낙상) 중 정답률</td>
+        <td style="padding:0.4rem 0.5rem; color:var(--muted);">실제 낙상만 대상, 감지 성공률</td>
+      </tr>
+      <tr style="border-bottom:1px solid rgba(71,85,105,0.3);">
+        <td style="padding:0.4rem 0; color:var(--muted);">데이터 불균형</td>
+        <td style="padding:0.4rem 0.5rem; color:var(--danger);">취약 (정상 많으면 부풀려짐)</td>
+        <td style="padding:0.4rem 0.5rem; color:var(--safe);">강건 (낙상 데이터만 평가)</td>
+      </tr>
+      <tr>
+        <td style="padding:0.4rem 0; color:var(--muted);">의료 적합성</td>
+        <td style="padding:0.4rem 0.5rem; color:var(--danger);">낮음</td>
+        <td style="padding:0.4rem 0.5rem; color:var(--safe);">높음 (놓침 최소화)</td>
+      </tr>
+    </table>
+    <p style="color:var(--muted); font-size:0.85rem; margin-top:0.5rem;">
+      따라서 Ye 논문의 <strong>Accuracy 92%</strong>와 SENTIO의 <strong>Recall 95.2%</strong>는 측정 기준 자체가 다르므로 직접적인 수치 비교는 적절하지 않습니다.
+    </p>
+  </div>
 
   <div style="padding:1.5rem; background:var(--card); border-radius:16px; margin-top:1.5rem; border:1px solid var(--border);">
     <h4 style="color:var(--primary); margin-bottom:0.8rem;">SENTIO V5만의 차별점</h4>
