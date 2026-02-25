@@ -245,37 +245,66 @@ export function DashboardView() {
             </div>
 
             {isFocusMode && mainCamera ? (
-              <div className="flex gap-3 transition-all duration-500 ease-in-out">
-                <div className="flex-[7] transition-all duration-500">
-                  <VideoFeed
-                    cameraId={mainCamera.id}
-                    cameraName={mainCamera.name}
-                    hideButtons={false}
-                    onClick={() => handleCameraClick(mainCamera.id)}
-                    className={cn(
-                      "cursor-pointer hover:ring-2 hover:ring-primary transition-all",
-                      currentAlert !== "safe" && alertCameraId === mainCamera.id && "ring-4 ring-danger animate-border-flash"
-                    )}
-                  />
+              pipCameras.length === 1 ? (
+                /* 2대 PIP: 좌우 6:4 비율 (PIP 1개일 때 자연스러운 배치) */
+                <div className="flex gap-3 transition-all duration-500 ease-in-out">
+                  <div className="flex-[6] transition-all duration-500">
+                    <VideoFeed
+                      cameraId={mainCamera.id}
+                      cameraName={mainCamera.name}
+                      hideButtons={false}
+                      onClick={() => handleCameraClick(mainCamera.id)}
+                      className={cn(
+                        "cursor-pointer hover:ring-2 hover:ring-primary transition-all",
+                        currentAlert !== "safe" && alertCameraId === mainCamera.id && "ring-4 ring-danger animate-border-flash"
+                      )}
+                    />
+                  </div>
+                  <div className="flex-[4] transition-all duration-500">
+                    <VideoFeed
+                      cameraId={pipCameras[0].id}
+                      cameraName={pipCameras[0].name}
+                      compact={true}
+                      hideButtons={true}
+                      onClick={() => handleCameraClick(pipCameras[0].id)}
+                      className="cursor-pointer hover:ring-2 hover:ring-primary transition-all h-full hover:scale-[1.02]"
+                    />
+                  </div>
                 </div>
-                <div className="flex-[3] flex flex-col gap-2 transition-all duration-500">
-                  {pipCameras.map((cam) => (
-                    <div
-                      key={cam.id}
-                      className="flex-1 min-h-0 transition-all duration-300 hover:scale-105"
-                    >
-                      <VideoFeed
-                        cameraId={cam.id}
-                        cameraName={cam.name}
-                        compact={true}
-                        hideButtons={true}
-                        onClick={() => handleCameraClick(cam.id)}
-                        className="cursor-pointer hover:ring-2 hover:ring-primary transition-all h-full"
-                      />
-                    </div>
-                  ))}
+              ) : (
+                /* 3대+ PIP: 메인 7 + 우측 세로 스택 3 */
+                <div className="flex gap-3 transition-all duration-500 ease-in-out">
+                  <div className="flex-[7] transition-all duration-500">
+                    <VideoFeed
+                      cameraId={mainCamera.id}
+                      cameraName={mainCamera.name}
+                      hideButtons={false}
+                      onClick={() => handleCameraClick(mainCamera.id)}
+                      className={cn(
+                        "cursor-pointer hover:ring-2 hover:ring-primary transition-all",
+                        currentAlert !== "safe" && alertCameraId === mainCamera.id && "ring-4 ring-danger animate-border-flash"
+                      )}
+                    />
+                  </div>
+                  <div className="flex-[3] flex flex-col gap-2 transition-all duration-500">
+                    {pipCameras.map((cam) => (
+                      <div
+                        key={cam.id}
+                        className="flex-1 min-h-0 transition-all duration-300 hover:scale-105"
+                      >
+                        <VideoFeed
+                          cameraId={cam.id}
+                          cameraName={cam.name}
+                          compact={true}
+                          hideButtons={true}
+                          onClick={() => handleCameraClick(cam.id)}
+                          className="cursor-pointer hover:ring-2 hover:ring-primary transition-all h-full"
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )
             ) : (
               <div className={cn(
                 "transition-all duration-500",

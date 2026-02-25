@@ -523,8 +523,10 @@ class CameraManager:
         return self._cameras.get(camera_id)
 
     def add_camera(self, camera_id: str, name: str = "", source: str | int = "") -> CameraInstance:
-        """카메라 추가 (이미 존재하면 기존 인스턴스 반환)"""
+        """카메라 추가 (이미 존재하면 이름 업데이트 후 반환)"""
         if camera_id in self._cameras:
+            if name:
+                self._cameras[camera_id].name = name
             return self._cameras[camera_id]
         cam = CameraInstance(camera_id, name)
         self._cameras[camera_id] = cam

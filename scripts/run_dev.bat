@@ -8,6 +8,8 @@ echo.
 
 set "PROJECT_DIR=%~dp0.."
 
+set "DEBUG=true"
+
 echo [1/2] Starting Backend...
 cd /d "%PROJECT_DIR%\backend"
 start "CARE-GUARD-Backend" cmd /k "call venv\Scripts\activate.bat && uvicorn app.main:app --reload --host 0.0.0.0 --port 8001"

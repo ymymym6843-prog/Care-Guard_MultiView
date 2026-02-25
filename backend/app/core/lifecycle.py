@@ -35,6 +35,41 @@ async def _ensure_demo_admin():
         await session.commit()
         logger.info("  데모용 admin 계정 자동 생성 (admin)")
 
+async def _ensure_rooms_from_config(cameras_config_json: str):
+    """CAMERAS_CONFIG 기반으로 Room + 카메라 매핑 자동 생성 (없을 때만)"""
+    import json as _json
+    from app.core.database import async_session
+    from app.models.room import Room, RoomCameraMapping
+    from sqlalchemy import select, func
+
+    try:
+        cameras_cfg = _json.loads(cameras_config_json)
+    except Exception:
+        return
+
+    async with async_session() as session:
+        # 이미 Room이 있으면 건너뜀
+        count_result = await session.execute(select(func.count()).select_from(Room))
+        if (count_result.scalar() or 0) > 0:
+            return
+
+        for cfg in cameras_cfg:
+            cam_id = cfg.get("id", "")
+            cam_name = cfg.get("name", cam_id)
+            if not cam_id:
+                continue
+
+            room = Room(name=cam_name, description=f"{cam_name} 공간")
+            session.add(room)
+            await session.flush()  # room.id 확보
+
+            mapping = RoomCameraMapping(room_id=room.id, camera_id=cam_id)
+            session.add(mapping)
+
+        await session.commit()
+        logger.info("  공간(Room) 자동 생성: %d개", len(cameras_cfg))
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """앱 라이프사이클 관리"""
@@ -49,6 +84,10 @@ async def lifespan(app: FastAPI):
 
     if settings.DEBUG:
         await _ensure_demo_admin()
+
+    # CAMERAS_CONFIG가 있으면 자동으로 Room + 카메라 매핑 생성
+    if settings.MULTI_CAMERA_ENABLED and settings.CAMERAS_CONFIG:
+        await _ensure_rooms_from_config(settings.CAMERAS_CONFIG)
 
     # 다중 카메라 모드
     if settings.MULTI_CAMERA_ENABLED and settings.CAMERAS_CONFIG:
