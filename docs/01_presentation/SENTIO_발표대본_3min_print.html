@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>SENTIO 3분 발표 대본</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+
+  @page {
+    size: A4;
+    margin: 20mm 20mm 18mm 20mm;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #fff;
+    color: #1a1a1a;
+    font-size: 10.5pt;
+    line-height: 1.7;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Header */
+  .doc-header {
+    text-align: center;
+    padding-bottom: 18px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #1a1a1a;
+  }
+  .doc-header h1 {
+    font-size: 20pt;
+    font-weight: 900;
+    margin-bottom: 6px;
+  }
+  .doc-header .subtitle {
+    font-size: 9.5pt;
+    color: #666;
+  }
+
+  /* Prep note - compact */
+  .prep-note {
+    font-size: 8.5pt;
+    color: #555;
+    background: #f0f7ff;
+    border: 1px solid #c4ddf5;
+    border-radius: 6px;
+    padding: 10px 16px;
+    margin-bottom: 20px;
+    line-height: 1.7;
+  }
+  .prep-note strong { color: #0066cc; }
+
+  /* Parts */
+  .part {
+    margin-bottom: 20px;
+    padding: 20px 24px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .part-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+  }
+  .part-num {
+    width: 24px; height: 24px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 12px; color: #fff; flex-shrink: 0;
+  }
+  .p1 { background: #ef4444; }
+  .p2 { background: #3b82f6; }
+  .p3 { background: #22c55e; }
+  .p4 { background: #f59e0b; }
+
+  .part-title { font-size: 12pt; font-weight: 700; flex: 1; }
+  .part-time {
+    font-size: 8.5pt; color: #666; background: #f3f3f3;
+    padding: 2px 10px; border-radius: 10px; flex-shrink: 0; font-family: monospace;
+  }
+
+  /* Badges */
+  .badge {
+    display: inline-block; padding: 3px 10px; border-radius: 4px;
+    font-size: 8.5pt; font-weight: 600; margin-bottom: 10px; margin-right: 4px;
+  }
+  .b-speak { background: #dcfce7; color: #166534; }
+  .b-do { background: #fef3c7; color: #92400e; }
+  .b-wait { background: #dbeafe; color: #1e40af; }
+  .b-visual { background: #f3e8ff; color: #6b21a8; }
+
+  /* Script lines */
+  .line {
+    font-size: 10.5pt; line-height: 1.85; color: #333;
+    margin-bottom: 12px; padding: 6px 0 6px 16px;
+    border-left: 3px solid #e0e0e0;
+  }
+  .line strong { color: #000; }
+  .line em { color: #0066cc; font-style: normal; font-weight: 600; }
+  .line.closing { border-left-color: #0066cc; border-left-width: 4px; margin-top: 10px; }
+  .line.sub { font-size: 9.5pt; color: #777; border-left-color: #eee; font-style: italic; }
+
+  /* Stage direction */
+  .dir {
+    font-size: 8.5pt; color: #92400e; margin: 8px 0;
+    padding: 8px 12px; background: #fffbeb; border-radius: 5px;
+    border-left: 3px solid #f59e0b; line-height: 1.7;
+  }
+  .dir strong { color: #78350f; }
+
+  /* Tip */
+  .tip {
+    font-size: 8.5pt; color: #6b21a8; margin-top: 10px;
+    padding: 6px 12px; background: #faf5ff; border-radius: 5px;
+    border-left: 3px solid #c084fc;
+  }
+
+  /* Slide cue - compact inline */
+  .slide-cue {
+    font-size: 9pt; font-weight: 700; color: #555;
+    margin: 10px 0 4px; padding-left: 16px;
+  }
+  .slide-cue span { color: #999; font-weight: 400; font-size: 8.5pt; }
+
+  /* Timeline compact */
+  .timeline {
+    margin-top: 20px;
+    padding: 14px 16px;
+    border-top: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    font-size: 7.5pt;
+  }
+  .tl-seg {
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 600;
+    font-size: 7pt;
+    white-space: nowrap;
+  }
+  .tl-seg:first-child { border-radius: 4px 0 0 4px; }
+  .tl-seg:last-child { border-radius: 0 4px 4px 0; }
+
+  .doc-footer {
+    text-align: center; margin-top: 14px;
+    font-size: 8pt; color: #bbb;
+  }
+
+  @media print {
+    body { font-size: 10pt; }
+    .prep-note { background: #f0f7ff !important; }
+    .dir { background: #fffbeb !important; }
+    .tip { background: #faf5ff !important; }
+    .tl-seg { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <h1>SENTIO 3분 발표 대본</h1>
+  <div class="subtitle">AI 낙상 감지 시스템 &mdash; 총 2분 55초 | 랜딩 &rarr; 영상 &rarr; 데모 &rarr; 시각자료</div>
+</div>
+
+<div class="prep-note">
+  <strong>사전 준비</strong> &mdash;
+  탭1: sentio-pulse.vercel.app/landing/ (시작 화면) &nbsp;|&nbsp;
+  탭2: SENTIO 대시보드 (로그인 완료) &nbsp;|&nbsp;
+  탭3: 시각자료 페이지 (백업) &nbsp;|&nbsp;
+  브라우저 전체화면(F11) 권장
+</div>
+
+<!-- PART 1: 인트로 -->
+<div class="part">
+  <div class="part-header">
+    <div class="part-num p1">1</div>
+    <div class="part-title">인트로 &mdash; 문제 제기</div>
+    <div class="part-time">0:00 ~ 0:25</div>
+  </div>
+  <div class="dir">화면: 랜딩페이지 히어로 섹션 ("AI가 지키는 요양병원 안전")</div>
+  <span class="badge b-speak">발화</span>
+  <div class="line">
+    안녕하세요, AI 낙상 감지 시스템 <em>SENTIO</em>를 소개하겠습니다.
+  </div>
+  <div class="line">
+    저희 SENTIO는 <strong>기존 CCTV에 소프트웨어만 추가</strong>하면
+    <strong>95.2%</strong> 감지율로 낙상을 실시간 감지하는 시스템입니다.
+  </div>
+  <div class="line">
+    65세 이상 노인 <strong>3명 중 1명</strong>이 매년 낙상을 경험하고,
+    병원 낙상의 <strong>47%</strong>는 간호사의 눈이 닿지 않는 곳에서 발생합니다.
+  </div>
+  <div class="line">
+    저희는 이 문제를 AI로 해결하고자 했습니다. 먼저 짧은 영상으로 소개드리겠습니다.
+  </div>
+  <div class="dir">&#128073; 히어로의 <strong>"발표 영상 보기"</strong> 버튼 클릭 &rarr; 영상 재생</div>
+</div>
+
+<!-- PART 2: 영상 + 전환 -->
+<div class="part">
+  <div class="part-header">
+    <div class="part-num p2">2</div>
+    <div class="part-title">프로모 영상 &amp; 전환</div>
+    <div class="part-time">0:25 ~ 1:35</div>
+  </div>
+  <span class="badge b-wait">대기 60초</span>
+  <div class="line sub">
+    영상 재생 (통계 &rarr; 문제점 &rarr; SENTIO &rarr; YOLO 데모 &rarr; 성능 &rarr; 대시보드 &rarr; 클로징). 발표자 대기.
+  </div>
+  <div class="tip">TIP: 영상 끝나기 3초 전 마이크 가까이 이동</div>
+  <span class="badge b-speak">전환 발화 10초</span>
+  <div class="line">
+    SENTIO는 실시간 영상 기반 AI 낙상 감지 시스템입니다.
+    지금부터 <strong>실제 배포된 앱</strong>을 직접 보여드리겠습니다.
+  </div>
+  <div class="dir">&#128073; 탭 전환 &rarr; <strong>SENTIO 대시보드</strong></div>
+</div>
+
+<!-- PART 3: 라이브 데모 -->
+<div class="part">
+  <div class="part-header">
+    <div class="part-num p3">3</div>
+    <div class="part-title">라이브 데모</div>
+    <div class="part-time">1:35 ~ 2:15</div>
+  </div>
+  <span class="badge b-do">동작</span>
+  <div class="line">
+    <strong>[그리드 뷰 15초]</strong>
+    실제 운영 화면입니다. 다중 카메라로 모든 구역을 모니터링하고,
+    우측에서 <em>자세와 위험도</em>가 실시간으로 표시됩니다.
+  </div>
+  <div class="line">
+    <strong>[낙상 감지 15초]</strong>
+    낙상 시 <strong>"안전" &rarr; "위험"</strong>으로 즉시 전환, 알림 자동 생성.
+    <em>블러 모드</em>에서도 얼굴 없이 감지 가능합니다.
+  </div>
+  <div class="line">
+    <strong>[이벤트/통계 10초]</strong>
+    <strong>언제, 어디서, 어떤 유형</strong>인지 기록되고, 시간대별/구역별 패턴 분석 가능합니다.
+  </div>
+  <div class="tip">TIP: 오류 시 "실시간 시스템이라 가끔 이런 상황도 있습니다" 로 넘기기</div>
+</div>
+
+<!-- PART 4: 시각자료 + 마무리 -->
+<div class="part">
+  <div class="part-header">
+    <div class="part-num p4">4</div>
+    <div class="part-title">신뢰도 &amp; 마무리 &mdash; 시각자료 슬라이드</div>
+    <div class="part-time">2:15 ~ 2:55</div>
+  </div>
+  <div class="dir">&#128073; 랜딩페이지 탭 &rarr; 네비바 <strong>"시각자료"</strong> 클릭 (슬라이드 5장, &larr;&rarr; 키로 넘김)</div>
+
+  <span class="badge b-visual">시각자료 + 발화</span>
+
+  <div class="slide-cue">[S1: 질문] <span>"이 시스템, 믿을 만한가?"</span></div>
+  <div class="line">
+    이 시스템, <strong>실제로 믿을 만한가?</strong> 검증 과정과 성능을 보여드리겠습니다.
+  </div>
+
+  <div class="slide-cue">[S2: 데이터셋] <span>2,000 &rarr; 665,574 &rarr; 424</span></div>
+  <div class="line">
+    <em>AIHub</em> 낙상 위험동작 영상으로 학습. <strong>2,000개 영상</strong>에서 <strong>66만 학습 시퀀스</strong> 추출,
+    <strong>424개 영상</strong>으로 최종 검증했습니다.
+  </div>
+
+  <div class="slide-cue">[S3: 성능 지표] <span>원형 차트 3개</span></div>
+  <div class="line">
+    감지율 <strong>95.2%</strong>, 정밀도 <strong>94.6%</strong>, F1 종합 <strong>94.9</strong>.
+  </div>
+
+  <div class="slide-cue">[S4: 쉬운 설명] <span>10x10 도트 시각화</span></div>
+  <div class="line">
+    <strong>넘어진 100명 중 95명을 잡아내고, 알림 100건 중 95건이 진짜 낙상.</strong>
+    거짓 알림 5건, 놓치는 경우 5건뿐입니다.
+  </div>
+
+  <div class="slide-cue">[S5: CPU 장점] <span>GPU vs CPU 비교</span></div>
+  <div class="line">
+    <strong>GPU 없이 일반 PC CPU만으로</strong> 이 성능이 나옵니다.
+    기존 병원 PC만으로 바로 도입할 수 있습니다.
+  </div>
+
+  <div class="line closing">
+    SENTIO는 <strong>"감지하고, 보호하고, 돌봅니다."</strong> 감사합니다.
+  </div>
+</div>
+
+<!-- Compact timeline -->
+<div class="timeline">
+  <div class="tl-seg" style="flex:25; background:#ef4444;">인트로 25s</div>
+  <div class="tl-seg" style="flex:60; background:#3b82f6;">영상 60s</div>
+  <div class="tl-seg" style="flex:10; background:#a855f7;">전환 10s</div>
+  <div class="tl-seg" style="flex:40; background:#22c55e;">데모 40s</div>
+  <div class="tl-seg" style="flex:40; background:#f59e0b;">시각자료 40s</div>
+</div>
+
+<div class="doc-footer">SENTIO &mdash; AI 낙상 감지 시스템 | 3분 발표 대본</div>
+
+</body>
+</html>
