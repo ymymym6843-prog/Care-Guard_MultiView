@@ -1,0 +1,86 @@
+{
+  "total_duration": 45.0,
+  "tts_files": [
+    {
+      "id": "demo_01_dashboard",
+      "file": "demo_01_dashboard.wav",
+      "start": 0.0,
+      "end": 11.0
+    },
+    {
+      "id": "demo_02_detection",
+      "file": "demo_02_detection.wav",
+      "start": 12.0,
+      "end": 24.0
+    },
+    {
+      "id": "demo_03_privacy",
+      "file": "demo_03_privacy.wav",
+      "start": 25.0,
+      "end": 34.0
+    },
+    {
+      "id": "demo_04_stats",
+      "file": "demo_04_stats.wav",
+      "start": 35.0,
+      "end": 45.0
+    }
+  ],
+  "subtitles": [
+    {
+      "start": 0.0,
+      "end": 5.5,
+      "text": "이것이 SENTIO의 실제 운영 화면입니다."
+    },
+    {
+      "start": 5.5,
+      "end": 8.5,
+      "text": "다중 카메라로 모든 구역을 한눈에 모니터링하고,"
+    },
+    {
+      "start": 8.5,
+      "end": 11.0,
+      "text": "각 인원의 자세와 위험도가 실시간으로 표시됩니다."
+    },
+    {
+      "start": 12.0,
+      "end": 16.0,
+      "text": "낙상이 발생하면, 상태가 안전에서 위험으로 즉시 전환되고,"
+    },
+    {
+      "start": 16.0,
+      "end": 19.0,
+      "text": "알림이 자동 생성됩니다."
+    },
+    {
+      "start": 19.0,
+      "end": 24.0,
+      "text": "위치와 시간, 신뢰도까지 한 번에 확인할 수 있습니다."
+    },
+    {
+      "start": 25.0,
+      "end": 29.5,
+      "text": "프라이버시 보호를 위한 블러 모드에서도,"
+    },
+    {
+      "start": 29.5,
+      "end": 34.0,
+      "text": "얼굴 없이 골격 정보만으로 정확한 감지가 가능합니다."
+    },
+    {
+      "start": 35.0,
+      "end": 39.0,
+      "text": "모든 이벤트는 자동으로 기록되어,"
+    },
+    {
+      "start": 39.0,
+      "end": 42.0,
+      "text": "언제 어디서 어떤 유형인지 추적되고,"
+    },
+    {
+      "start": 42.0,
+      "end": 45.0,
+      "text": "통계 페이지에서 시간대별, 구역별 패턴을 분석할 수 있습니다."
+    }
+  ]
+}

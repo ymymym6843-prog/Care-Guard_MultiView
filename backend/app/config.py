@@ -75,8 +75,8 @@ class Settings(BaseSettings):
     FALL_PRE_IMPACT_ML_THRESHOLD: float = 0.4  # ML 단독 전조 감지 임계값 (규칙 무반응이어도 ML이 이상 감지)
 
     # 앙상블 가중치 (규칙 기반 + ML 분류기)
-    FALL_RULE_WEIGHT: float = 0.0  # 규칙 0%
-    FALL_ML_WEIGHT: float = 1.0    # ML 100% (GRU 모델, CPU 지원)
+    FALL_RULE_WEIGHT: float = 0.3  # 규칙 30% (ML 버퍼 빈 구간 폴백 + 보조 판단)
+    FALL_ML_WEIGHT: float = 0.7    # ML 70% (GRU 모델, CPU 지원)
 
     # 앙상블 프로필 (fast/balanced/precise/ml-optimized)
     FALL_PROFILE: str = "ml-optimized"

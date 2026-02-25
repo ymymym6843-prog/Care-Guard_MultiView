@@ -19,7 +19,7 @@ logger = get_logger("app.api.stream")
 router = APIRouter()
 
 # 동시 MJPEG 연결 제한 (asyncio.Semaphore로 정확한 async-safe 제한)
-_MAX_MJPEG_CONNECTIONS = 5
+_MAX_MJPEG_CONNECTIONS = 12
 _mjpeg_semaphore = asyncio.Semaphore(_MAX_MJPEG_CONNECTIONS)
 _active_connections = 0
 
@@ -30,7 +30,8 @@ async def mjpeg_generator(cam_instance=None):
     _active_connections += 1
     logger.info("MJPEG 연결 시작 (활성: %d/%d)", _active_connections, _MAX_MJPEG_CONNECTIONS)
     _empty_count = 0
-    _MAX_EMPTY = 300  # ~10초간 프레임 없으면 연결 종료
+    _MAX_EMPTY = 3000  # ~100초간 프레임 없으면 연결 종료 (데모 영상 루프 전환 대비)
+    _last_jpeg = None  # 마지막 성공 프레임 캐시 (빈 프레임 구간 대비)
     try:
         while True:
             if cam_instance is not None:
@@ -39,6 +40,7 @@ async def mjpeg_generator(cam_instance=None):
                 jpeg = camera_service.get_latest_jpeg()
             if jpeg:
                 _empty_count = 0
+                _last_jpeg = jpeg
                 yield (
                     b"--frame\r\n"
                     b"Content-Type: image/jpeg\r\n\r\n" + jpeg + b"\r\n"
@@ -48,6 +50,12 @@ async def mjpeg_generator(cam_instance=None):
                 if _empty_count > _MAX_EMPTY:
                     logger.info("MJPEG 프레임 없음 타임아웃, 연결 종료")
                     break
+                # 빈 프레임 구간에서도 마지막 프레임 재전송 (연결 유지)
+                if _last_jpeg and _empty_count % 30 == 0:
+                    yield (
+                        b"--frame\r\n"
+                        b"Content-Type: image/jpeg\r\n\r\n" + _last_jpeg + b"\r\n"
+                    )
             await asyncio.sleep(settings.WS_PROCESS_INTERVAL)  # ~30fps
     finally:
         _active_connections -= 1

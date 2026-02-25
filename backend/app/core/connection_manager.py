@@ -146,14 +146,20 @@ class ConnectionManager:
         raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable")
 
     async def heartbeat_loop(self):
-        """하트비트 루프"""
+        """하트비트 루프 - ping 전송 실패 시 에러 카운트 증가, 전송 성공만으로는 리셋하지 않음"""
         while True:
             await asyncio.sleep(self._heartbeat_interval)
             disconnected = []
             for ws in list(self._connections):
                 try:
-                    await ws.send_text(json.dumps({"type": "ping"}))
-                    self._error_counts[id(ws)] = 0
+                    await asyncio.wait_for(
+                        ws.send_text(json.dumps({"type": "ping"})),
+                        timeout=5.0,
+                    )
+                    # 전송 성공 시 에러 카운트 감소 (즉시 리셋 대신 점진적 회복)
+                    ws_id = id(ws)
+                    if self._error_counts.get(ws_id, 0) > 0:
+                        self._error_counts[ws_id] = max(0, self._error_counts[ws_id] - 1)
                 except Exception:
                     ws_id = id(ws)
                     count = self._error_counts.get(ws_id, 0) + 1

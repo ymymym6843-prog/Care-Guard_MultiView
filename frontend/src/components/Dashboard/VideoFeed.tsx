@@ -87,6 +87,9 @@ export function VideoFeed({ cameraId = "cam0", cameraName, compact = false, onCl
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [streamError, setStreamError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const retryCountRef = useRef(0);
+  const MAX_RETRIES = 10;
 
   const handleStartCamera = useCallback(async () => {
     if (isLoading) return;
@@ -134,10 +137,34 @@ export function VideoFeed({ cameraId = "cam0", cameraName, compact = false, onCl
     },
   }), [t]);
 
+  // 쿠키 기반 인증: same-origin <img> 태그는 쿠키를 자동 전송
+  // 모든 카메라: /api/stream/mjpeg/{cameraId}
+  const mjpegUrl = `${MJPEG_BASE_URL}/${cameraId}`;
+
   // Reset error when camera activates
   useEffect(() => {
-    if (isCameraActive) setStreamError(false);
+    if (isCameraActive) {
+      setStreamError(false);
+      retryCountRef.current = 0;
+    }
+    return () => {
+      if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
+    };
   }, [isCameraActive]);
+
+  // MJPEG 스트림 에러 시 자동 재연결
+  const handleStreamError = useCallback(() => {
+    setStreamError(true);
+    if (retryCountRef.current >= MAX_RETRIES) return;
+    retryCountRef.current += 1;
+    const delay = Math.min(2000 * retryCountRef.current, 10000);
+    retryTimerRef.current = setTimeout(() => {
+      setStreamError(false);
+      if (imgRef.current) {
+        imgRef.current.src = `${mjpegUrl}?retry=${Date.now()}`;
+      }
+    }, delay);
+  }, [mjpegUrl]);
 
 
   const toggleFullscreen = useCallback(() => {
@@ -167,9 +194,6 @@ export function VideoFeed({ cameraId = "cam0", cameraName, compact = false, onCl
   }, [privacyMode, setPrivacyMode]);
 
   const PrivacyIcon = privacyConfig[privacyMode].icon;
-  // 쿠키 기반 인증: same-origin <img> 태그는 쿠키를 자동 전송
-  // 모든 카메라: /api/stream/mjpeg/{cameraId}
-  const mjpegUrl = `${MJPEG_BASE_URL}/${cameraId}`;
 
   return (
     <Card
@@ -287,7 +311,8 @@ export function VideoFeed({ cameraId = "cam0", cameraName, compact = false, onCl
                 "w-full h-full object-cover",
                 privacyMode === "blur" && "blur-lg",
               )}
-              onError={() => setStreamError(true)}
+              onError={handleStreamError}
+              onLoad={() => { retryCountRef.current = 0; setStreamError(false); }}
             />
           )}
 

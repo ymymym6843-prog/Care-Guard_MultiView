@@ -259,10 +259,10 @@ class CameraInstance:
                     # 이후: reset_camera()로 해당 카메라만 → 다른 카메라 GRU 버퍼 보존
                     from app.services.fall_detector import fall_detector
                     from app.services.fall_classifier import fall_classifier
-                    from app.services.alert_manager import alert_manager
+                    # 플레이리스트 전환 시 감지 상태만 리셋, 알림 상태는 보존
+                    # alert_manager를 리셋하면 MONITORING/WARNING 중 끊겨서 낙상 미감지
                     fall_detector.reset_camera(self.camera_id)
                     fall_classifier.reset_camera(self.camera_id)
-                    alert_manager.reset_camera(self.camera_id)
 
                     if self._playlist and len(self._playlist) > 1:
                         self._playlist_index = (self._playlist_index + 1) % len(self._playlist)

@@ -250,8 +250,12 @@ class AlertManager:
                         alert.fall_start_time = None
                         alert.pre_impact_warned = False
                 else:
-                    alert.state = AlertState.NORMAL
-                    alert.fall_start_time = None
+                    # 비전조 MONITORING도 최소 2초 유지 (단일 프레임 미감지로 즉시 리셋 방지)
+                    if alert.fall_start_time and (now - alert.fall_start_time) < 2.0:
+                        pass  # 최소 유지 시간 미충족 → MONITORING 유지
+                    else:
+                        alert.state = AlertState.NORMAL
+                        alert.fall_start_time = None
 
             elif alert.state == AlertState.WARNING:
                 # WARNING 상태에서 회복: 최소 유지 시간 체크
