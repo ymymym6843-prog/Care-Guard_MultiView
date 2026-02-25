@@ -76,6 +76,15 @@ class CameraInstance:
         if self._running:
             return
 
+        # 이전 스레드가 완전히 종료되었는지 확인 (좀비 스레드 방지)
+        if self._thread and self._thread.is_alive():
+            logger.warning("[%s] 이전 캡처 스레드가 아직 실행 중, 종료 대기...", self.camera_id)
+            self._thread.join(timeout=5.0)
+            if self._thread.is_alive():
+                logger.error("[%s] 이전 스레드 종료 실패, 재시작 중단", self.camera_id)
+                return
+        self._thread = None
+
         if source is not None:
             self._current_source = source
             if isinstance(source, str) and source.isdigit():
@@ -114,13 +123,14 @@ class CameraInstance:
         self.frame_width = int(self._capture.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.frame_height = int(self._capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-        # 데모 영상 파일인 경우
+        # 데모 영상 파일인 경우 (source가 None이면 _current_source로 판별)
         self._demo_mode = False
-        if isinstance(source, str) and not source.isdigit() and self._capture:
+        effective_source = source if source is not None else self._current_source
+        if isinstance(effective_source, str) and not effective_source.isdigit() and self._capture:
             total_frames = int(self._capture.get(cv2.CAP_PROP_FRAME_COUNT))
             if total_frames > 30:  # 파일 기반 소스 (프레임 수가 있으면 파일)
                 self._demo_mode = True
-                self._demo_source = source
+                self._demo_source = effective_source
                 # 플레이리스트 모드에서는 오프셋 불필요 (영상이 이미 다름)
                 if not self._playlist:
                     # 단일 영상 반복 시 카메라별 시작 위치 오프셋 (동시 낙상 방지)
@@ -187,7 +197,9 @@ class CameraInstance:
         """카메라 캡처 중지"""
         self._running = False
         if self._thread:
-            self._thread.join(timeout=3.0)
+            self._thread.join(timeout=5.0)
+            if self._thread.is_alive():
+                logger.warning("[%s] 캡처 스레드 종료 타임아웃 (5초)", self.camera_id)
             self._thread = None
         if self._capture:
             self._capture.release()
@@ -195,6 +207,16 @@ class CameraInstance:
         self.is_active = False
         self._demo_mode = False
         self._demo_source = ""
+
+        # 오래된 프레임 데이터 초기화 (재시작 시 정지 화면 방지)
+        with self._jpeg_lock:
+            self._latest_jpeg = None
+        # 큐에 남은 오래된 프레임 비우기
+        while not self.frame_queue.empty():
+            try:
+                self.frame_queue.get_nowait()
+            except Exception:
+                break
 
     def _capture_loop(self):
         """카메라 프레임 캡처 루프 (별도 스레드)"""

@@ -25,10 +25,12 @@ _active_connections = 0
 
 
 async def mjpeg_generator(cam_instance=None):
-    """MJPEG 프레임 제너레이터 (Semaphore 기반 연결 수 제한)"""
+    """MJPEG 프레임 제너레이터 (semaphore release는 _guarded_stream에서 처리)"""
     global _active_connections
     _active_connections += 1
     logger.info("MJPEG 연결 시작 (활성: %d/%d)", _active_connections, _MAX_MJPEG_CONNECTIONS)
+    _empty_count = 0
+    _MAX_EMPTY = 300  # ~10초간 프레임 없으면 연결 종료
     try:
         while True:
             if cam_instance is not None:
@@ -36,15 +38,29 @@ async def mjpeg_generator(cam_instance=None):
             else:
                 jpeg = camera_service.get_latest_jpeg()
             if jpeg:
+                _empty_count = 0
                 yield (
                     b"--frame\r\n"
                     b"Content-Type: image/jpeg\r\n\r\n" + jpeg + b"\r\n"
                 )
+            else:
+                _empty_count += 1
+                if _empty_count > _MAX_EMPTY:
+                    logger.info("MJPEG 프레임 없음 타임아웃, 연결 종료")
+                    break
             await asyncio.sleep(settings.WS_PROCESS_INTERVAL)  # ~30fps
     finally:
         _active_connections -= 1
-        _mjpeg_semaphore.release()
         logger.info("MJPEG 연결 종료 (활성: %d/%d)", _active_connections, _MAX_MJPEG_CONNECTIONS)
+
+
+async def _guarded_stream(generator):
+    """Semaphore acquire/release를 보장하는 래퍼 제너레이터"""
+    try:
+        async for chunk in generator:
+            yield chunk
+    finally:
+        _mjpeg_semaphore.release()
 
 
 async def _acquire_mjpeg_slot():
@@ -91,7 +107,7 @@ async def mjpeg_stream(
     await _acquire_mjpeg_slot()
 
     return StreamingResponse(
-        mjpeg_generator(),
+        _guarded_stream(mjpeg_generator()),
         media_type="multipart/x-mixed-replace; boundary=frame",
     )
 
@@ -118,7 +134,7 @@ async def mjpeg_stream_by_camera(
 
     await _acquire_mjpeg_slot()
     return StreamingResponse(
-        mjpeg_generator(cam_instance=cam),
+        _guarded_stream(mjpeg_generator(cam_instance=cam)),
         media_type="multipart/x-mixed-replace; boundary=frame",
     )
 
@@ -147,7 +163,7 @@ async def internal_mjpeg_stream(
     await _acquire_mjpeg_slot()
 
     return StreamingResponse(
-        mjpeg_generator(),
+        _guarded_stream(mjpeg_generator()),
         media_type="multipart/x-mixed-replace; boundary=frame",
     )
 
