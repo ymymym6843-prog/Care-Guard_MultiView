@@ -200,7 +200,7 @@ export function VideoFeed({ cameraId = "cam0", cameraName, compact = false, onCl
       ref={containerRef}
       onClick={onClick}
       className={cn(
-        "border-2 transition-colors",
+        "border-2 transition-colors flex flex-col",
         currentAlert === "danger" && "border-danger animate-border-flash",
         currentAlert === "warning" && "border-warning",
         currentAlert === "safe" && "border-border",
@@ -288,8 +288,8 @@ export function VideoFeed({ cameraId = "cam0", cameraName, compact = false, onCl
           </div>
         )}
       </CardHeader>
-      <CardContent className="p-3 pt-0">
-        <div className="relative bg-black rounded-lg overflow-hidden aspect-video">
+      <CardContent className="p-3 pt-0 flex-1 min-h-0 flex flex-col">
+        <div className="relative bg-black rounded-lg overflow-hidden aspect-video flex-1 min-h-0">
           {/* WebRTC 모드 */}
           {isCameraActive && globalStreamMode === "webrtc" && (
             <WebRTCPlayer

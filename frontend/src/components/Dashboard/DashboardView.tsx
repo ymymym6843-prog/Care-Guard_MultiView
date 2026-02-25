@@ -258,11 +258,11 @@ export function DashboardView() {
                     )}
                   />
                 </div>
-                <div className="flex-[3] space-y-2 transition-all duration-500">
+                <div className="flex-[3] flex flex-col gap-2 transition-all duration-500">
                   {pipCameras.map((cam) => (
                     <div
                       key={cam.id}
-                      className="transition-all duration-300 hover:scale-105"
+                      className="flex-1 min-h-0 transition-all duration-300 hover:scale-105"
                     >
                       <VideoFeed
                         cameraId={cam.id}
@@ -270,7 +270,7 @@ export function DashboardView() {
                         compact={true}
                         hideButtons={true}
                         onClick={() => handleCameraClick(cam.id)}
-                        className="cursor-pointer hover:ring-2 hover:ring-primary transition-all h-[180px]"
+                        className="cursor-pointer hover:ring-2 hover:ring-primary transition-all h-full"
                       />
                     </div>
                   ))}

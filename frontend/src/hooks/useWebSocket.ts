@@ -70,21 +70,17 @@ export function useWebSocket() {
           const alertLevel = d.alert_level as string;
           if (alertLevel) {
             const store = useMonitoringStore.getState();
-            // 카메라별 알림 수준 추적 → 전체 최고 수준 사용
-            store.setPerCameraAlert(metricsCameraId, alertLevel as "safe" | "warning" | "danger");
-            const alertRank = { safe: 0, warning: 1, danger: 2 } as Record<string, number>;
-            const allAlerts = Object.values(store.perCameraAlert);
-            // 방금 설정한 값도 포함
-            allAlerts.push(alertLevel as AlertLevel);
-            const globalAlert = (allAlerts.reduce((max, a) =>
-              (alertRank[a] ?? 0) > (alertRank[max] ?? 0) ? a : max, "safe" as AlertLevel)) as "safe" | "warning" | "danger";
-            // acknowledge 후 서버가 safe를 보내기 전까지 danger 재설정 방지
-            if (globalAlert === "danger" && store.isAcknowledged) {
-              // suppress — 서버 acknowledge 확인 대기
-            } else {
-              if (globalAlert !== "danger" && store.isAcknowledged) {
-                store.setIsAcknowledged(false);
-              }
+            // acknowledge 상태에서는 metrics_update의 알림 수준 변경을 모두 무시
+            // alert_update에서만 상태 전환을 처리함
+            if (!store.isAcknowledged) {
+              // 카메라별 알림 수준 추적 → 전체 최고 수준 사용
+              store.setPerCameraAlert(metricsCameraId, alertLevel as "safe" | "warning" | "danger");
+              const alertRank = { safe: 0, warning: 1, danger: 2 } as Record<string, number>;
+              const allAlerts = Object.values(store.perCameraAlert);
+              // 방금 설정한 값도 포함
+              allAlerts.push(alertLevel as AlertLevel);
+              const globalAlert = (allAlerts.reduce((max, a) =>
+                (alertRank[a] ?? 0) > (alertRank[max] ?? 0) ? a : max, "safe" as AlertLevel)) as "safe" | "warning" | "danger";
               store.setCurrentAlert(globalAlert);
             }
           }
@@ -173,14 +169,12 @@ export function useWebSocket() {
             const personId = (d.person_id as string) ?? undefined;
             const fallType = (d.fall_type as string) ?? "unknown";
 
-            if (
-              d.state === "acknowledged" ||
-              level === "safe"
-            ) {
-              // 서버가 acknowledge를 확인했거나 safe로 전환
-              store.setIsAcknowledged(false);
-              store.setCurrentAlert(level as "safe" | "warning" | "danger");
+            if (d.state === "acknowledged") {
+              // 서버가 acknowledge를 확인 — isAcknowledged 유지하여 재알림 방지
+              store.setCurrentAlert("safe");
               store.setCurrentFallType("unknown");
+              // perCameraAlert도 리셋하여 metrics_update에서 danger 재계산 방지
+              store.clearPerCameraAlert();
               store.addEventLog(
                 "safe",
                 i18n.t("dashboard.eventLog.ackCategory", "확인"),
@@ -189,6 +183,12 @@ export function useWebSocket() {
                 undefined,
                 alertCameraId,
               );
+            } else if (level === "safe") {
+              // 서버가 safe로 전환 — 이제 안전하므로 acknowledge 해제
+              store.setIsAcknowledged(false);
+              store.setCurrentAlert("safe");
+              store.setCurrentFallType("unknown");
+              store.clearPerCameraAlert();
             } else if (level === "danger" && !store.isAcknowledged && prevAlert !== "danger") {
               store.setCurrentAlert("danger");
               store.setCurrentFallType(fallType);

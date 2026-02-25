@@ -116,6 +116,7 @@ interface MonitoringState {
   // 카메라별 알림 수준 (다중 카메라 시 최고 수준 계산용)
   perCameraAlert: Record<string, AlertLevel>;
   setPerCameraAlert: (cameraId: string, level: AlertLevel) => void;
+  clearPerCameraAlert: () => void;
 
   // 다중 인원 메트릭
   personMetrics: PersonMetrics[];
@@ -233,6 +234,7 @@ export const useMonitoringStore = create<MonitoringState>()((set) => ({
   perCameraAlert: {},
   setPerCameraAlert: (cameraId, level) =>
     set((state) => ({ perCameraAlert: { ...state.perCameraAlert, [cameraId]: level } })),
+  clearPerCameraAlert: () => set({ perCameraAlert: {} }),
 
   // 다중 인원 메트릭
   personMetrics: [],
