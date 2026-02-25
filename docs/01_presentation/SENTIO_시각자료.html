@@ -222,6 +222,48 @@
   }
   .cpu-bottom strong { color: #22c55e; }
 
+  /* ===== SLIDE 6: TEAM ===== */
+  .s-team {
+    background: radial-gradient(ellipse at center, #0f1729 0%, #0a0a1a 70%);
+    gap: 40px;
+  }
+  .team-thanks {
+    font-size: 52px; font-weight: 900; text-align: center;
+    background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    opacity: 0; animation: fadeUp 0.8s ease forwards;
+  }
+  .team-card {
+    display: flex; align-items: center; gap: 32px;
+    padding: 36px 48px; border-radius: 24px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    opacity: 0; animation: fadeUp 0.8s ease 0.3s forwards;
+  }
+  .team-avatar {
+    width: 100px; height: 100px; border-radius: 50%;
+    background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; font-weight: 900; color: #fff;
+    flex-shrink: 0; letter-spacing: -2px;
+  }
+  .team-info { text-align: left; }
+  .team-name { font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .team-team { font-size: 16px; color: #00d4ff; font-weight: 600; margin-bottom: 12px; }
+  .team-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+  .team-tag {
+    padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500;
+    background: rgba(255,255,255,0.06); color: #94a3b8; border: 1px solid rgba(255,255,255,0.08);
+  }
+  .team-slogan {
+    font-size: 18px; color: #64748b; text-align: center; font-weight: 300;
+    opacity: 0; animation: fadeUp 0.8s ease 0.6s forwards;
+  }
+  .team-slogan strong { color: #94a3b8; }
+  .team-course {
+    font-size: 14px; color: #4b5563; text-align: center;
+    opacity: 0; animation: fadeUp 0.8s ease 0.8s forwards;
+  }
+
   /* ===== ANIMATIONS ===== */
   @keyframes fadeUp {
     to { opacity: 1; transform: translateY(0); }
@@ -403,6 +445,26 @@
   <div class="cpu-bottom">
     병원 어디서든, <strong>기존 장비 그대로</strong> 바로 도입할 수 있습니다
   </div>
+</div>
+
+<!-- SLIDE 6: Team & Thank you -->
+<div class="slide s-team" data-slide="5">
+  <div class="team-thanks">감사합니다</div>
+  <div class="team-card">
+    <div class="team-avatar">YM</div>
+    <div class="team-info">
+      <div class="team-name">석유민</div>
+      <div class="team-team">Team Uminy</div>
+      <div class="team-tags">
+        <span class="team-tag">물리치료사 출신</span>
+        <span class="team-tag">AI 개발자</span>
+        <span class="team-tag">Full-Stack</span>
+        <span class="team-tag">1인 개발</span>
+      </div>
+    </div>
+  </div>
+  <div class="team-slogan">"<strong>현장의 문제를 아는 사람</strong>이 가장 좋은 솔루션을 만듭니다"</div>
+  <div class="team-course">디지털 재활 헬스케어 AI 개발자 양성 과정 1기 &middot; 2026</div>
 </div>
 
 <!-- Slide navigation dots -->
