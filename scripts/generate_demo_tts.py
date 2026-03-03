@@ -10,7 +10,7 @@ import sys
 import wave
 from pathlib import Path
 
-API_KEY = "AIzaSyC4QWE49V0HK3PfC0CKi2DsI812VD8POD4"
+API_KEY = os.getenv("GEMINI_API_KEY")
 OUTPUT_DIR = Path(__file__).parent.parent / "docs" / "01_presentation" / "demo_tts"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -68,6 +68,10 @@ SUBTITLES = [
 
 def generate_tts(text: str, filename: str) -> str | None:
     """Gemini TTS API로 음성 생성"""
+    if not API_KEY:
+        print("    Error: GEMINI_API_KEY environment variable not set.")
+        return None
+        
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent?key={API_KEY}"
 
     payload = {
@@ -134,6 +138,11 @@ def save_subtitles():
 
 
 def main():
+    if not API_KEY:
+        print("Error: GEMINI_API_KEY environment variable not set.")
+        print("Please set the environment variable and try again.")
+        sys.exit(1)
+
     targets = TTS_LINES
     if len(sys.argv) > 1:
         filter_ids = sys.argv[1:]
