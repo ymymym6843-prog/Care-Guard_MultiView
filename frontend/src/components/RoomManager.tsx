@@ -151,6 +151,9 @@ export function RoomManager() {
   };
 
   const handleDelete = async (roomId: number) => {
+    if (!window.confirm(t("rooms.confirmDelete", "이 공간을 삭제하시겠습니까? 카메라 배정도 함께 삭제됩니다."))) {
+      return;
+    }
     try {
       await apiCall(`/api/rooms/${roomId}`, { method: "DELETE" });
       fetchRooms();

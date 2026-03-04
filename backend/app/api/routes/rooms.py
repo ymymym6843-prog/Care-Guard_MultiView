@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy import select, func, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.auth import require_auth
+from app.core.auth import require_auth, require_admin
 from app.core.database import get_db
 from app.models.room import Room, RoomCameraMapping
 
@@ -73,7 +73,7 @@ async def list_rooms(
 async def create_room(
     req: RoomCreateRequest,
     db: AsyncSession = Depends(get_db),
-    _user=Depends(require_auth),
+    _user=Depends(require_admin),
 ):
     """공간 생성 (관리자 전용)"""
     room = Room(name=req.name, description=req.description)
@@ -88,7 +88,7 @@ async def update_room(
     room_id: int,
     req: RoomUpdateRequest,
     db: AsyncSession = Depends(get_db),
-    _user=Depends(require_auth),
+    _user=Depends(require_admin),
 ):
     """공간 수정 (관리자 전용)"""
     result = await db.execute(select(Room).where(Room.id == room_id))
@@ -112,7 +112,7 @@ async def update_room(
 async def delete_room(
     room_id: int,
     db: AsyncSession = Depends(get_db),
-    _user=Depends(require_auth),
+    _user=Depends(require_admin),
 ):
     """공간 삭제 (관리자 전용, 매핑도 삭제)"""
     result = await db.execute(select(Room).where(Room.id == room_id))
@@ -154,7 +154,7 @@ async def assign_cameras(
     room_id: int,
     req: CameraAssignRequest,
     db: AsyncSession = Depends(get_db),
-    _user=Depends(require_auth),
+    _user=Depends(require_admin),
 ):
     """카메라 배정 (전체 교체, 관리자 전용)"""
     result = await db.execute(select(Room).where(Room.id == room_id))

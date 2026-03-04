@@ -167,13 +167,16 @@ class TestAlertManager:
         assert manager._person_alerts["person_0"].acknowledged_by == "admin"
 
     def test_normal_pose_resets_monitoring_state(self):
-        """Test that normal pose (is_fallen=False) resets monitoring state."""
+        """Test that normal pose (is_fallen=False) resets monitoring state after min hold time."""
         manager = AlertManager()
         person_id = "person_reset"
 
         # Trigger monitoring (confidence < 0.5)
         manager.update(person_id, is_fallen=True, confidence=0.35, fall_duration=0.5)
         assert manager._person_alerts[person_id].state == AlertState.MONITORING
+
+        # Simulate time passing beyond min hold time (2 seconds for non-pre-impact MONITORING)
+        manager._person_alerts[person_id].fall_start_time = time.time() - 3.0
 
         # Return to normal
         result = manager.update(person_id, is_fallen=False, confidence=0.0, fall_duration=0.0)
@@ -288,6 +291,9 @@ class TestAlertManager:
 
         # Trigger WARNING (confidence >= 0.5)
         manager.update(person_id, is_fallen=True, confidence=0.6, fall_duration=0.5)
+
+        # Back-date fall_start_time to simulate elapsed time
+        manager._person_alerts[person_id].fall_start_time = time.time() - 1.0
 
         assert manager.alert_duration > 0.0
 

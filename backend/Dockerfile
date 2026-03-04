@@ -25,8 +25,16 @@ RUN mkdir -p /app/models && \
 RUN python -c "from ultralytics import YOLO; model = YOLO('yolo11s-pose.pt')" && \
     mv yolo11s-pose.pt /app/models/ 2>/dev/null || true
 
+# 비루트 유저 생성
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+
 # 소스 코드 복사
 COPY . .
+
+# incidents/reports 디렉토리 생성 + 권한
+RUN mkdir -p /app/incidents /app/reports && chown -R appuser:appgroup /app/incidents /app/reports /app/models
+
+USER appuser
 
 EXPOSE 8000
 

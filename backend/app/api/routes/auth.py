@@ -17,7 +17,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 # 로그인 시도 제한: IP별 최대 5회/60초
 _LOGIN_MAX_ATTEMPTS = 5
 _LOGIN_WINDOW_SECONDS = 60
-_login_attempts: dict[str, list[float]] = defaultdict(list)
+_login_attempts: dict[str, list[float]] = {}
+_last_cleanup = time.time()
 
 from app.config import settings
 from app.core.database import get_db
@@ -39,18 +40,44 @@ class RegisterRequest(BaseModel):
     role: Literal["staff", "admin"] = "staff"
 
 
+def _get_client_ip(request: Request) -> str:
+    """리버스 프록시(nginx) 뒤에서 실제 클라이언트 IP 추출"""
+    # nginx가 설정하는 X-Real-IP 우선, 없으면 X-Forwarded-For, 마지막 TCP peer
+    ip = request.headers.get("X-Real-IP")
+    if not ip:
+        forwarded = request.headers.get("X-Forwarded-For")
+        if forwarded:
+            ip = forwarded.split(",")[0].strip()
+    if not ip:
+        ip = request.client.host if request.client else "unknown"
+    return ip
+
+
 def _check_rate_limit(client_ip: str) -> None:
     """IP 기반 로그인 시도 횟수 확인"""
+    global _last_cleanup
     now = time.time()
-    attempts = _login_attempts[client_ip]
-    # 윈도우 밖의 시도 제거
+
+    # 5분마다 전체 정리 (메모리 누수 방지)
+    if now - _last_cleanup > 300:
+        expired_ips = [
+            ip for ip, ts in _login_attempts.items()
+            if not ts or now - ts[-1] > _LOGIN_WINDOW_SECONDS
+        ]
+        for ip in expired_ips:
+            del _login_attempts[ip]
+        _last_cleanup = now
+
+    # 현재 IP 윈도우 필터링
+    attempts = _login_attempts.get(client_ip, [])
     fresh = [t for t in attempts if now - t < _LOGIN_WINDOW_SECONDS]
     if fresh:
         _login_attempts[client_ip] = fresh
     elif client_ip in _login_attempts:
-        # 빈 리스트는 키 자체를 삭제하여 메모리 누수 방지
         del _login_attempts[client_ip]
-    if len(_login_attempts.get(client_ip, [])) >= _LOGIN_MAX_ATTEMPTS:
+        fresh = []
+
+    if len(fresh) >= _LOGIN_MAX_ATTEMPTS:
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
             detail="로그인 시도 횟수를 초과했습니다. 잠시 후 다시 시도하세요.",
@@ -125,9 +152,9 @@ async def login(
     db: AsyncSession = Depends(get_db),
 ):
     """로그인 (HttpOnly 쿠키로 JWT 토큰 발급)"""
-    client_ip = request.client.host if request.client else "unknown"
+    client_ip = _get_client_ip(request)
     _check_rate_limit(client_ip)
-    _login_attempts[client_ip].append(time.time())
+    _login_attempts.setdefault(client_ip, []).append(time.time())
 
     result = await db.execute(select(User).where(User.username == form.username))
     user = result.scalar_one_or_none()
@@ -325,11 +352,11 @@ async def refresh(request: Request):
             detail="토큰에 사용자 정보가 없습니다",
         )
 
+    from app.core.database import async_session
     user = None
-    async for db in get_db():
+    async with async_session() as db:
         result = await db.execute(select(User).where(User.username == username))
         user = result.scalar_one_or_none()
-        break
 
     if not user or not user.is_active:
         raise HTTPException(

@@ -209,6 +209,7 @@ _INSECURE_DEFAULTS = {
     "",
     "sentio-secret-change-in-production",
     "change-this-to-a-secure-random-string-in-production",
+    "sentio-docker-default-key-change-in-production-2024",
 }
 if settings.JWT_SECRET_KEY in _INSECURE_DEFAULTS:
     _generated = secrets.token_urlsafe(32)

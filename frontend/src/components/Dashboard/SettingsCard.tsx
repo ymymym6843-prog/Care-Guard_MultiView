@@ -1,4 +1,5 @@
 import { SlidersHorizontal, Volume2, VolumeX, Bell, BellOff, AudioLines, Eye, EyeOff } from "lucide-react";
+import { apiCall } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
@@ -158,10 +159,9 @@ export function SettingsCard() {
               updateSettings({ overlayEnabled: checked });
               // 백엔드 API 호출
               try {
-                await fetch("/api/settings/overlay", {
+                await apiCall("/api/settings/overlay", {
                   method: "PUT",
                   headers: { "Content-Type": "application/json" },
-                  credentials: "include",
                   body: JSON.stringify({ enabled: checked }),
                 });
               } catch (e) {

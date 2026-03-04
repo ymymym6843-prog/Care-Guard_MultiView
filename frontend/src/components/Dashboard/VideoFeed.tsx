@@ -392,8 +392,9 @@ function OverlayCanvas({ privacyMode, cameraId = "cam0" }: { privacyMode: Privac
       const bboxes = store.bboxes.filter(b => (b.cameraId ?? "cam0") === currentCamId);
       const poses = store.poseData.filter(p => (p.cameraId ?? "cam0") === currentCamId);
 
-      // 데이터 변경 체크 (불필요한 재렌더 방지)
-      const dataHash = `${mode}:${overlay}:${bboxes.length}:${poses.length}:${poses[0]?.landmarks?.[0]?.x ?? 0}`;
+      // 데이터 변경 체크 (불필요한 재렌더 방지, 다중 인원 대응)
+      const poseHash = poses.map(p => `${p.personId ?? ''}:${p.landmarks?.[0]?.x ?? 0}:${p.landmarks?.[0]?.y ?? 0}`).join(';');
+      const dataHash = `${mode}:${overlay}:${bboxes.length}:${poses.length}:${poseHash}`;
       if (dataHash === lastDataHash) {
         rafRef.current = requestAnimationFrame(render);
         return;

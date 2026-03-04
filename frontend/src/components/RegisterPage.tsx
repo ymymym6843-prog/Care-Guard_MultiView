@@ -8,7 +8,7 @@
 
 import { useState } from "react";
 import { UserPlus, Loader2, Eye, EyeOff } from "lucide-react";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 import { Logo } from "@/components/ui/Logo";
 
 interface RegisterPageProps {
@@ -101,10 +101,9 @@ export function RegisterPage({ onRegisterSuccess }: RegisterPageProps) {
             {t("auth.noUsersMessage")}
             <br />
           </p>
-          <p
-            className="text-xs text-muted-foreground text-center mt-1"
-            dangerouslySetInnerHTML={{ __html: t("auth.firstAccountAdmin") }}
-          />
+          <p className="text-xs text-muted-foreground text-center mt-1">
+            <Trans i18nKey="auth.firstAccountAdmin" components={{ strong: <strong /> }} />
+          </p>
         </div>
 
         {/* 등록 폼 */}

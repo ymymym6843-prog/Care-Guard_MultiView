@@ -7,6 +7,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { apiCall } from "@/lib/auth";
 
 // MediaPipe Pose 연결선 (useSkeletonRenderer와 동일)
 const POSE_CONNECTIONS: [number, number][] = [
@@ -85,9 +86,7 @@ export default function SkeletonReplay() {
   // @ts-expect-error 향후 사건 목록 UI에서 사용 예정
   const _loadFromApi = useCallback(async (incidentId: string) => {
     try {
-      const res = await fetch(`/api/incidents/${incidentId}/replay`, {
-        credentials: "include",
-      });
+      const res = await apiCall(`/api/incidents/${incidentId}/replay`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json();
       setData(json);

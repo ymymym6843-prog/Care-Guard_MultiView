@@ -17,3 +17,5 @@ htmlcov
 incidents/
 reports/
 scripts/
+debug_frames/
+audit_logs/

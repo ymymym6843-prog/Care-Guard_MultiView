@@ -11,6 +11,7 @@ ONNX 모델이 없으면 graceful degradation으로 기본 점수 0.0을 반환�
   출력 5개: 5클래스 softmax [normal, front_fall, back_fall, side_fall, pre_impact]
 """
 
+import threading
 from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
@@ -84,11 +85,9 @@ class FallClassifier:
         self._enabled = False
         self._initialized = False
         self._output_dim = 0  # 모델 출력 차원 (1, 2, 4)
-        # person별 시퀀스 버퍼
-        # 주의: add_frame()과 _run_inference()는 동일 스레드(ml-worker)에서
-        # fall_detector.detect() 내부에서 순차 호출됩니다.
-        # 스레드 간 동시 접근 시에는 Lock이 필요합니다.
+        # person별 시퀀스 버퍼 (다중 스레드에서 접근 가능하므로 Lock 보호)
         self._buffers: dict[str, deque] = {}
+        self._buffer_lock = threading.Lock()
 
     @property
     def enabled(self) -> bool:
@@ -155,9 +154,10 @@ class FallClassifier:
         return self._output_dim
 
     def _get_buffer(self, person_id: str) -> deque:
-        if person_id not in self._buffers:
-            self._buffers[person_id] = deque(maxlen=self.SEQUENCE_LENGTH)
-        return self._buffers[person_id]
+        with self._buffer_lock:
+            if person_id not in self._buffers:
+                self._buffers[person_id] = deque(maxlen=self.SEQUENCE_LENGTH)
+            return self._buffers[person_id]
 
     def add_frame(self, person_id: str, landmarks: list[dict]) -> None:
         """프레임 랜드마크를 시퀀스 버퍼에 추가"""
@@ -308,18 +308,21 @@ class FallClassifier:
 
     def reset_person(self, person_id: str) -> None:
         """인물 시퀀스 버퍼 초기화"""
-        self._buffers.pop(person_id, None)
+        with self._buffer_lock:
+            self._buffers.pop(person_id, None)
 
     def reset_camera(self, camera_id: str) -> None:
         """특정 카메라의 버퍼만 초기화 (캐시는 보존)"""
-        prefix = f"{camera_id}_"
-        to_remove = [pid for pid in self._buffers if pid.startswith(prefix)]
-        for pid in to_remove:
-            del self._buffers[pid]
+        with self._buffer_lock:
+            prefix = f"{camera_id}_"
+            to_remove = [pid for pid in self._buffers if pid.startswith(prefix)]
+            for pid in to_remove:
+                del self._buffers[pid]
 
     def reset_all(self) -> None:
         """모든 버퍼 초기화"""
-        self._buffers.clear()
+        with self._buffer_lock:
+            self._buffers.clear()
 
 
 # 싱글톤

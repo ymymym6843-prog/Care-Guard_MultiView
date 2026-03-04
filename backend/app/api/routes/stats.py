@@ -189,11 +189,15 @@ async def summary_stats(
     # 평균 응답 시간 (이벤트 발생 → 확인까지 걸린 초)
     avg_response = 0.0
     if acknowledged > 0:
-        if camera_ids is not None:
-            camera_list = ",".join(f"'{c}'" for c in camera_ids)
-            camera_filter = f" AND camera_id IN ({camera_list})"
-        else:
-            camera_filter = ""
+        # parameterized query로 SQL injection 방지
+        params: dict = {"since": since}
+        camera_filter = ""
+        if camera_ids is not None and camera_ids:
+            placeholders = ", ".join(f":cam_{i}" for i in range(len(camera_ids)))
+            camera_filter = f" AND camera_id IN ({placeholders})"
+            for i, cid in enumerate(camera_ids):
+                params[f"cam_{i}"] = cid
+
         if _is_sqlite:
             avg_sql = (
                 "SELECT AVG((julianday(acknowledged_at) - julianday(timestamp)) * 86400) "
@@ -208,7 +212,7 @@ async def summary_stats(
                 "WHERE timestamp >= :since AND acknowledged = true AND acknowledged_at IS NOT NULL"
                 + camera_filter
             )
-        avg_result = await db.execute(text(avg_sql), {"since": since})
+        avg_result = await db.execute(text(avg_sql), params)
         avg_secs = avg_result.scalar()
         if avg_secs:
             avg_response = float(avg_secs)

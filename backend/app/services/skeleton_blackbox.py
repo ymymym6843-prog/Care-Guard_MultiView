@@ -118,7 +118,8 @@ class SkeletonBlackbox:
             ),
         }
 
-        # JSON 직렬화 + 해시
+        # 해시 필드를 먼저 삽입 (플레이스홀더), 직렬화, 해시 계산, 최종 치환
+        incident_data["system_trace_hash"] = ""
         json_str = json.dumps(incident_data, ensure_ascii=False, indent=2)
         data_hash = hashlib.sha256(json_str.encode()).hexdigest()
         incident_data["system_trace_hash"] = f"sha256:{data_hash[:12]}"

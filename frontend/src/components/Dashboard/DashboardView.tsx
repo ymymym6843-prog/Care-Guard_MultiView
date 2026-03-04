@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 import { StatusCard } from "./StatusCard";
 import { MetricsCard } from "./MetricsCard";
 import { VideoFeed } from "./VideoFeed";
@@ -170,25 +170,37 @@ export function DashboardView() {
     setIsSafeZoneOpen(true);
   };
 
+  // 카메라 이름 변경 debounce (500ms)
+  const nameDebounceRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+
   // 카메라 설정 업데이트 (활성/비활성, 이름)
   const handleUpdateCamera = async (cameraId: string, updates: Partial<{ isActive: boolean; name: string }>) => {
     // 낙관적 업데이트
     setCameras(cameras.map(c => c.id === cameraId ? { ...c, ...updates } : c));
 
     try {
-      // 1. 활성 상태 변경 (Start/Stop)
+      // 1. 활성 상태 변경 (Start/Stop) — 즉시 전송
       if (typeof updates.isActive === "boolean") {
         const endpoint = updates.isActive ? "start" : "stop";
         await apiCall(`/api/cameras/${cameraId}/${endpoint}`, { method: "POST" });
       }
 
-      // 2. 이름 변경 (POST - PATCH 405 이슈 회피)
+      // 2. 이름 변경 — debounce 500ms
       if (updates.name !== undefined) {
-        await apiCall(`/api/cameras/${cameraId}/update`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: updates.name }),
-        });
+        if (nameDebounceRef.current[cameraId]) {
+          clearTimeout(nameDebounceRef.current[cameraId]);
+        }
+        nameDebounceRef.current[cameraId] = setTimeout(async () => {
+          try {
+            await apiCall(`/api/cameras/${cameraId}/update`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ name: updates.name }),
+            });
+          } catch (e) {
+            console.error("카메라 이름 업데이트 실패:", e);
+          }
+        }, 500);
       }
     } catch (e) {
       console.error("카메라 업데이트 실패:", e);
@@ -262,11 +274,11 @@ export function DashboardView() {
                   </div>
                   <div className="flex-[4] transition-all duration-500">
                     <VideoFeed
-                      cameraId={pipCameras[0].id}
-                      cameraName={pipCameras[0].name}
+                      cameraId={pipCameras[0]!.id}
+                      cameraName={pipCameras[0]!.name}
                       compact={true}
                       hideButtons={true}
-                      onClick={() => handleCameraClick(pipCameras[0].id)}
+                      onClick={() => handleCameraClick(pipCameras[0]!.id)}
                       className="cursor-pointer hover:ring-2 hover:ring-primary transition-all h-full hover:scale-[1.02]"
                     />
                   </div>
