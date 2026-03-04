@@ -82,8 +82,8 @@ export function StatusCard() {
   const filteredPersons = roomCameraIds === null
     ? personMetrics
     : personMetrics.filter((p) =>
-        roomCameraIds.some((c) => p.personId.startsWith(`${c}_`))
-      );
+      roomCameraIds.some((c) => p.personId.startsWith(`${c}_`))
+    );
 
   // 가장 위험한 인물 찾기
   const dangerPerson = filteredPersons.length > 0
@@ -117,7 +117,7 @@ export function StatusCard() {
   return (
     <Card
       className={cn(
-        "glass-card border-none transition-all duration-500 overflow-hidden relative",
+        "glass-card transition-all duration-500 overflow-hidden relative",
         currentAlert === "danger" && "ring-2 ring-danger animate-danger-pulse bg-danger/10",
         currentAlert === "warning" && "ring-1 ring-warning bg-warning/5",
         currentAlert === "safe" && "bg-safe/5"

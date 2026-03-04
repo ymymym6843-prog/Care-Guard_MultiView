@@ -428,7 +428,7 @@ function OverlayCanvas({ privacyMode, cameraId = "cam0" }: { privacyMode: Privac
         });
 
         bboxes.forEach((bbox, idx) => {
-          const color = bbox.isFallen ? "#ef4444" : PERSON_COLORS[idx % PERSON_COLORS.length]!;
+          const color = bbox.isFallen ? "#e11d48" : PERSON_COLORS[idx % PERSON_COLORS.length]!;
           drawBBox(ctx, bbox, w, h, color);
         });
       }
@@ -541,7 +541,7 @@ function drawBBox(
   const textHeight = 16;
   const padding = 4;
 
-  ctx.fillStyle = bbox.isFallen ? "rgba(239, 68, 68, 0.8)" : "rgba(0, 0, 0, 0.6)";
+  ctx.fillStyle = bbox.isFallen ? "rgba(225, 29, 72, 0.8)" : "rgba(0, 0, 0, 0.6)";
   ctx.fillRect(
     px1,
     py1 - textHeight - padding,

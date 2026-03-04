@@ -58,8 +58,8 @@ export function Sidebar({
         key={item.id}
         to={item.path}
         className={({ isActive }) => cn(
-          "flex items-center gap-3 h-10 px-4 py-2 rounded-md transition-colors text-sm font-medium hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-          isActive ? "bg-sidebar-accent text-sidebar-accent-foreground" : "transparent",
+          "flex items-center gap-3 h-10 px-4 py-2 rounded-full transition-all duration-300 text-sm font-medium hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+          isActive ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm" : "transparent",
           collapsed && "justify-center px-0"
         )}
       >

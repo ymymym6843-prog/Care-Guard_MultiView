@@ -219,8 +219,8 @@ export function MetricsCard() {
   const filteredPersons = roomCameraIds === null
     ? personMetrics
     : personMetrics.filter((p) =>
-        roomCameraIds.some((c) => p.personId.startsWith(`${c}_`))
-      );
+      roomCameraIds.some((c) => p.personId.startsWith(`${c}_`))
+    );
 
   // 카메라별 그룹핑 (personId 형식: "cam0_person_1")
   const cameraGroups = new Map<string, PersonMetrics[]>();
@@ -249,7 +249,7 @@ export function MetricsCard() {
 
 
   return (
-    <Card className="glass-card border-none">
+    <Card className="glass-card">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium flex items-center gap-2">
           <Activity className="h-4 w-4 text-primary" />
@@ -291,8 +291,8 @@ export function MetricsCard() {
                       <div className={cn(
                         "w-2 h-2 rounded-full",
                         alertLevel === "danger" ? "bg-danger animate-pulse" :
-                        alertLevel === "warning" ? "bg-warning animate-pulse" :
-                        "bg-safe",
+                          alertLevel === "warning" ? "bg-warning animate-pulse" :
+                            "bg-safe",
                       )} />
                       <span className="text-xs font-semibold">
                         {cameraNameMap.get(camId) || camId}

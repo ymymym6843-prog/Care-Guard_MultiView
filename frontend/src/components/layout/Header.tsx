@@ -45,7 +45,7 @@ export function Header({ onLogout }: HeaderProps) {
   };
 
   return (
-    <header role="banner" aria-label={t("header.mainHeader", "메인 헤더")} className="h-16 bg-card border-b border-border px-6 flex items-center justify-between shrink-0">
+    <header role="banner" aria-label={t("header.mainHeader", "메인 헤더")} className="h-16 glass-panel border-b-0 px-6 flex items-center justify-between shrink-0 relative z-30">
       {/* 좌측: 로고 */}
       <Logo size="sm" orientation="horizontal" />
 

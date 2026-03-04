@@ -15,7 +15,7 @@ export function SettingsCard() {
     usePushNotifications();
 
   return (
-    <Card>
+    <Card className="glass-card">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium flex items-center gap-2">
           <SlidersHorizontal className="h-4 w-4 text-primary" />

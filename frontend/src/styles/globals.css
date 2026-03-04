@@ -4,13 +4,10 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * SENTIO WAITING AI - Theme System
+ * SENTIO WAITING AI - V4 Dual Theme System
  *
- * 라이트/다크 듀얼 테마 지원
- * 의료/재활 분야 UI/UX 가이드라인 준수
- * - 상태별 색상: safe(녹) / warning(노) / danger(빨)
- * - 고대비, 큰 글씨, 접근성 우선
- * - oklch 색상 포맷 (Tailwind v4)
+ * ☀️ Light Mode: Serene Daylight (따뜻한 오프화이트, 맑은 세이지 그린/스카이 블루 포인트)
+ * 🌙 Dark Mode: Midnight Aurora 2.0 (딥 네이비 심연, 네온 글로우 강)
  */
 
 @theme inline {
@@ -67,129 +64,148 @@
   --radius-xl: calc(var(--radius) + 4px);
 
   /* === 폰트 === */
-  --font-sans: "Pretendard Variable", Pretendard, "Noto Sans KR",
-    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-    "Noto Color Emoji";
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono",
-    Menlo, Consolas, "Liberation Mono", monospace;
+  --font-sans: "Pretendard Variable", Pretendard, "Noto Sans KR", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
 /*
- * === 라이트 테마 (기본) ===
- * 밝은 환경에서의 가독성 최적화
+ * === ☀️ 라이트 테마: Serene Daylight ===
  */
 :root {
-  --radius: 0.625rem;
+  --radius: 0.75rem;
 
-  /* 배경 - 밝은 그레이 */
-  --background: oklch(0.985 0.002 248);
-  --foreground: oklch(0.141 0.031 263);
+  /* 배경 - 웜톤 오프화이트/아이보리 */
+  --background: oklch(0.985 0.01 75);
+  --foreground: oklch(0.2 0.02 240);
 
-  /* 카드 */
-  --card: oklch(1.0 0 0);
-  --card-foreground: oklch(0.141 0.031 263);
+  /* 카드 - 깨끗한 아크릴/화이트 글래스 */
+  --card: oklch(1 0 0 / 0.85);
+  --card-foreground: oklch(0.2 0.02 240);
 
   /* 팝오버 */
-  --popover: oklch(1.0 0 0);
-  --popover-foreground: oklch(0.141 0.031 263);
+  --popover: oklch(1 0 0 / 0.95);
+  --popover-foreground: oklch(0.2 0.02 240);
 
-  /* 프라이머리 - Teal Blue (Logo Color) */
-  --primary: oklch(0.60 0.20 250);
-  --primary-foreground: oklch(0.985 0.002 248);
+  /* 프라이머리 - 맑은 세이지 그린 / 스카이 블루 */
+  --primary: oklch(0.68 0.1 210);
+  --primary-foreground: oklch(1 0 0);
 
   /* 세컨더리 */
-  --secondary: oklch(0.930 0.010 255);
-  --secondary-foreground: oklch(0.250 0.030 264);
+  --secondary: oklch(0.95 0.01 80);
+  --secondary-foreground: oklch(0.25 0.02 240);
 
   /* 뮤트 */
-  --muted: oklch(0.930 0.010 255);
-  --muted-foreground: oklch(0.460 0.030 264);
+  --muted: oklch(0.96 0.01 80);
+  --muted-foreground: oklch(0.5 0.02 240);
 
   /* 액센트 */
-  --accent: oklch(0.930 0.010 255);
-  --accent-foreground: oklch(0.250 0.030 264);
+  --accent: oklch(0.96 0.01 80);
+  --accent-foreground: oklch(0.2 0.02 240);
 
-  /* 파괴적 액션 - 위험 빨강 */
-  --destructive: oklch(0.577 0.237 25);
+  /* 파괴적 액션 */
+  --destructive: oklch(0.55 0.18 25);
+  --destructive-foreground: oklch(1 0 0);
+
+  /* 테두리/입력/링 */
+  --border: oklch(0.9 0.01 80 / 0.7);
+  --input: oklch(0.92 0.01 80 / 0.7);
+  --ring: oklch(0.68 0.1 210 / 0.5);
+
+  /* === SENTIO 상태 색상 (Serene Daylight) === */
+  --safe: oklch(0.75 0.15 140);
+  --safe-foreground: oklch(0.15 0.02 240);
+
+  --warning: oklch(0.75 0.15 50);
+  --warning-foreground: oklch(0.15 0.02 240);
+
+  --danger: oklch(0.55 0.18 25);
+  --danger-foreground: oklch(1 0 0);
+
+  /* 차트 색상 */
+  --chart-1: oklch(0.68 0.1 210);
+  --chart-2: oklch(0.75 0.15 140);
+  --chart-3: oklch(0.75 0.15 50);
+  --chart-4: oklch(0.55 0.18 25);
+  --chart-5: oklch(0.65 0.12 280);
+
+  /* 사이드바 */
+  --sidebar: oklch(0.985 0.01 75 / 0.85);
+  --sidebar-foreground: oklch(0.2 0.02 240);
+  --sidebar-primary: oklch(0.68 0.1 210);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.95 0.01 80 / 0.8);
+  --sidebar-accent-foreground: oklch(0.2 0.02 240);
+  --sidebar-border: oklch(0.9 0.01 80 / 0.8);
+  --sidebar-ring: oklch(0.68 0.1 210 / 0.3);
+}
+
+/*
+ * === 🌙 다크 테마: Midnight Aurora 2.0 ===
+ */
+.dark {
+  /* 배경 - 딥 네이비 (유지하되 대비 약간 조절) */
+  --background: oklch(0.141 0.031 263);
+  --foreground: oklch(0.985 0.002 248);
+
+  /* 카드 - 어두운 투명 글래스 */
+  --card: oklch(0.18 0.03 264 / 0.5);
+  --card-foreground: oklch(0.985 0.002 248);
+
+  /* 팝오버 */
+  --popover: oklch(0.18 0.03 264 / 0.85);
+  --popover-foreground: oklch(0.985 0.002 248);
+
+  /* 프라이머리 - 일렉트릭 시안 */
+  --primary: oklch(0.707 0.165 255);
+  --primary-foreground: oklch(0.141 0.031 263);
+
+  /* 세컨더리 */
+  --secondary: oklch(0.25 0.03 264);
+  --secondary-foreground: oklch(0.985 0.002 248);
+
+  /* 뮤트 */
+  --muted: oklch(0.25 0.03 264);
+  --muted-foreground: oklch(0.7 0.02 257);
+
+  /* 액센트 */
+  --accent: oklch(0.28 0.04 264 / 0.6);
+  --accent-foreground: oklch(0.985 0.002 248);
+
+  /* 파괴적 액션 */
+  --destructive: oklch(0.637 0.237 25);
   --destructive-foreground: oklch(0.985 0.002 248);
 
   /* 테두리/입력/링 */
-  --border: oklch(0.880 0.010 255);
-  --input: oklch(0.880 0.010 255);
-  --ring: oklch(0.607 0.165 255);
+  --border: oklch(0.3 0.04 264 / 0.6);
+  --input: oklch(0.25 0.03 264 / 0.5);
+  --ring: oklch(0.707 0.165 255 / 0.6);
 
-  /* === SENTIO 상태 색상 (라이트) === */
-  --safe: oklch(0.656 0.190 164);
-  --safe-foreground: oklch(0.985 0.002 248);
-
-  --warning: oklch(0.750 0.180 80);
-  --warning-foreground: oklch(0.200 0.030 80);
-
-  --danger: oklch(0.577 0.237 25);
-  --danger-foreground: oklch(0.985 0.002 248);
-
-  /* 차트 색상 (라이트) */
-  --chart-1: oklch(0.607 0.165 255);
-  --chart-2: oklch(0.656 0.190 164);
-  --chart-3: oklch(0.700 0.165 76);
-  --chart-4: oklch(0.577 0.237 25);
-  --chart-5: oklch(0.590 0.200 310);
-
-  /* 사이드바 (라이트) */
-  --sidebar: oklch(0.965 0.005 255);
-  --sidebar-foreground: oklch(0.141 0.031 263);
-  --sidebar-primary: oklch(0.607 0.165 255);
-  --sidebar-primary-foreground: oklch(0.985 0.002 248);
-  --sidebar-accent: oklch(0.930 0.010 255);
-  --sidebar-accent-foreground: oklch(0.250 0.030 264);
-  --sidebar-border: oklch(0.880 0.010 255);
-  --sidebar-ring: oklch(0.607 0.165 255);
-}
-
-/*
- * === 다크 테마 ===
- * 24시간 모니터링 환경 최적화 (눈 피로 감소)
- */
-.dark {
-  --background: oklch(0.141 0.031 263);
-  --foreground: oklch(0.985 0.002 248);
-  --card: oklch(0.216 0.032 264);
-  --card-foreground: oklch(0.985 0.002 248);
-  --popover: oklch(0.216 0.032 264);
-  --popover-foreground: oklch(0.985 0.002 248);
-  --primary: oklch(0.707 0.165 255);
-  --primary-foreground: oklch(0.141 0.031 263);
-  --secondary: oklch(0.318 0.030 264);
-  --secondary-foreground: oklch(0.985 0.002 248);
-  --muted: oklch(0.318 0.030 264);
-  --muted-foreground: oklch(0.704 0.026 257);
-  --accent: oklch(0.318 0.030 264);
-  --accent-foreground: oklch(0.985 0.002 248);
-  --destructive: oklch(0.637 0.237 25);
-  --destructive-foreground: oklch(0.985 0.002 248);
-  --border: oklch(0.318 0.030 264);
-  --input: oklch(0.318 0.030 264);
-  --ring: oklch(0.707 0.165 255);
+  /* === SENTIO 상태 색상 (Midnight Aurora 2.0) === */
   --safe: oklch(0.776 0.190 164);
-  --safe-foreground: oklch(0.141 0.031 263);
+  --safe-foreground: oklch(0.1 0.03 263);
+
   --warning: oklch(0.85 0.18 80);
-  --warning-foreground: oklch(0.141 0.031 263);
+  --warning-foreground: oklch(0.1 0.03 263);
+
   --danger: oklch(0.637 0.237 25);
   --danger-foreground: oklch(0.985 0.002 248);
+
+  /* 차트 색상 */
   --chart-1: oklch(0.707 0.165 255);
   --chart-2: oklch(0.776 0.190 164);
   --chart-3: oklch(0.85 0.18 80);
   --chart-4: oklch(0.637 0.237 25);
-  --chart-5: oklch(0.650 0.200 310);
-  --sidebar: oklch(0.170 0.031 263);
+  --chart-5: oklch(0.7 0.2 310);
+
+  /* 사이드바 */
+  --sidebar: oklch(0.15 0.03 263 / 0.6);
   --sidebar-foreground: oklch(0.985 0.002 248);
   --sidebar-primary: oklch(0.707 0.165 255);
   --sidebar-primary-foreground: oklch(0.141 0.031 263);
-  --sidebar-accent: oklch(0.250 0.032 264);
+  --sidebar-accent: oklch(0.25 0.04 264 / 0.5);
   --sidebar-accent-foreground: oklch(0.985 0.002 248);
-  --sidebar-border: oklch(0.318 0.030 264);
-  --sidebar-ring: oklch(0.707 0.165 255);
+  --sidebar-border: oklch(0.28 0.04 264 / 0.5);
+  --sidebar-ring: oklch(0.707 0.165 255 / 0.5);
 }
 
 /* === 글로벌 베이스 스타일 === */
@@ -203,21 +219,104 @@
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Serene Daylight 배경 장식 (라이트) */
+    background-image:
+      radial-gradient(circle at top right, oklch(0.68 0.1 210 / 0.05), transparent 50%),
+      radial-gradient(circle at bottom left, oklch(0.75 0.15 140 / 0.05), transparent 40%);
+    background-attachment: fixed;
+  }
+
+  /* Midnight Aurora 2.0 배경 심연 효과 (다크) */
+  .dark body {
+    background-image:
+      radial-gradient(circle at top left, oklch(0.707 0.165 255 / 0.08), transparent 40%),
+      radial-gradient(circle at bottom right, oklch(0.776 0.190 164 / 0.05), transparent 50%);
   }
 }
 
 /* === 모던 디자인 유틸리티 === */
 @layer components {
+
+  /* 글로우/텍스트 쉐도우 효과 추가 (듀얼 컨텍스트용) */
+  .text-glow-primary {
+    text-shadow: 0 0 10px oklch(var(--color-primary) / 0.4);
+  }
+
+  .text-glow-danger {
+    text-shadow: 0 0 10px oklch(var(--color-danger) / 0.4);
+  }
+
+  .text-glow-warning {
+    text-shadow: 0 0 10px oklch(var(--color-warning) / 0.4);
+  }
+
+  .text-glow-safe {
+    text-shadow: 0 0 10px oklch(var(--color-safe) / 0.4);
+  }
+
+  .dark .text-glow-primary {
+    text-shadow: 0 0 15px oklch(var(--color-primary) / 0.6);
+  }
+
+  .dark .text-glow-danger {
+    text-shadow: 0 0 15px oklch(var(--color-danger) / 0.6);
+  }
+
+  .dark .text-glow-warning {
+    text-shadow: 0 0 15px oklch(var(--color-warning) / 0.6);
+  }
+
+  .dark .text-glow-safe {
+    text-shadow: 0 0 15px oklch(var(--color-safe) / 0.6);
+  }
+
+  /* 
+   * Glassmorphism 
+   */
   .glass-panel {
-    @apply bg-background/80 backdrop-blur-xl border border-border/50 shadow-xl;
+    @apply bg-background/70 backdrop-blur-2xl transition-all duration-300 border border-white/50;
+    /* Serene Daylight: 투명한 크리스탈 패널 */
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+  }
+
+  .dark .glass-panel {
+    @apply bg-background/50 border-white/5;
+    /* Midnight Aurora 2.0: 심연 속의 다크 글래스와 이너 보더 */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.08);
   }
 
   .glass-card {
-    @apply bg-card/60 backdrop-blur-md border border-border/50 shadow-sm hover:shadow-md transition-all duration-300;
+    @apply bg-card/70 backdrop-blur-xl rounded-2xl transition-all duration-300 border border-white/60;
+    /* Serene Daylight: 넓고 부드러운 그림자, 떠있는 느낌 */
+    box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.06);
+  }
+
+  .glass-card:hover {
+    @apply -translate-y-0.5 border-white/80;
+    box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .glass-card {
+    @apply bg-card/60 border-white/5;
+    box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.06);
+  }
+
+  .dark .glass-card:hover {
+    @apply border-white/10;
+    /* Midnight Aurora 2.0: Hover 시 은은한 프라이머리 쉐도우 글로우 */
+    box-shadow:
+      0 8px 30px -5px rgba(0, 0, 0, 0.7),
+      inset 0 1px 1px rgba(255, 255, 255, 0.1),
+      0 0 20px -5px oklch(var(--color-primary) / 0.2);
   }
 
   .glass-sidebar {
-    @apply bg-sidebar/80 backdrop-blur-xl border-r border-sidebar-border/500;
+    @apply bg-sidebar/80 backdrop-blur-2xl border-r border-sidebar-border/40 transition-all duration-300;
+    box-shadow: 4px 0 24px -4px rgba(0, 0, 0, 0.02);
+  }
+
+  .dark .glass-sidebar {
+    box-shadow: 4px 0 30px -4px rgba(0, 0, 0, 0.4), inset -1px 0 0 rgba(255, 255, 255, 0.03);
   }
 }
 
@@ -225,7 +324,7 @@
 @keyframes enter-up {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(16px);
   }
 
   to {
@@ -247,11 +346,11 @@
 }
 
 .animate-enter-up {
-  animation: enter-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: enter-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-enter-scale {
-  animation: enter-scale 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: enter-scale 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* === SENTIO 긴급 알림 애니메이션 === */
@@ -260,10 +359,12 @@
   0%,
   100% {
     opacity: 1;
+    box-shadow: 0 0 0 0 oklch(var(--color-danger) / 0.4);
   }
 
   50% {
-    opacity: 0.5;
+    opacity: 0.8;
+    box-shadow: 0 0 0 15px oklch(var(--color-danger) / 0);
   }
 }
 
@@ -272,10 +373,12 @@
   0%,
   100% {
     border-color: var(--danger);
+    box-shadow: inset 0 0 20px oklch(var(--color-danger) / 0.2);
   }
 
   50% {
     border-color: transparent;
+    box-shadow: inset 0 0 0px oklch(var(--color-danger) / 0);
   }
 }
 
@@ -286,32 +389,28 @@
     transform: translateX(0);
   }
 
-  10%,
-  30%,
-  50%,
-  70%,
-  90% {
+  15%,
+  45%,
+  75% {
     transform: translateX(-4px);
   }
 
-  20%,
-  40%,
-  60%,
-  80% {
+  30%,
+  60% {
     transform: translateX(4px);
   }
 }
 
 .animate-danger-pulse {
-  animation: danger-pulse 0.5s ease-in-out infinite;
+  animation: danger-pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .animate-border-flash {
-  animation: border-flash 1s ease-in-out infinite;
+  animation: border-flash 1.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .animate-alert-shake {
-  animation: alert-shake 0.6s ease-in-out;
+  animation: alert-shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
 /* === 접근성: 움직임 감소 설정 존중 === */
@@ -335,7 +434,8 @@
 :focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 0 4px oklch(var(--color-primary) / 0.2);
 }
 
 /* === 접근성: Windows 고대비 모드 (색각 이상자 지원) === */
